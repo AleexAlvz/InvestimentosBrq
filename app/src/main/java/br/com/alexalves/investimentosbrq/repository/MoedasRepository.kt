@@ -30,7 +30,25 @@ class MoedasRepository {
     private fun buscaMoedas(service: ServiceInvestimentos?): List<Moeda> {
         if (service?.results?.currencies!=null){
             service.results.currencies.let {
-                val moedas = listOf(it.ars, it.aud, it.btc, it.cad, it.cny, it.eur, it.gbp, it.jpy, it.usd)
+                val ars = it.ars
+                ars.setAbreviacao()
+                val aud = it.aud
+                aud.setAbreviacao()
+                val btc = it.btc
+                btc.setAbreviacao()
+                val cad = it.cad
+                cad.setAbreviacao()
+                val cny = it.cny
+                cny.setAbreviacao()
+                val eur = it.eur
+                eur.setAbreviacao()
+                val gbp = it.gbp
+                gbp.setAbreviacao()
+                val jpy = it.jpy
+                jpy.setAbreviacao()
+                val usd = it.usd
+                usd.setAbreviacao()
+                val moedas = listOf(ars, aud, btc, cad, cny, eur, gbp, jpy, usd)
                 return moedas
             }
         }else return listOf()

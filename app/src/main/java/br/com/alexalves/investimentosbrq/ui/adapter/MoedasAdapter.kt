@@ -1,11 +1,13 @@
 package br.com.alexalves.investimentosbrq.ui.adapter
 
 import android.content.Context
+import android.content.res.Resources
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import br.com.alexalves.investimentosbrq.model.Moeda
 import br.com.alexalves.investimentosbrq.R
@@ -26,9 +28,34 @@ class MoedasAdapter(
     }
 
     private fun vinculaCampos(holder: MoedasViewHolder, moeda: Moeda) {
-        holder.nomeMoeda.setText(moeda.name)
-        holder.variacaoMoeda.setText(moeda.variation.toString())
         holder.itemView.setOnClickListener { onItemClick(moeda) }
+        holder.nomeMoeda.setText(moeda.abreviacao)
+        holder.variacaoMoeda.text = moeda.variation.toString()
+        setColorVariacao(moeda, holder)
+    }
+
+    private fun setColorVariacao(
+        moeda: Moeda,
+        holder: MoedasViewHolder
+    ) {
+        val variacao = moeda.variation
+        if (variacao > 0) {
+            holder.variacaoMoeda.setTextColor(
+                ContextCompat.getColor(
+                    context!!,
+                    R.color.green_positive
+                )
+            )
+        } else if (variacao < 0) {
+            holder.variacaoMoeda.setTextColor(
+                ContextCompat.getColor(
+                    context!!,
+                    R.color.red_negative
+                )
+            )
+        } else if (variacao.equals(0)) {
+            holder.variacaoMoeda.setTextColor(ContextCompat.getColor(context!!, R.color.white))
+        }
     }
 
     override fun getItemCount(): Int { return moedas.size }
