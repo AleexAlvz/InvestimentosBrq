@@ -6,8 +6,10 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import br.com.alexalves.investimentosbrq.HomeViewModel
 import br.com.alexalves.investimentosbrq.R
 import br.com.alexalves.investimentosbrq.model.Moeda
 import br.com.alexalves.investimentosbrq.repository.MoedasRepository
@@ -15,8 +17,8 @@ import br.com.alexalves.investimentosbrq.ui.adapter.MoedasAdapter
 
 class HomeActivity: AppCompatActivity() {
 
-    lateinit var moedasRepository: MoedasRepository
     lateinit var recyclerView: RecyclerView
+    lateinit var viewModel: HomeViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -27,19 +29,19 @@ class HomeActivity: AppCompatActivity() {
     }
 
     private fun configuraAdapter() {
-        moedasRepository = MoedasRepository()
-        moedasRepository.moedas.observe(
-            this,
-            Observer { moedas ->
+
+        viewModel.buscaMoedas(
+            quandoSucesso = { moedas ->
                 val moedasAdapter = MoedasAdapter(moedas, this, this::onClickItemMoedas)
                 recyclerView.adapter = moedasAdapter
                 moedasAdapter.notifyDataSetChanged()
-            })
-        moedasRepository.buscaMoedas()
+        }, quandoFalha = {erro ->
+                Log.i("ERRO",erro)
+        })
     }
 
     private fun inicializaCampos() {
-        moedasRepository = MoedasRepository()
+        viewModel = ViewModelProvider(this).get(HomeViewModel::class.java)
         recyclerView = findViewById(R.id.recycler_view_moedas_home)
     }
 
@@ -57,5 +59,6 @@ class HomeActivity: AppCompatActivity() {
 
     fun onClickItemMoedas(moeda: Moeda){
         Log.i("Click",moeda.name)
+        configuraAdapter()
     }
 }

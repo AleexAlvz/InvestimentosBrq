@@ -10,47 +10,57 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.io.IOException
 
-class MoedasRepository {
+class MoedasRepository(
+) {
+
 
     val service = InvestimentosServiceAPI().getInvestimentosService()
-    val moedas = MutableLiveData<List<Moeda>>()
 
-    fun buscaMoedas(){
+    fun buscaMoedas(
+        quandoSucesso: ((moedas: List<Moeda>) -> Unit)? = null,
+        quandoFalha: ((erro: String) -> Unit)? = null
+    ) {
         val callService = service.getService()
         CoroutineScope(Dispatchers.IO).launch {
-            val service = callService.execute().body()
-            val moedasBuscadas = buscaMoedas(service)
-            withContext(Main){
-                moedas.value = moedasBuscadas
+            try {
+                val service = callService.execute().body()
+                val moedasBuscadas = buscaMoedas(service)
+                withContext(Main) {
+                    quandoSucesso?.invoke(moedasBuscadas)
+                }
+
+            } catch (erro: IOException) {
+                quandoFalha?.invoke(erro.message.toString())
             }
         }
     }
 
     private fun buscaMoedas(service: ServiceInvestimentos?): List<Moeda> {
-        if (service?.results?.currencies!=null){
-            service.results.currencies.let {
-                val ars = it.ars
-                ars.setAbreviacao()
-                val aud = it.aud
-                aud.setAbreviacao()
-                val btc = it.btc
-                btc.setAbreviacao()
-                val cad = it.cad
-                cad.setAbreviacao()
-                val cny = it.cny
-                cny.setAbreviacao()
-                val eur = it.eur
-                eur.setAbreviacao()
-                val gbp = it.gbp
-                gbp.setAbreviacao()
-                val jpy = it.jpy
-                jpy.setAbreviacao()
-                val usd = it.usd
-                usd.setAbreviacao()
-                val moedas = listOf(ars, aud, btc, cad, cny, eur, gbp, jpy, usd)
-                return moedas
-            }
-        }else return listOf()
+        var moedas: List<Moeda>? = null
+        service?.results?.currencies?.let {
+            val ars = it.ars
+            ars.setAbreviacao()
+            val aud = it.aud
+            aud.setAbreviacao()
+            val btc = it.btc
+            btc.setAbreviacao()
+            val cad = it.cad
+            cad.setAbreviacao()
+            val cny = it.cny
+            cny.setAbreviacao()
+            val eur = it.eur
+            eur.setAbreviacao()
+            val gbp = it.gbp
+            gbp.setAbreviacao()
+            val jpy = it.jpy
+            jpy.setAbreviacao()
+            val usd = it.usd
+            usd.setAbreviacao()
+            val moedasDaFuncao = listOf(ars, aud, btc, cad, cny, eur, gbp, jpy, usd)
+            moedas = moedasDaFuncao
+        }
+        return moedas as List<Moeda>
     }
 }
