@@ -5,11 +5,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_below="@id/toolbar"
+    android:layout_below="@id/toolbar_activity_home"
     android:background="@color/black">
 
     <include
-        android:id="@+id/toolbar"
+        android:id="@+id/toolbar_activity_home"
         layout="@layout/toolbar" />
 
     <androidx.recyclerview.widget.RecyclerView

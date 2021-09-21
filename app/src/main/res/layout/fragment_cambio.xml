@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/black"
+    android:paddingStart="24dp"
+    android:paddingTop="64dp"
+    android:paddingEnd="24dp"
+    android:paddingBottom="22dp">
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/fragment_cambio_card_moeda"
+        android:layout_width="match_parent"
+        android:layout_height="171dp"
+        android:backgroundTint="@color/black"
+        app:cardCornerRadius="15dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:strokeColor="@color/white"
+        app:strokeWidth="1dp">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:paddingStart="16dp"
+            android:paddingTop="10dp"
+            android:paddingEnd="16dp">
+
+            <TextView
+                android:id="@+id/fragment_cambio_text_titulo_moeda"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/arialblack"
+                android:textColor="@color/white"
+                android:textSize="22sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="USD - Dollar" />
+
+            <TextView
+                android:id="@+id/fragment_cambio_text_variacao_moeda"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:fontFamily="@font/arial"
+                android:textColor="@color/white"
+                android:textSize="20sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/fragment_cambio_text_titulo_moeda"
+                tools:text="0.50%"
+                tools:textColor="@color/green_positive" />
+
+            <TextView
+                android:id="@+id/fragment_cambio_text_valor_compra_moeda"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:fontFamily="@font/arial"
+                android:textColor="@color/white"
+                android:textSize="16sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/fragment_cambio_text_variacao_moeda"
+                tools:text="Compra: R$5,175" />
+
+            <TextView
+                android:id="@+id/fragment_cambio_text_valor_venda_moeda"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:fontFamily="@font/arial"
+                android:textColor="@color/white"
+                android:textSize="16sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/fragment_cambio_text_valor_compra_moeda"
+                tools:text="Venda: R$5,1608" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </com.google.android.material.card.MaterialCardView>
+
+    <TextView
+        android:id="@+id/fragment_cambio_text_saldo_disponivel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:fontFamily="@font/arial"
+        android:textColor="@color/white"
+        android:textSize="24sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/fragment_cambio_card_moeda"
+        tools:text="Saldo disponivel: R$ 1000" />
+
+    <TextView
+        android:id="@+id/fragment_cambio_text_dolar_em_caixa"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:fontFamily="@font/arial"
+        android:textColor="@color/white"
+        android:textSize="24sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/fragment_cambio_text_saldo_disponivel"
+        tools:text="0 Dollar em caixa" />
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/fragment_cambio_input_layout_quantidade"
+        style="@style/TextInputLayout_Personalizado"
+        android:layout_width="match_parent"
+        android:layout_height="54dp"
+        android:layout_marginTop="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/fragment_cambio_text_dolar_em_caixa">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:hint="Quantidade"
+            android:textColor="@color/white" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+
+    <Button
+        android:id="@+id/fragment_cambio_button_vender"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/button_shape"
+        android:fontFamily="@font/arial"
+        android:text="Vender"
+        android:textColor="@color/white"
+        android:textSize="24sp"
+        android:theme="@style/ButtonAzul_Cambio"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/fragment_cambio_button_comprar"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/fragment_cambio_button_comprar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/button_shape"
+        android:fontFamily="@font/arial"
+        android:text="Comprar"
+        android:textColor="@color/white"
+        android:textSize="24sp"
+        android:theme="@style/ButtonAzul_Cambio"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/fragment_cambio_button_vender" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

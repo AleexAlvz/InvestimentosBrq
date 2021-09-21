@@ -1,18 +1,17 @@
 package br.com.alexalves.investimentosbrq.ui.activities
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import br.com.alexalves.investimentosbrq.HomeViewModel
 import br.com.alexalves.investimentosbrq.R
 import br.com.alexalves.investimentosbrq.model.Moeda
-import br.com.alexalves.investimentosbrq.repository.MoedasRepository
 import br.com.alexalves.investimentosbrq.ui.adapter.MoedasAdapter
 
 class HomeActivity: AppCompatActivity() {
@@ -58,7 +57,8 @@ class HomeActivity: AppCompatActivity() {
     }
 
     fun onClickItemMoedas(moeda: Moeda){
-        Log.i("Click",moeda.name)
-        configuraAdapter()
+        val intent = Intent(this, CambioActivity::class.java)
+        intent.putExtra(getString(R.string.parametro_moeda), moeda)
+        startActivity(intent)
     }
 }

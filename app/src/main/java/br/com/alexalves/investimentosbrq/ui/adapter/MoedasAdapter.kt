@@ -1,16 +1,14 @@
 package br.com.alexalves.investimentosbrq.ui.adapter
 
 import android.content.Context
-import android.content.res.Resources
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
-import br.com.alexalves.investimentosbrq.model.Moeda
 import br.com.alexalves.investimentosbrq.R
+import br.com.alexalves.investimentosbrq.model.Moeda
 
 class MoedasAdapter(
     private val moedas: List<Moeda>,
@@ -30,7 +28,7 @@ class MoedasAdapter(
     private fun vinculaCampos(holder: MoedasViewHolder, moeda: Moeda) {
         holder.itemView.setOnClickListener { onItemClick(moeda) }
         holder.nomeMoeda.setText(moeda.abreviacao)
-        val variacaoFormatada = moeda.variation.toString()+"%"
+        val variacaoFormatada = moeda.variacaoComDuasCasasDecimais().toString()+"%"
         holder.variacaoMoeda.text = variacaoFormatada
         setColorVariacao(moeda, holder)
     }

@@ -1,6 +1,9 @@
 package br.com.alexalves.investimentosbrq.model
 
+import android.util.Log
+import java.io.Serializable
 import java.math.BigDecimal
+import java.text.Format
 
 class Moeda(
     val name: String,
@@ -8,7 +11,12 @@ class Moeda(
     val sell: BigDecimal,
     val variation: Double,
     var abreviacao: String = "indefinido"
-){
+): Serializable{
+
+    fun variacaoComDuasCasasDecimais(): Double{
+        val variacaoFormatada = String.format("%.2f",this.variation).toDouble()
+        return variacaoFormatada
+    }
 
     fun setAbreviacao(){
         when(this.name){
