@@ -9,15 +9,21 @@ import androidx.appcompat.widget.Toolbar
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import br.com.alexalves.investimentosbrq.HomeViewModel
 import br.com.alexalves.investimentosbrq.R
+import br.com.alexalves.investimentosbrq.database.DatabaseBuilder
 import br.com.alexalves.investimentosbrq.model.Moeda
+import br.com.alexalves.investimentosbrq.model.Usuario
 import br.com.alexalves.investimentosbrq.ui.adapter.MoedasAdapter
+import br.com.alexalves.investimentosbrq.viewmodel.HomeViewModel
+import br.com.alexalves.investimentosbrq.viewmodel.viewModelFactory.HomeViewModelFactory
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class HomeActivity: AppCompatActivity() {
 
     lateinit var recyclerView: RecyclerView
-    lateinit var viewModel: HomeViewModel
+    lateinit var homeViewModel: HomeViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -28,8 +34,7 @@ class HomeActivity: AppCompatActivity() {
     }
 
     private fun configuraAdapter() {
-
-        viewModel.buscaMoedas(
+        homeViewModel.buscaMoedas(
             quandoSucesso = { moedas ->
                 val moedasAdapter = MoedasAdapter(moedas, this, this::onClickItemMoedas)
                 recyclerView.adapter = moedasAdapter
@@ -40,7 +45,7 @@ class HomeActivity: AppCompatActivity() {
     }
 
     private fun inicializaCampos() {
-        viewModel = ViewModelProvider(this).get(HomeViewModel::class.java)
+        inicializaViewModel()
         recyclerView = findViewById(R.id.recycler_view_moedas_home)
     }
 
@@ -60,5 +65,12 @@ class HomeActivity: AppCompatActivity() {
         val intent = Intent(this, CambioActivity::class.java)
         intent.putExtra(getString(R.string.moeda_argument), moeda)
         startActivity(intent)
+    }
+
+    private fun inicializaViewModel() {
+        val usuarioDao = DatabaseBuilder(baseContext).getDatabase().usuarioDao
+        val factory = HomeViewModelFactory(usuarioDao)
+        val provedor = ViewModelProvider(viewModelStore, factory)
+        homeViewModel = provedor.get(HomeViewModel::class.java)
     }
 }

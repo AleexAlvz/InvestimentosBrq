@@ -1,21 +1,20 @@
-package br.com.alexalves.investimentosbrq
+package br.com.alexalves.investimentosbrq.viewmodel
 
-import android.util.Log
-import android.widget.Toast
-import androidx.lifecycle.MutableLiveData
+import android.content.Context
 import androidx.lifecycle.ViewModel
+import br.com.alexalves.investimentosbrq.database.UsuarioDao
 import br.com.alexalves.investimentosbrq.model.Moeda
 import br.com.alexalves.investimentosbrq.repository.MoedasRepository
 
-class HomeViewModel: ViewModel() {
+class HomeViewModel(val usuarioDao: UsuarioDao) : ViewModel() {
 
-    val moedasRepository = MoedasRepository()
+    val moedasRepository = MoedasRepository(usuarioDao)
 
     fun buscaMoedas(
         quandoSucesso: ((moedas: List<Moeda>)->Unit)? = null,
         quandoFalha: ((erro: String)->Unit)? = null
     ){
-        moedasRepository.buscaMoedas(
+        moedasRepository.configuraeFiltraMoedas(
             quandoSucesso = { moedas ->
             quandoSucesso?.invoke(moedas)
         }, quandoFalha = { erro ->

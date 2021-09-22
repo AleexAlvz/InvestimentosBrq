@@ -30,7 +30,7 @@ class Moeda(
 
     fun getVariacaoFormatada(): String{
         if (variation!=null){
-            val variacaoFormatada = String.format("%.2f",this.variation)+"%"
+            val variacaoFormatada = String.format("%.2f",this.variation).replace(".",",")+"%"
             return variacaoFormatada
         } else return "null"
     }

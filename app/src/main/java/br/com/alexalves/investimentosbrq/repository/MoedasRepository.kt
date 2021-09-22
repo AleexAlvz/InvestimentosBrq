@@ -1,41 +1,66 @@
 package br.com.alexalves.investimentosbrq.repository
 
+import android.content.Context
+import br.com.alexalves.investimentosbrq.database.DatabaseBuilder
+import br.com.alexalves.investimentosbrq.database.UsuarioDao
 import br.com.alexalves.investimentosbrq.model.Moeda
 import br.com.alexalves.investimentosbrq.model.ServiceInvestimentos
+import br.com.alexalves.investimentosbrq.model.Usuario
 import br.com.alexalves.investimentosbrq.retrofit.InvestimentosServiceAPI
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.IOException
+import java.lang.Exception
+import java.math.BigDecimal
 
 class MoedasRepository(
+    val usuarioDao: UsuarioDao
 ) {
-
 
     val service = InvestimentosServiceAPI().getInvestimentosService()
 
-    fun buscaMoedas(
+    fun buscaSaldo(
+        quandoSucesso: ((saldo: BigDecimal)->Unit)? = null,
+        quandoFalha: ((erro: String) -> Unit)? = null
+    ){
+        try {
+            CoroutineScope(IO).launch {
+                val usuario = usuarioDao.buscaUsuario(id = 1)
+                withContext(Main){
+                    if (usuario!=null){
+                        quandoSucesso?.invoke(usuario.saldo)
+                    } else quandoFalha?.invoke("Usuario não encontrado")
+                }
+            }
+        } catch (erro: Exception){
+            quandoFalha?.invoke(erro.message.toString())
+        }
+
+    }
+
+    fun configuraeFiltraMoedas(
         quandoSucesso: ((moedas: List<Moeda>) -> Unit)? = null,
         quandoFalha: ((erro: String) -> Unit)? = null
     ) {
         val callService = service.getService()
-        CoroutineScope(Dispatchers.IO).launch {
+        CoroutineScope(IO).launch {
             try {
                 val service = callService.execute().body()
-                val moedasBuscadas = buscaMoedas(service)
+                val moedasBuscadas = configuraeFiltraMoedas(service)
                 withContext(Main) {
                     quandoSucesso?.invoke(moedasBuscadas)
                 }
-
-            } catch (erro: IOException) {
+            } catch (erro: Exception) {
                 quandoFalha?.invoke(erro.message.toString())
             }
         }
     }
 
-    private fun buscaMoedas(service: ServiceInvestimentos?): List<Moeda> {
+    private fun configuraeFiltraMoedas(service: ServiceInvestimentos?): List<Moeda> {
         var moedas: List<Moeda>? = null
         service?.results?.currencies?.let {
             val ars = it.ars
@@ -56,9 +81,22 @@ class MoedasRepository(
             jpy.configura(it.source)
             val usd = it.usd
             usd.configura(it.source)
-            val moedasDaFuncao = listOf(ars, aud, btc, cad, cny, eur, gbp, jpy, usd)
-            moedas = moedasDaFuncao
+            val moedasDaFuncao = listOf<Moeda>(ars, aud, btc, cad, cny, eur, gbp, jpy, usd)
+            val moedasSemNull = arrayListOf<Moeda>()
+            for (moeda in moedasDaFuncao){
+                if (moeda.sell!=null&&moeda.buy!=null){
+                    moedasSemNull.add(moeda)
+                }
+            }
+            moedas = moedasSemNull
         }
         return moedas as List<Moeda>
+    }
+
+    fun buscaSaldoEmCaixa(
+        quandoSucesso: ((saldoEmCaixa: Int) -> Unit)?,
+        quandoFalha: ((erro: String) -> Unit)?
+    ) {
+
     }
 }
