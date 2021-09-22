@@ -5,6 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/black"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
     android:paddingStart="24dp"
     android:paddingTop="64dp"
     android:paddingEnd="24dp"
@@ -94,7 +96,7 @@
         tools:text="Saldo disponivel: R$ 1000" />
 
     <TextView
-        android:id="@+id/fragment_cambio_text_dolar_em_caixa"
+        android:id="@+id/fragment_cambio_text_moeda_em_caixa"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
@@ -109,30 +111,36 @@
         android:id="@+id/fragment_cambio_input_layout_quantidade"
         style="@style/TextInputLayout_Personalizado"
         android:layout_width="match_parent"
-        android:layout_height="54dp"
+        android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
+        app:hintTextColor="@color/white"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/fragment_cambio_text_dolar_em_caixa">
+        app:layout_constraintTop_toBottomOf="@id/fragment_cambio_text_moeda_em_caixa">
 
         <com.google.android.material.textfield.TextInputEditText
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:digits="0123456789"
+            android:gravity="start"
             android:hint="Quantidade"
-            android:textColor="@color/white" />
-    </com.google.android.material.textfield.TextInputLayout>
+            android:inputType="number"
+            android:maxLength="24"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:textAlignment="textStart"
+            android:textColor="@color/white"
+            android:textSize="22sp" />
 
+    </com.google.android.material.textfield.TextInputLayout>
 
     <Button
         android:id="@+id/fragment_cambio_button_vender"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@drawable/button_shape"
-        android:fontFamily="@font/arial"
         android:text="Vender"
-        android:textColor="@color/white"
-        android:textSize="24sp"
-        android:theme="@style/ButtonAzul_Cambio"
+        android:theme="@style/button_blue_action"
+        android:background="@drawable/button_shape"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/fragment_cambio_button_comprar"
         app:layout_constraintStart_toStartOf="parent" />
@@ -141,12 +149,9 @@
         android:id="@+id/fragment_cambio_button_comprar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@drawable/button_shape"
-        android:fontFamily="@font/arial"
         android:text="Comprar"
-        android:textColor="@color/white"
-        android:textSize="24sp"
-        android:theme="@style/ButtonAzul_Cambio"
+        android:background="@drawable/button_shape"
+        android:theme="@style/button_blue_action"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/fragment_cambio_button_vender" />

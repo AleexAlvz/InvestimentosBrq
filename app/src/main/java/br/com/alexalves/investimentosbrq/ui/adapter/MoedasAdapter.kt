@@ -28,7 +28,7 @@ class MoedasAdapter(
     private fun vinculaCampos(holder: MoedasViewHolder, moeda: Moeda) {
         holder.itemView.setOnClickListener { onItemClick(moeda) }
         holder.nomeMoeda.setText(moeda.abreviacao)
-        val variacaoFormatada = moeda.variacaoComDuasCasasDecimais().toString()+"%"
+        val variacaoFormatada = moeda.getVariacaoFormatada()
         holder.variacaoMoeda.text = variacaoFormatada
         setColorVariacao(moeda, holder)
     }

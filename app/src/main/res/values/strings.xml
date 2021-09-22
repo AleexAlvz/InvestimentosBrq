@@ -1,4 +1,4 @@
 <resources>
     <string name="app_name">InvestimentosBrq</string>
-    <string name="parametro_moeda">moeda</string>
+    <string name="moeda_argument">moeda</string>
 </resources>

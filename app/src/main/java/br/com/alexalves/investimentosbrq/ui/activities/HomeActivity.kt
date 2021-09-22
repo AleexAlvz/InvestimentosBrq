@@ -58,7 +58,7 @@ class HomeActivity: AppCompatActivity() {
 
     fun onClickItemMoedas(moeda: Moeda){
         val intent = Intent(this, CambioActivity::class.java)
-        intent.putExtra(getString(R.string.parametro_moeda), moeda)
+        intent.putExtra(getString(R.string.moeda_argument), moeda)
         startActivity(intent)
     }
 }

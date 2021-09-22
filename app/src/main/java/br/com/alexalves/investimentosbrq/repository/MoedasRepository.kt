@@ -1,7 +1,5 @@
 package br.com.alexalves.investimentosbrq.repository
 
-import android.util.Log
-import androidx.lifecycle.MutableLiveData
 import br.com.alexalves.investimentosbrq.model.Moeda
 import br.com.alexalves.investimentosbrq.model.ServiceInvestimentos
 import br.com.alexalves.investimentosbrq.retrofit.InvestimentosServiceAPI
@@ -41,23 +39,23 @@ class MoedasRepository(
         var moedas: List<Moeda>? = null
         service?.results?.currencies?.let {
             val ars = it.ars
-            ars.setAbreviacao()
+            ars.configura(it.source)
             val aud = it.aud
-            aud.setAbreviacao()
+            aud.configura(it.source)
             val btc = it.btc
-            btc.setAbreviacao()
+            btc.configura(it.source)
             val cad = it.cad
-            cad.setAbreviacao()
+            cad.configura(it.source)
             val cny = it.cny
-            cny.setAbreviacao()
+            cny.configura(it.source)
             val eur = it.eur
-            eur.setAbreviacao()
+            eur.configura(it.source)
             val gbp = it.gbp
-            gbp.setAbreviacao()
+            gbp.configura(it.source)
             val jpy = it.jpy
-            jpy.setAbreviacao()
+            jpy.configura(it.source)
             val usd = it.usd
-            usd.setAbreviacao()
+            usd.configura(it.source)
             val moedasDaFuncao = listOf(ars, aud, btc, cad, cny, eur, gbp, jpy, usd)
             moedas = moedasDaFuncao
         }
