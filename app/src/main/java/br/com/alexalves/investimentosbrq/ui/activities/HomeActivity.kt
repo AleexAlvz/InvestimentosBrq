@@ -6,6 +6,7 @@ import android.util.Log
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -34,14 +35,12 @@ class HomeActivity: AppCompatActivity() {
     }
 
     private fun configuraAdapter() {
-        homeViewModel.buscaMoedas(
-            quandoSucesso = { moedas ->
-                val moedasAdapter = MoedasAdapter(moedas, this, this::onClickItemMoedas)
-                recyclerView.adapter = moedasAdapter
-                moedasAdapter.notifyDataSetChanged()
-        }, quandoFalha = {erro ->
-                Log.i("ERRO",erro)
+        homeViewModel.listaDeMoedas.observe(this, Observer { moedas ->
+            val moedasAdapter = MoedasAdapter(moedas, this, this::onClickItemMoedas)
+            recyclerView.adapter = moedasAdapter
+            moedasAdapter.notifyDataSetChanged()
         })
+        homeViewModel.buscaMoedas()
     }
 
     private fun inicializaCampos() {

@@ -6,18 +6,18 @@ import java.math.BigDecimal
 
 @Entity
 class Usuario(
-    val saldo: BigDecimal = BigDecimal(1000.0),
-    val usd: Int = 0,
-    val eur: Int = 0,
-    val gbp: Int = 0,
-    val ars: Int = 0,
-    val cad: Int = 0,
-    val aud: Int = 0,
-    val jpy: Int = 0,
-    val cny: Int = 0,
-    val btc: Int = 0,
+    var saldo: BigDecimal = BigDecimal(1000.0),
+    var usd: Int = 0,
+    var eur: Int = 0,
+    var gbp: Int = 0,
+    var ars: Int = 0,
+    var cad: Int = 0,
+    var aud: Int = 0,
+    var jpy: Int = 0,
+    var cny: Int = 0,
+    var btc: Int = 0,
     @PrimaryKey(autoGenerate = true)
-    val id: Long = 0
+    var id: Long = 0
 ){
 
 }

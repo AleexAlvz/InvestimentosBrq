@@ -10,6 +10,7 @@ import androidx.fragment.app.Fragment
 import br.com.alexalves.investimentosbrq.R
 import br.com.alexalves.investimentosbrq.model.Moeda
 import br.com.alexalves.investimentosbrq.ui.fragments.CambioFragment
+import java.math.BigDecimal
 
 class CambioActivity : AppCompatActivity() {
 
@@ -27,10 +28,24 @@ class CambioActivity : AppCompatActivity() {
 
     private fun fragmentCambioConfigurado(): CambioFragment {
         val cambioFragment = CambioFragment()
+        cambioFragment.sucessoCompra = { quantidadeComprada, valorDaCompra ->
+            iniciaFragmentCompraSucedida(quantidadeComprada, valorDaCompra)
+        }
+        cambioFragment.sucessoVenda = { quantidadeVendida, valorDaCompra ->
+            iniciaFragmentVendaSucedida(quantidadeVendida, valorDaCompra)
+        }
         val bundle = Bundle()
         bundle.putSerializable(getString(R.string.moeda_argument), moeda)
         cambioFragment.arguments = bundle
         return cambioFragment
+    }
+
+    private fun iniciaFragmentVendaSucedida(quantidadeVendida: Int, valorDaCompra: BigDecimal) {
+
+    }
+
+    private fun iniciaFragmentCompraSucedida(quantidadeComprada: Int, valorDaCompra: BigDecimal) {
+
     }
 
     private fun inicializaFragment(fragment: Fragment) {

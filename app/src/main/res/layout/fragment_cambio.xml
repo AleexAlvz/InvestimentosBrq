@@ -140,7 +140,7 @@
         android:layout_height="wrap_content"
         android:text="Vender"
         android:theme="@style/button_blue_action"
-        android:background="@drawable/button_shape"
+        android:background="@drawable/button_blue_background"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/fragment_cambio_button_comprar"
         app:layout_constraintStart_toStartOf="parent" />
@@ -150,7 +150,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Comprar"
-        android:background="@drawable/button_shape"
+        android:background="@drawable/button_blue_background"
         android:theme="@style/button_blue_action"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

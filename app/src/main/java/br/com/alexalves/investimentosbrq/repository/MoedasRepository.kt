@@ -1,42 +1,36 @@
 package br.com.alexalves.investimentosbrq.repository
 
-import android.content.Context
-import br.com.alexalves.investimentosbrq.database.DatabaseBuilder
 import br.com.alexalves.investimentosbrq.database.UsuarioDao
 import br.com.alexalves.investimentosbrq.model.Moeda
 import br.com.alexalves.investimentosbrq.model.ServiceInvestimentos
 import br.com.alexalves.investimentosbrq.model.Usuario
 import br.com.alexalves.investimentosbrq.retrofit.InvestimentosServiceAPI
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.io.IOException
-import java.lang.Exception
 import java.math.BigDecimal
 
 class MoedasRepository(
-    val usuarioDao: UsuarioDao
+    private val usuarioDao: UsuarioDao
 ) {
-
-    val service = InvestimentosServiceAPI().getInvestimentosService()
+    private val service = InvestimentosServiceAPI().getInvestimentosService()
 
     fun buscaSaldo(
-        quandoSucesso: ((saldo: BigDecimal)->Unit)? = null,
+        quandoSucesso: ((saldo: BigDecimal) -> Unit)? = null,
         quandoFalha: ((erro: String) -> Unit)? = null
-    ){
+    ) {
         try {
             CoroutineScope(IO).launch {
                 val usuario = usuarioDao.buscaUsuario(id = 1)
-                withContext(Main){
-                    if (usuario!=null){
+                withContext(Main) {
+                    if (usuario != null) {
                         quandoSucesso?.invoke(usuario.saldo)
                     } else quandoFalha?.invoke("Usuario não encontrado")
                 }
             }
-        } catch (erro: Exception){
+        } catch (erro: Exception) {
             quandoFalha?.invoke(erro.message.toString())
         }
 
@@ -61,7 +55,7 @@ class MoedasRepository(
     }
 
     private fun configuraeFiltraMoedas(service: ServiceInvestimentos?): List<Moeda> {
-        var moedas: List<Moeda>? = null
+        var moedas = arrayListOf<Moeda>()
         service?.results?.currencies?.let {
             val ars = it.ars
             ars.configura(it.source)
@@ -82,21 +76,126 @@ class MoedasRepository(
             val usd = it.usd
             usd.configura(it.source)
             val moedasDaFuncao = listOf<Moeda>(ars, aud, btc, cad, cny, eur, gbp, jpy, usd)
-            val moedasSemNull = arrayListOf<Moeda>()
-            for (moeda in moedasDaFuncao){
-                if (moeda.sell!=null&&moeda.buy!=null){
-                    moedasSemNull.add(moeda)
+            for (moeda in moedasDaFuncao) {
+                if (moeda.sell != null && moeda.buy != null) {
+                    moedas.add(moeda)
                 }
             }
-            moedas = moedasSemNull
         }
-        return moedas as List<Moeda>
+        return moedas
     }
 
-    fun buscaSaldoEmCaixa(
+    fun buscaMoedaEmCaixa(
+        moedaBuscada: Moeda,
         quandoSucesso: ((saldoEmCaixa: Int) -> Unit)?,
         quandoFalha: ((erro: String) -> Unit)?
     ) {
+        try {
+            CoroutineScope(IO).launch {
+                val usuario = usuarioDao.buscaUsuario(id = 1)
+                withContext(Main) {
+                    if (usuario != null) {
+                        val moedaBuscado: Int = buscaMoedaPelaAbreviação(moedaBuscada, usuario)
+                        quandoSucesso?.invoke(moedaBuscado)
+                    } else quandoFalha?.invoke("Usuario não encontrado")
+                }
+            }
+        } catch (erro: Exception) {
+            quandoFalha?.invoke(erro.message.toString())
+        }
+    }
 
+    private fun buscaMoedaPelaAbreviação(moedaBuscada: Moeda, usuario: Usuario) =
+        when (moedaBuscada.abreviacao) {
+            "USD" -> usuario.usd
+            "EUR" -> usuario.eur
+            "GBP" -> usuario.gbp
+            "ARS" -> usuario.ars
+            "CAD" -> usuario.cad
+            "AUD" -> usuario.aud
+            "JPY" -> usuario.jpy
+            "CNY" -> usuario.cny
+            "BTC" -> usuario.btc
+            else -> throw Exception("Moeda não encontrada")
+        }
+
+    fun compraMoeda(
+        moeda: Moeda,
+        quantidade: Int,
+        quandoSucesso: ((totalDaCompra: BigDecimal) -> Unit)?,
+        quandoFalha: ((erro: String) -> Unit)?
+    ) {
+        try {
+            CoroutineScope(IO).launch {
+                val usuario = usuarioDao.buscaUsuario(id = 1)
+                val saldoAtual = usuario.saldo
+                val moedaEmCaixa = buscaMoedaPelaAbreviação(moeda, usuario)
+                val totalDaCompra = quantidade.toBigDecimal() * moeda.buy
+                if (quantidade != 0) {
+                    val aprovacao = (totalDaCompra <= saldoAtual)
+                    if (aprovacao) {
+                        val saldoFinal = saldoAtual - totalDaCompra
+                        val moedasEmCaixaFinal = moedaEmCaixa + quantidade
+                        salvaCompraNoUsuario(saldoFinal, moedasEmCaixaFinal, moeda, usuario)
+                        usuarioDao.atualizaUsuario(usuario)
+                        quandoSucesso?.invoke(totalDaCompra)
+                    }
+                } else {
+                    quandoFalha?.invoke("O pedido de compra deve ser maior que 0 unidades")
+                }
+            }
+        } catch (erro: Exception) {
+            quandoFalha?.invoke(erro.message.toString())
+        }
+    }
+
+    fun vendeMoeda(
+        moeda: Moeda,
+        quantidade: Int,
+        quandoSucesso: ((totalDaVenda: BigDecimal) -> Unit)?,
+        quandoFalha: ((erro: String) -> Unit)?
+    ) {
+        try {
+            CoroutineScope(IO).launch {
+                val usuario = usuarioDao.buscaUsuario(id = 1)
+                val saldoAtual = usuario.saldo
+                val moedaEmCaixa = buscaMoedaPelaAbreviação(moeda, usuario)
+                val totalDaVenda = quantidade.toBigDecimal() * moeda.sell
+                if (quantidade != 0) {
+                    val aprovacao = (quantidade <= moedaEmCaixa)
+                    if (aprovacao) {
+                        val saldoFinal = saldoAtual + totalDaVenda
+                        val moedasEmCaixaFinal = moedaEmCaixa - quantidade
+                        salvaCompraNoUsuario(saldoFinal, moedasEmCaixaFinal, moeda, usuario)
+                        usuarioDao.atualizaUsuario(usuario)
+                        quandoSucesso?.invoke(totalDaVenda)
+                    }
+                } else {
+                    quandoFalha?.invoke("O pedido de venda deve ser maior que 0 unidades")
+                }
+            }
+        } catch (erro: Exception) {
+            quandoFalha?.invoke(erro.message.toString())
+        }
+    }
+
+    private fun salvaCompraNoUsuario(
+        saldoFinal: BigDecimal,
+        moedasEmCaixaFinal: Int,
+        moeda: Moeda,
+        usuario: Usuario
+    ) {
+        usuario.saldo = saldoFinal
+        when (moeda.abreviacao) {
+            "USD" -> usuario.usd = moedasEmCaixaFinal
+            "EUR" -> usuario.eur = moedasEmCaixaFinal
+            "GBP" -> usuario.gbp = moedasEmCaixaFinal
+            "ARS" -> usuario.ars = moedasEmCaixaFinal
+            "CAD" -> usuario.cad = moedasEmCaixaFinal
+            "AUD" -> usuario.aud = moedasEmCaixaFinal
+            "JPY" -> usuario.jpy = moedasEmCaixaFinal
+            "CNY" -> usuario.cny = moedasEmCaixaFinal
+            "BTC" -> usuario.btc = moedasEmCaixaFinal
+        }
     }
 }
