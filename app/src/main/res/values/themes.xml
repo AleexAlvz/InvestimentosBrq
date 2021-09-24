@@ -2,12 +2,12 @@
     <!-- Base application theme. -->
     <style name="Theme.InvestimentosBrq" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <!-- Primary brand color. -->
-        <item name="colorPrimary">@color/black</item>
-        <item name="colorPrimaryVariant">@color/purple_700</item>
-        <item name="colorOnPrimary">@color/white</item>
+        <item name="colorPrimary">#2A4DCA</item>
+        <item name="colorPrimaryVariant">@color/black</item>
+        <item name="colorOnPrimary">@color/black</item>
         <!-- Secondary brand color. -->
         <item name="colorSecondary">@color/teal_200</item>
-        <item name="colorSecondaryVariant">@color/teal_700</item>
+        <item name="colorSecondaryVariant">@color/black</item>
         <item name="colorOnSecondary">@color/black</item>
         <!-- Status bar color. -->
         <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
@@ -15,9 +15,10 @@
     </style>
 
     <style name="button_blue_action" parent="Theme.InvestimentosBrq">
-        <item name="colorPrimary">@color/color_background_button</item>
+        <item name="theme">@style/button_blue_action</item>
+        <item name="android:textColor">@color/color_text_button</item>
+        <item name="colorOnSurface">@color/color_background_button</item>
         <item name="android:textSize">24sp</item>
-        <item name="android:textColor">@color/white</item>
         <item name="fontFamily">@font/arial</item>
     </style>
 

@@ -10,8 +10,6 @@ class DatabaseBuilder(val context: Context) {
             context,
             AppDatabase::class.java,
             "usuario_db")
-            .fallbackToDestructiveMigration()
             .build()
     }
-
 }

@@ -1,6 +1,7 @@
 package br.com.alexalves.investimentosbrq.ui.fragments
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -54,10 +55,10 @@ class CambioFragment : Fragment() {
     }
 
     private fun configuraButtons() {
-        //App inicia com botões desabilitados
-        configuraCampoQuantidadeChangedTextListener()
+        //Configuracao inicial dos buttons
         buttonVender.isEnabled = false
-        buttonComprar.isEnabled = false
+        buttonComprar.isEnabled = moeda.buy <= saldoUsuario
+        configuraCampoQuantidadeChangedTextListener()
         //Eventos dos botões
         buttonCompraListener()
         buttonVendaListener()
@@ -82,10 +83,10 @@ class CambioFragment : Fragment() {
         }
     }
 
-
     private fun buttonCompraListener() {
         buttonComprar.setOnClickListener {
-            val quantidadeParaComprar = inputLayoutQuantidade.editText?.text.toString().toInt()
+            val textQuantidade = inputLayoutQuantidade.editText?.text.toString()
+            val quantidadeParaComprar = if (textQuantidade.isBlank()) 0  else textQuantidade.toInt()
             cambioViewModel.compraMoeda(
                 moeda,
                 quantidadeParaComprar,
@@ -96,7 +97,7 @@ class CambioFragment : Fragment() {
                     )
                 },
                 quandoFalha = { erro ->
-                    Toast.makeText(requireContext(), erro, Toast.LENGTH_LONG).show()
+                    Log.i("ERRO", erro)
                 }
             )
         }
@@ -118,7 +119,7 @@ class CambioFragment : Fragment() {
 
     private fun configuraButtonCompra(quantidade: Int) {
         val valorNecessario = quantidade.toBigDecimal() * moeda.buy
-        val aprovacao = ((valorNecessario <= saldoUsuario) && (quantidade != 0))
+        val aprovacao = ((valorNecessario <= saldoUsuario))
         buttonComprar.isEnabled = aprovacao
     }
 
@@ -141,7 +142,7 @@ class CambioFragment : Fragment() {
         cambioViewModel.moedasEmCaixa.observe(viewLifecycleOwner, Observer { moedaEmCaixaBuscada ->
             if (moedaEmCaixaBuscada != null) {
                 moedasEmCaixa = moedaEmCaixaBuscada
-                val moedaEmCaixaFormatado = "${moedasEmCaixa} ${moeda.abreviacao} em caixa"
+                val moedaEmCaixaFormatado = "${moedasEmCaixa} ${moeda.name} em caixa"
                 textMoedasEmCaixa.text = moedaEmCaixaFormatado
             }
         })
@@ -174,7 +175,7 @@ class CambioFragment : Fragment() {
         //Saldo
         textSaldoUsuario.text = "Saldo disponível: R$ 0"
         //Moedas em caixa
-        val moedasEmCaixaFormatado = "0 ${moeda.abreviacao} em caixa"
+        val moedasEmCaixaFormatado = "0 ${moeda.name} em caixa"
         textMoedasEmCaixa.text = moedasEmCaixaFormatado
     }
 

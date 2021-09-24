@@ -1,5 +1,6 @@
 package br.com.alexalves.investimentosbrq.ui.activities
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
@@ -9,7 +10,12 @@ import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
 import br.com.alexalves.investimentosbrq.R
 import br.com.alexalves.investimentosbrq.model.Moeda
+import br.com.alexalves.investimentosbrq.model.TipoOperacao
 import br.com.alexalves.investimentosbrq.ui.fragments.CambioFragment
+import br.com.alexalves.investimentosbrq.ui.fragments.OperacaoSucedidaFragment
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.math.BigDecimal
 
 class CambioActivity : AppCompatActivity() {
@@ -28,24 +34,58 @@ class CambioActivity : AppCompatActivity() {
 
     private fun fragmentCambioConfigurado(): CambioFragment {
         val cambioFragment = CambioFragment()
-        cambioFragment.sucessoCompra = { quantidadeComprada, valorDaCompra ->
-            iniciaFragmentCompraSucedida(quantidadeComprada, valorDaCompra)
-        }
-        cambioFragment.sucessoVenda = { quantidadeVendida, valorDaCompra ->
-            iniciaFragmentVendaSucedida(quantidadeVendida, valorDaCompra)
-        }
-        val bundle = Bundle()
-        bundle.putSerializable(getString(R.string.moeda_argument), moeda)
-        cambioFragment.arguments = bundle
+        configuraQuandoSucessoCompraCambio(cambioFragment)
+        configuraQuandoSucessoVendaCambio(cambioFragment)
+        configuraBundleMoedaEmCambioFragment(cambioFragment)
         return cambioFragment
     }
 
-    private fun iniciaFragmentVendaSucedida(quantidadeVendida: Int, valorDaCompra: BigDecimal) {
-
+    private fun configuraBundleMoedaEmCambioFragment(cambioFragment: CambioFragment) {
+        val bundle = Bundle()
+        bundle.putSerializable(getString(R.string.moeda_argument), moeda)
+        cambioFragment.arguments = bundle
     }
 
-    private fun iniciaFragmentCompraSucedida(quantidadeComprada: Int, valorDaCompra: BigDecimal) {
+    private fun configuraQuandoSucessoVendaCambio(cambioFragment: CambioFragment) {
+        cambioFragment.sucessoVenda = { quantidadeVendida, valorDaCompra ->
+            val fragmentVenda = fragmentVendaSucedidaConfigurado(quantidadeVendida, valorDaCompra)
+            configuraToolbarEmVendaSucesso()
+            inicializaFragment(fragmentVenda)
+        }
+    }
 
+    private fun configuraQuandoSucessoCompraCambio(cambioFragment: CambioFragment) {
+        cambioFragment.sucessoCompra = { quantidadeComprada, valorDaCompra ->
+            val fragmentCompra = fragmentCompraSucedidaConfigurado(quantidadeComprada, valorDaCompra)
+            configuraToolbarEmCompraSucesso()
+            inicializaFragment(fragmentCompra)
+        }
+    }
+
+    private fun fragmentVendaSucedidaConfigurado(quantidadeVendida: Int, valorTotal: BigDecimal): Fragment {
+        val fragmentVenda = OperacaoSucedidaFragment()
+        fragmentVenda.quantidade = quantidadeVendida
+        fragmentVenda.valorTotal = valorTotal
+        fragmentVenda.moeda = moeda
+        fragmentVenda.tipoOperacao = TipoOperacao.Venda
+        fragmentVenda.buttonHomeListener = { voltarParaHome() }
+        return fragmentVenda
+    }
+
+    private fun fragmentCompraSucedidaConfigurado(quantidadeComprada: Int, valorTotal: BigDecimal): Fragment {
+        val fragmentCompra = OperacaoSucedidaFragment()
+        fragmentCompra.quantidade = quantidadeComprada
+        fragmentCompra.valorTotal = valorTotal
+        fragmentCompra.moeda = moeda
+        fragmentCompra.tipoOperacao = TipoOperacao.Compra
+        fragmentCompra.buttonHomeListener = { voltarParaHome() }
+        return fragmentCompra
+    }
+
+    fun voltarParaHome(){
+        val intent = Intent(this, HomeActivity::class.java)
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        startActivity(intent)
     }
 
     private fun inicializaFragment(fragment: Fragment) {
@@ -69,13 +109,38 @@ class CambioActivity : AppCompatActivity() {
     }
 
     private fun configuraToolbarEmCambio() {
-        toolbar_titulo.text = "Cambio"
-        toolbar_voltar.text = "Moedas"
-        toolbar_voltar.visibility = View.VISIBLE
-        toolbar_voltar.setOnClickListener {
-            val intent = Intent(this, HomeActivity::class.java)
-            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-            startActivity(intent)
+        val context: Context = this
+        MainScope().launch {
+            toolbar_titulo.text = "Cambio"
+            toolbar_voltar.text = "Moedas"
+            toolbar_voltar.visibility = View.VISIBLE
+            toolbar_voltar.setOnClickListener {
+                val intent = Intent(context, HomeActivity::class.java)
+                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                startActivity(intent)
+            }
+        }
+    }
+
+    private fun configuraToolbarEmVendaSucesso() {
+        MainScope().launch {
+            toolbar_titulo.text = "Vender"
+            toolbar_voltar.text = "Câmbio"
+            toolbar_voltar.visibility = View.VISIBLE
+            toolbar_voltar.setOnClickListener {
+                inicializaFragment(fragmentCambioConfigurado())
+            }
+        }
+    }
+
+    private fun configuraToolbarEmCompraSucesso() {
+        MainScope().launch {
+            toolbar_titulo.text = "Comprar"
+            toolbar_voltar.text = "Câmbio"
+            toolbar_voltar.visibility = View.VISIBLE
+            toolbar_voltar.setOnClickListener {
+                inicializaFragment(fragmentCambioConfigurado())
+            }
         }
     }
 }
