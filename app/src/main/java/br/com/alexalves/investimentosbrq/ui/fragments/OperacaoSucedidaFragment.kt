@@ -10,13 +10,14 @@ import androidx.fragment.app.Fragment
 import br.com.alexalves.investimentosbrq.R
 import br.com.alexalves.investimentosbrq.model.Moeda
 import br.com.alexalves.investimentosbrq.model.TipoOperacao
+import br.com.alexalves.investimentosbrq.ui.customview.ButtonBlue
 import java.math.BigDecimal
 
 class OperacaoSucedidaFragment: Fragment() {
 
     private lateinit var inflatedView: View
     private lateinit var textSucesso: TextView
-    private lateinit var buttonHome: Button
+    private lateinit var buttonHome: ButtonBlue
     var buttonHomeListener: (()-> Unit)? = null
     var quantidade: Int = 0
     var valorTotal: BigDecimal = BigDecimal.ZERO
@@ -31,9 +32,15 @@ class OperacaoSucedidaFragment: Fragment() {
     ): View? {
         inflatedView = inflater.inflate(R.layout.fragment_operacao_sucedida, container, false)
         buscaCampos()
-        configuraButtonHomeListener()
+        configuraButtonHome()
+
         configuraTextoSucesso()
         return inflatedView
+    }
+
+    private fun configuraButtonHome() {
+        buttonHome.configuraTitulo("Home")
+        configuraButtonHomeListener()
     }
 
     private fun configuraTextoSucesso() {
@@ -63,6 +70,6 @@ class OperacaoSucedidaFragment: Fragment() {
     }
 
     private fun configuraButtonHomeListener() {
-        buttonHome.setOnClickListener { buttonHomeListener?.invoke() }
+        buttonHome.configuraClique = { buttonHomeListener?.invoke() }
     }
 }

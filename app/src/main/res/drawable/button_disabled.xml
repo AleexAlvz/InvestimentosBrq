@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <shape xmlns:android="http://schemas.android.com/apk/res/android">
     <corners android:radius="21dp"/>
-    <solid android:color="@color/white"/>
+    <solid android:color="@color/blue_button_disabled"/>
+    <size android:width="151dp" android:height="43dp"/>
 </shape>

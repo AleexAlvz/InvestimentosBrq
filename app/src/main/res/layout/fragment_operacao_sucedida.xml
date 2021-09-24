@@ -23,16 +23,13 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintVertical_bias="0.42"/>
     
-    <Button
+    <br.com.alexalves.investimentosbrq.ui.customview.ButtonBlue
         android:id="@+id/operacao_sucedida_button_home"
         android:layout_width="151dp"
         android:layout_height="43dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:text="Home"
-        style="@style/button_blue_action"
-        android:background="@drawable/button_shape"
         android:layout_marginBottom="22dp"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

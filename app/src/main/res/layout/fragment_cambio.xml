@@ -134,28 +134,20 @@
 
     </com.google.android.material.textfield.TextInputLayout>
 
-    <Button
+    <br.com.alexalves.investimentosbrq.ui.customview.ButtonBlue
         android:id="@+id/fragment_cambio_button_vender"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:text="Vender"
-        android:enabled="false"
+        android:layout_height="43dp"
         android:layout_marginEnd="12dp"
-        android:background="@drawable/button_shape"
-        style="@style/button_blue_action"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/fragment_cambio_button_comprar"
         app:layout_constraintStart_toStartOf="parent" />
 
-    <Button
+    <br.com.alexalves.investimentosbrq.ui.customview.ButtonBlue
         android:id="@+id/fragment_cambio_button_comprar"
         android:layout_width="0dp"
         android:layout_marginStart="12dp"
-        android:layout_height="wrap_content"
-        android:text="Comprar"
-        android:background="@drawable/button_shape"
-        android:textColor="@color/white"
-        style="@style/button_blue_action"
+        android:layout_height="43dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/fragment_cambio_button_vender" />

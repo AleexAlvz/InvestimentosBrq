@@ -11,6 +11,6 @@
     <color name="green_positive">#7ED321</color>
     <color name="red_negative">#D0021B</color>
     <color name="blue_button">#3C8DBC</color>
-    <color name="blue_button_desabilitado">#E63C8DBC</color>
+    <color name="blue_button_disabled">#BF3C8DBC</color>
     <color name="mtrl_textinput_default_box_stroke_color">#fff</color>
 </resources>

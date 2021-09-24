@@ -16,6 +16,7 @@ import androidx.lifecycle.ViewModelProvider
 import br.com.alexalves.investimentosbrq.R
 import br.com.alexalves.investimentosbrq.database.DatabaseBuilder
 import br.com.alexalves.investimentosbrq.model.Moeda
+import br.com.alexalves.investimentosbrq.ui.customview.ButtonBlue
 import br.com.alexalves.investimentosbrq.viewmodel.CambioViewModel
 import br.com.alexalves.investimentosbrq.viewmodel.viewModelFactory.CambioViewModelFactory
 import com.google.android.material.textfield.TextInputLayout
@@ -32,11 +33,12 @@ class CambioFragment : Fragment() {
     private lateinit var textSaldoUsuario: TextView
     private lateinit var textMoedasEmCaixa: TextView
     private lateinit var inputLayoutQuantidade: TextInputLayout
-    private lateinit var buttonComprar: Button
-    private lateinit var buttonVender: Button
+    private lateinit var buttonComprar: ButtonBlue
+    private lateinit var buttonVender: ButtonBlue
     private lateinit var cambioViewModel: CambioViewModel
     private var moedasEmCaixa: Int = 0
     private var saldoUsuario: BigDecimal = BigDecimal.ZERO
+    private var sucessoBuscaUsuario: Boolean = false
     var sucessoCompra: ((quantidadeComprada: Int, valorDaCompra: BigDecimal) -> Unit)? = null
     var sucessoVenda: ((quantidadeVendida: Int, valorDaCompra: BigDecimal) -> Unit)? = null
 
@@ -50,14 +52,18 @@ class CambioFragment : Fragment() {
         observaUsuario()
         buscaDadosUsuario()
         configuraTextoNosCampos()
-        configuraButtons()
         return inflatedView
     }
 
     private fun configuraButtons() {
         //Configuracao inicial dos buttons
-        buttonVender.isEnabled = false
-        buttonComprar.isEnabled = moeda.buy <= saldoUsuario
+        buttonVender.configuraEstado(false)
+        buttonVender.configuraTitulo("Vender")
+        Log.i("TESTE",(moeda.buy<saldoUsuario).toString())
+        Log.i("TESTE","Saldo: ${saldoUsuario}")
+        Log.i("TESTE","Valor moeda: ${moeda.buy}")
+        buttonComprar.configuraEstado(moeda.buy < saldoUsuario)
+        buttonComprar.configuraTitulo("Comprar")
         configuraCampoQuantidadeChangedTextListener()
         //Eventos dos botões
         buttonCompraListener()
@@ -65,7 +71,7 @@ class CambioFragment : Fragment() {
     }
 
     private fun buttonVendaListener() {
-        buttonVender.setOnClickListener {
+        buttonVender.configuraClique = {
             val quantidadeParaVender = inputLayoutQuantidade.editText?.text.toString().toInt()
             cambioViewModel.vendeMoeda(
                 moeda,
@@ -84,13 +90,14 @@ class CambioFragment : Fragment() {
     }
 
     private fun buttonCompraListener() {
-        buttonComprar.setOnClickListener {
+        buttonComprar.configuraClique = {
             val textQuantidade = inputLayoutQuantidade.editText?.text.toString()
             val quantidadeParaComprar = if (textQuantidade.isBlank()) 0  else textQuantidade.toInt()
             cambioViewModel.compraMoeda(
                 moeda,
                 quantidadeParaComprar,
                 quandoSucesso = { totalDaCompra ->
+                    Log.i("ERRO","ERRO")
                     sucessoCompra?.invoke(
                         quantidadeParaComprar,
                         totalDaCompra
@@ -107,8 +114,8 @@ class CambioFragment : Fragment() {
         inputLayoutQuantidade.editText?.doAfterTextChanged { s ->
             val quantidadeTexto = s.toString()
             if (quantidadeTexto.isBlank()) {
-                buttonComprar.isEnabled = false
-                buttonVender.isEnabled = false
+                buttonComprar.configuraEstado(true)
+                buttonVender.configuraEstado(false)
             } else {
                 val quantidadeInt = quantidadeTexto.toInt()
                 configuraButtonVenda(quantidadeInt)
@@ -120,12 +127,12 @@ class CambioFragment : Fragment() {
     private fun configuraButtonCompra(quantidade: Int) {
         val valorNecessario = quantidade.toBigDecimal() * moeda.buy
         val aprovacao = ((valorNecessario <= saldoUsuario))
-        buttonComprar.isEnabled = aprovacao
+        buttonComprar.configuraEstado(aprovacao)
     }
 
     private fun configuraButtonVenda(quantidade: Int) {
         val aprovacao = ((quantidade <= moedasEmCaixa) && (quantidade != 0))
-        buttonVender.isEnabled = aprovacao
+        buttonVender.configuraEstado(aprovacao)
     }
 
     private fun buscaDadosUsuario() {
@@ -144,6 +151,9 @@ class CambioFragment : Fragment() {
                 moedasEmCaixa = moedaEmCaixaBuscada
                 val moedaEmCaixaFormatado = "${moedasEmCaixa} ${moeda.name} em caixa"
                 textMoedasEmCaixa.text = moedaEmCaixaFormatado
+                if (sucessoBuscaUsuario){
+                    configuraButtons()
+                } else sucessoBuscaUsuario = true
             }
         })
     }
@@ -155,6 +165,9 @@ class CambioFragment : Fragment() {
                 val saldoFormatado =
                     "Saldo disponível: R$ ${saldoBuscado.toString().replace(".", ",")}"
                 textSaldoUsuario.text = saldoFormatado
+                if (sucessoBuscaUsuario){
+                    configuraButtons()
+                } else sucessoBuscaUsuario = true
             }
         })
     }
