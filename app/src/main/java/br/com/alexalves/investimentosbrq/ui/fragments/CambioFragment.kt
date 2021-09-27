@@ -62,7 +62,7 @@ class CambioFragment : Fragment() {
         Log.i("TESTE",(moeda.buy<saldoUsuario).toString())
         Log.i("TESTE","Saldo: ${saldoUsuario}")
         Log.i("TESTE","Valor moeda: ${moeda.buy}")
-        buttonComprar.configuraEstado(moeda.buy < saldoUsuario)
+        buttonComprar.configuraEstado(false)
         buttonComprar.configuraTitulo("Comprar")
         configuraCampoQuantidadeChangedTextListener()
         //Eventos dos botões
@@ -114,7 +114,7 @@ class CambioFragment : Fragment() {
         inputLayoutQuantidade.editText?.doAfterTextChanged { s ->
             val quantidadeTexto = s.toString()
             if (quantidadeTexto.isBlank()) {
-                buttonComprar.configuraEstado(true)
+                buttonComprar.configuraEstado(false)
                 buttonVender.configuraEstado(false)
             } else {
                 val quantidadeInt = quantidadeTexto.toInt()
@@ -126,7 +126,7 @@ class CambioFragment : Fragment() {
 
     private fun configuraButtonCompra(quantidade: Int) {
         val valorNecessario = quantidade.toBigDecimal() * moeda.buy
-        val aprovacao = ((valorNecessario <= saldoUsuario))
+        val aprovacao = ((valorNecessario <= saldoUsuario) && quantidade>0)
         buttonComprar.configuraEstado(aprovacao)
     }
 

@@ -128,6 +128,7 @@ class CambioActivity : AppCompatActivity() {
             toolbar_voltar.text = "Câmbio"
             toolbar_voltar.visibility = View.VISIBLE
             toolbar_voltar.setOnClickListener {
+                configuraToolbarEmCambio()
                 inicializaFragment(fragmentCambioConfigurado())
             }
         }
@@ -139,6 +140,7 @@ class CambioActivity : AppCompatActivity() {
             toolbar_voltar.text = "Câmbio"
             toolbar_voltar.visibility = View.VISIBLE
             toolbar_voltar.setOnClickListener {
+                configuraToolbarEmCambio()
                 inicializaFragment(fragmentCambioConfigurado())
             }
         }
