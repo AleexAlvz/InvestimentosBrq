@@ -10,7 +10,7 @@ import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 
 val appModules = module {
-    single<AppDatabase> { Room.databaseBuilder(get(), AppDatabase::class.java, "usuario_db").build() }
+    single<AppDatabase> { Room.databaseBuilder(get(), AppDatabase::class.java, "usuario_db").fallbackToDestructiveMigration().build() }
     single<UsuarioDao> { get<AppDatabase>().usuarioDao }
     single<MoedasRepository> { MoedasRepository(get()) }
 

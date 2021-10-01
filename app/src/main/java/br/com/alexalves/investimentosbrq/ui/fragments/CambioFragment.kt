@@ -1,6 +1,5 @@
 package br.com.alexalves.investimentosbrq.ui.fragments
 
-import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -8,7 +7,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
-import androidx.core.content.ContextCompat
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -19,6 +17,7 @@ import br.com.alexalves.investimentosbrq.viewmodel.CambioViewModel
 import com.google.android.material.textfield.TextInputLayout
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.math.BigDecimal
+import java.math.BigInteger
 
 class CambioFragment : Fragment() {
 
@@ -33,11 +32,11 @@ class CambioFragment : Fragment() {
     private lateinit var inputLayoutQuantidade: TextInputLayout
     private lateinit var buttonComprar: ButtonBlue
     private lateinit var buttonVender: ButtonBlue
-    private var moedasEmCaixa: Int = 0
+    private var moedasEmCaixa: BigInteger = BigInteger.ZERO
     private var saldoUsuario: BigDecimal = BigDecimal.ZERO
     private var sucessoBuscaUsuario: Boolean = false
-    var sucessoCompra: ((quantidadeComprada: Int, valorDaCompra: BigDecimal) -> Unit)? = null
-    var sucessoVenda: ((quantidadeVendida: Int, valorDaCompra: BigDecimal) -> Unit)? = null
+    var sucessoCompra: ((quantidadeComprada: BigInteger, valorDaCompra: BigDecimal) -> Unit)? = null
+    var sucessoVenda: ((quantidadeVendida: BigInteger, valorDaCompra: BigDecimal) -> Unit)? = null
     val cambioViewModel: CambioViewModel by viewModel()
 
     override fun onCreateView(
@@ -66,7 +65,7 @@ class CambioFragment : Fragment() {
 
     private fun buttonVendaListener() {
         buttonVender.configuraClique = {
-            val quantidadeParaVender = inputLayoutQuantidade.editText?.text.toString().toInt()
+            val quantidadeParaVender = inputLayoutQuantidade.editText?.text.toString().toBigInteger()
             cambioViewModel.vendeMoeda(
                 moeda,
                 quantidadeParaVender,
@@ -86,7 +85,7 @@ class CambioFragment : Fragment() {
     private fun buttonCompraListener() {
         buttonComprar.configuraClique = {
             val textQuantidade = inputLayoutQuantidade.editText?.text.toString()
-            val quantidadeParaComprar = if (textQuantidade.isBlank()) 0 else textQuantidade.toInt()
+            val quantidadeParaComprar = if (textQuantidade.isBlank()) BigInteger.ZERO else textQuantidade.toBigInteger()
             cambioViewModel.compraMoeda(
                 moeda,
                 quantidadeParaComprar,
@@ -111,21 +110,21 @@ class CambioFragment : Fragment() {
                 buttonComprar.configuraEstado(false)
                 buttonVender.configuraEstado(false)
             } else {
-                val quantidadeInt = quantidadeTexto.toInt()
+                val quantidadeInt = quantidadeTexto.toBigInteger()
                 configuraButtonVenda(quantidadeInt)
                 configuraButtonCompra(quantidadeInt)
             }
         }
     }
 
-    private fun configuraButtonCompra(quantidade: Int) {
+    private fun configuraButtonCompra(quantidade: BigInteger) {
         val valorNecessario = quantidade.toBigDecimal() * moeda.buy
-        val aprovacao = ((valorNecessario <= saldoUsuario) && quantidade > 0)
+        val aprovacao = ((valorNecessario <= saldoUsuario) && quantidade > BigInteger.ZERO)
         buttonComprar.configuraEstado(aprovacao)
     }
 
-    private fun configuraButtonVenda(quantidade: Int) {
-        val aprovacao = ((quantidade <= moedasEmCaixa) && (quantidade != 0))
+    private fun configuraButtonVenda(quantidade: BigInteger) {
+        val aprovacao = ((quantidade <= moedasEmCaixa) && (quantidade != BigInteger.ZERO))
         buttonVender.configuraEstado(aprovacao)
     }
 

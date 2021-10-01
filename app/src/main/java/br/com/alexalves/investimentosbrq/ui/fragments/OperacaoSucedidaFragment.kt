@@ -12,6 +12,7 @@ import br.com.alexalves.investimentosbrq.model.Moeda
 import br.com.alexalves.investimentosbrq.model.TipoOperacao
 import br.com.alexalves.investimentosbrq.ui.customview.ButtonBlue
 import java.math.BigDecimal
+import java.math.BigInteger
 
 class OperacaoSucedidaFragment: Fragment() {
 
@@ -19,7 +20,7 @@ class OperacaoSucedidaFragment: Fragment() {
     private lateinit var textSucesso: TextView
     private lateinit var buttonHome: ButtonBlue
     var buttonHomeListener: (()-> Unit)? = null
-    var quantidade: Int = 0
+    var quantidade: BigInteger = BigInteger.ZERO
     var valorTotal: BigDecimal = BigDecimal.ZERO
 
     var moeda: Moeda? = null

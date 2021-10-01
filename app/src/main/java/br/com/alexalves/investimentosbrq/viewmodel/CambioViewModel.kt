@@ -11,13 +11,14 @@ import br.com.alexalves.investimentosbrq.database.UsuarioDao
 import br.com.alexalves.investimentosbrq.model.Moeda
 import br.com.alexalves.investimentosbrq.repository.MoedasRepository
 import java.math.BigDecimal
+import java.math.BigInteger
 
 class CambioViewModel(
     val moedasRepository: MoedasRepository
 ) : ViewModel() {
 
     val saldoUsuario = MutableLiveData<BigDecimal>()
-    val moedasEmCaixa = MutableLiveData<Int>()
+    val moedasEmCaixa = MutableLiveData<BigInteger>()
 
     fun atualizaSaldo() {
         moedasRepository.buscaSaldo(
@@ -46,7 +47,7 @@ class CambioViewModel(
 
     fun compraMoeda(
         moeda: Moeda,
-        quantidade: Int,
+        quantidade: BigInteger,
         quandoSucesso: ((totalDaCompra: BigDecimal) -> Unit)?,
         quandoFalha: ((erro: String) -> Unit)?
 
@@ -59,7 +60,7 @@ class CambioViewModel(
 
     fun vendeMoeda(
         moeda: Moeda,
-        quantidade: Int,
+        quantidade: BigInteger,
         quandoSucesso: ((totalDaVenda: BigDecimal) -> Unit)?,
         quandoFalha: ((erro: String) -> Unit)?
     ) {

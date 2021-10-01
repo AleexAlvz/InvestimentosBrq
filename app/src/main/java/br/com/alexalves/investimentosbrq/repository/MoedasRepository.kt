@@ -11,6 +11,7 @@ import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.math.BigDecimal
+import java.math.BigInteger
 
 class MoedasRepository(
     private val usuarioDao: UsuarioDao
@@ -87,7 +88,7 @@ class MoedasRepository(
 
     fun buscaMoedaEmCaixa(
         moedaBuscada: Moeda,
-        quandoSucesso: ((saldoEmCaixa: Int) -> Unit)?,
+        quandoSucesso: ((saldoEmCaixa: BigInteger) -> Unit)?,
         quandoFalha: ((erro: String) -> Unit)?
     ) {
         try {
@@ -95,7 +96,7 @@ class MoedasRepository(
                 val usuario = usuarioDao.buscaUsuario(id = 1)
                 withContext(Main) {
                     if (usuario != null) {
-                        val moedaBuscado: Int = buscaMoedaPelaAbreviação(moedaBuscada, usuario)
+                        val moedaBuscado: BigInteger = buscaMoedaPelaAbreviação(moedaBuscada, usuario)
                         quandoSucesso?.invoke(moedaBuscado)
                     } else quandoFalha?.invoke("Usuario não encontrado")
                 }
@@ -121,7 +122,7 @@ class MoedasRepository(
 
     fun compraMoeda(
         moeda: Moeda,
-        quantidade: Int,
+        quantidade: BigInteger,
         quandoSucesso: ((totalDaCompra: BigDecimal) -> Unit)?,
         quandoFalha: ((erro: String) -> Unit)?
     ) {
@@ -131,7 +132,7 @@ class MoedasRepository(
                 val saldoAtual = usuario.saldo
                 val moedaEmCaixa = buscaMoedaPelaAbreviação(moeda, usuario)
                 val totalDaCompra = quantidade.toBigDecimal() * moeda.buy
-                if (quantidade != 0) {
+                if (quantidade != BigInteger.ZERO) {
                     val aprovacao = (totalDaCompra <= saldoAtual)
                     if (aprovacao) {
                         val saldoFinal = saldoAtual - totalDaCompra
@@ -151,7 +152,7 @@ class MoedasRepository(
 
     fun vendeMoeda(
         moeda: Moeda,
-        quantidade: Int,
+        quantidade: BigInteger,
         quandoSucesso: ((totalDaVenda: BigDecimal) -> Unit)?,
         quandoFalha: ((erro: String) -> Unit)?
     ) {
@@ -161,7 +162,7 @@ class MoedasRepository(
                 val saldoAtual = usuario.saldo
                 val moedaEmCaixa = buscaMoedaPelaAbreviação(moeda, usuario)
                 val totalDaVenda = quantidade.toBigDecimal() * moeda.sell
-                if (quantidade != 0) {
+                if (quantidade != BigInteger.ZERO) {
                     val aprovacao = (quantidade <= moedaEmCaixa)
                     if (aprovacao) {
                         val saldoFinal = saldoAtual + totalDaVenda
@@ -181,7 +182,7 @@ class MoedasRepository(
 
     private fun salvaCompraNoUsuario(
         saldoFinal: BigDecimal,
-        moedasEmCaixaFinal: Int,
+        moedasEmCaixaFinal: BigInteger,
         moeda: Moeda,
         usuario: Usuario
     ) {

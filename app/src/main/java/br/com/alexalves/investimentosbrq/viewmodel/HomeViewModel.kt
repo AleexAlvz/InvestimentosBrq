@@ -7,6 +7,9 @@ import androidx.lifecycle.ViewModel
 import br.com.alexalves.investimentosbrq.database.UsuarioDao
 import br.com.alexalves.investimentosbrq.model.Moeda
 import br.com.alexalves.investimentosbrq.repository.MoedasRepository
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.launch
 
 class HomeViewModel(
     val moedasRepository: MoedasRepository

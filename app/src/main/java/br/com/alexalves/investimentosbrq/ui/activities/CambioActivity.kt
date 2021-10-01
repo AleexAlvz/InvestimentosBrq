@@ -17,6 +17,7 @@ import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.math.BigDecimal
+import java.math.BigInteger
 
 class CambioActivity : AppCompatActivity() {
 
@@ -62,7 +63,7 @@ class CambioActivity : AppCompatActivity() {
         }
     }
 
-    private fun fragmentVendaSucedidaConfigurado(quantidadeVendida: Int, valorTotal: BigDecimal): Fragment {
+    private fun fragmentVendaSucedidaConfigurado(quantidadeVendida: BigInteger, valorTotal: BigDecimal): Fragment {
         val fragmentVenda = OperacaoSucedidaFragment()
         fragmentVenda.quantidade = quantidadeVendida
         fragmentVenda.valorTotal = valorTotal
@@ -72,7 +73,7 @@ class CambioActivity : AppCompatActivity() {
         return fragmentVenda
     }
 
-    private fun fragmentCompraSucedidaConfigurado(quantidadeComprada: Int, valorTotal: BigDecimal): Fragment {
+    private fun fragmentCompraSucedidaConfigurado(quantidadeComprada: BigInteger, valorTotal: BigDecimal): Fragment {
         val fragmentCompra = OperacaoSucedidaFragment()
         fragmentCompra.quantidade = quantidadeComprada
         fragmentCompra.valorTotal = valorTotal
