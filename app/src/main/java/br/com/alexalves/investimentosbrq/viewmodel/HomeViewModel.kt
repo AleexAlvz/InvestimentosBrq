@@ -8,16 +8,18 @@ import br.com.alexalves.investimentosbrq.database.UsuarioDao
 import br.com.alexalves.investimentosbrq.model.Moeda
 import br.com.alexalves.investimentosbrq.repository.MoedasRepository
 
-class HomeViewModel(val usuarioDao: UsuarioDao) : ViewModel() {
+class HomeViewModel(
+    val moedasRepository: MoedasRepository
+) : ViewModel() {
 
-    val moedasRepository = MoedasRepository(usuarioDao)
     val listaDeMoedas = MutableLiveData<List<Moeda>>()
 
-    fun buscaMoedas(){
+    fun buscaMoedas() {
         moedasRepository.configuraeFiltraMoedas(
-            quandoSucesso = { moedas -> listaDeMoedas.value = moedas
-        }, quandoFalha = { erro ->
-           Log.i("Busca Moedas","Erro na busca de moedas: ${erro}")
-        })
+            quandoSucesso = { moedas ->
+                listaDeMoedas.value = moedas
+            }, quandoFalha = { erro ->
+                Log.i("Busca Moedas", "Erro na busca de moedas: ${erro}")
+            })
     }
 }

@@ -1,20 +1,23 @@
 package br.com.alexalves.investimentosbrq.viewmodel
 
+import android.content.Context
 import android.util.Log
+import androidx.core.content.ContextCompat
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import br.com.alexalves.investimentosbrq.R
 import br.com.alexalves.investimentosbrq.database.UsuarioDao
 import br.com.alexalves.investimentosbrq.model.Moeda
 import br.com.alexalves.investimentosbrq.repository.MoedasRepository
 import java.math.BigDecimal
 
 class CambioViewModel(
-    private val usuarioDao: UsuarioDao
+    val moedasRepository: MoedasRepository
 ) : ViewModel() {
 
-    val moedasRepository = MoedasRepository(usuarioDao)
     val saldoUsuario = MutableLiveData<BigDecimal>()
-    var moedasEmCaixa = MutableLiveData<Int>()
+    val moedasEmCaixa = MutableLiveData<Int>()
 
     fun atualizaSaldo() {
         moedasRepository.buscaSaldo(
@@ -29,6 +32,16 @@ class CambioViewModel(
             quandoSucesso = { saldoEmCaixa -> moedasEmCaixa.value = saldoEmCaixa },
             quandoFalha = { erro -> Log.i("BuscaSaldoEmCaixa", "Busca do saldo falhou: ${erro}") }
         )
+    }
+
+    fun buscaCorMoeda(variacao: Double, context: Context): LiveData<Int> {
+        val cor = if (variacao > 0) {
+            ContextCompat.getColor(context, R.color.green_positive)
+        } else if (variacao < 0) {
+            ContextCompat.getColor(context, R.color.red_negative)
+        } else ContextCompat.getColor(context, R.color.white)
+        val mutableLiveDataCor = MutableLiveData<Int>(cor)
+        return mutableLiveDataCor
     }
 
     fun compraMoeda(

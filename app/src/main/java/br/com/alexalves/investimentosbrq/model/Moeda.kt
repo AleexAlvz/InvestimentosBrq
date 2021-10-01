@@ -13,7 +13,7 @@ class Moeda(
 
 ): Serializable{
 
-    fun configura(sourceBuscada: String){
+    fun configura(sourceBuscada: String = "indefinido"){
         when(this.name){
             "Dollar" -> this.abreviacao = "USD"
             "Euro" -> this.abreviacao = "EUR"
