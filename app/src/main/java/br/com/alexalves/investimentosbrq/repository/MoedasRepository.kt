@@ -18,8 +18,8 @@ class MoedasRepository(
 ) {
     private val service = InvestimentosServiceAPI().getInvestimentosService()
 
-    fun buscaSaldo(
-        quandoSucesso: ((saldo: BigDecimal) -> Unit)? = null,
+    fun buscaUsuario(
+        quandoSucesso: ((usuario: Usuario) -> Unit)? = null,
         quandoFalha: ((erro: String) -> Unit)? = null
     ) {
         try {
@@ -27,17 +27,16 @@ class MoedasRepository(
                 val usuario = usuarioDao.buscaUsuario(id = 1)
                 withContext(Main) {
                     if (usuario != null) {
-                        quandoSucesso?.invoke(usuario.saldo)
+                        quandoSucesso?.invoke(usuario)
                     } else quandoFalha?.invoke("Usuario não encontrado")
                 }
             }
         } catch (erro: Exception) {
             quandoFalha?.invoke(erro.message.toString())
         }
-
     }
 
-    fun configuraeFiltraMoedas(
+    fun buscaMoedas(
         quandoSucesso: ((moedas: List<Moeda>) -> Unit)? = null,
         quandoFalha: ((erro: String) -> Unit)? = null
     ) {
@@ -45,7 +44,7 @@ class MoedasRepository(
         CoroutineScope(IO).launch {
             try {
                 val service = callService.execute().body()
-                val moedasBuscadas = configuraeFiltraMoedas(service)
+                val moedasBuscadas = configuraEFiltraMoedas(service)
                 withContext(Main) {
                     quandoSucesso?.invoke(moedasBuscadas)
                 }
@@ -55,7 +54,7 @@ class MoedasRepository(
         }
     }
 
-    private fun configuraeFiltraMoedas(service: ServiceInvestimentos?): List<Moeda> {
+    private fun configuraEFiltraMoedas(service: ServiceInvestimentos?): List<Moeda> {
         var moedas = arrayListOf<Moeda>()
         service?.results?.currencies?.let {
             val ars = it.ars
@@ -86,27 +85,7 @@ class MoedasRepository(
         return moedas
     }
 
-    fun buscaMoedaEmCaixa(
-        moedaBuscada: Moeda,
-        quandoSucesso: ((saldoEmCaixa: BigInteger) -> Unit)?,
-        quandoFalha: ((erro: String) -> Unit)?
-    ) {
-        try {
-            CoroutineScope(IO).launch {
-                val usuario = usuarioDao.buscaUsuario(id = 1)
-                withContext(Main) {
-                    if (usuario != null) {
-                        val moedaBuscado: BigInteger = buscaMoedaPelaAbreviação(moedaBuscada, usuario)
-                        quandoSucesso?.invoke(moedaBuscado)
-                    } else quandoFalha?.invoke("Usuario não encontrado")
-                }
-            }
-        } catch (erro: Exception) {
-            quandoFalha?.invoke(erro.message.toString())
-        }
-    }
-
-    private fun buscaMoedaPelaAbreviação(moedaBuscada: Moeda, usuario: Usuario) =
+    private fun buscaMoedaPelaAbreviacao(moedaBuscada: Moeda, usuario: Usuario) =
         when (moedaBuscada.abreviacao) {
             "USD" -> usuario.usd
             "EUR" -> usuario.eur
@@ -130,7 +109,7 @@ class MoedasRepository(
             CoroutineScope(IO).launch {
                 val usuario = usuarioDao.buscaUsuario(id = 1)
                 val saldoAtual = usuario.saldo
-                val moedaEmCaixa = buscaMoedaPelaAbreviação(moeda, usuario)
+                val moedaEmCaixa = buscaMoedaPelaAbreviacao(moeda, usuario)
                 val totalDaCompra = quantidade.toBigDecimal() * moeda.buy
                 if (quantidade != BigInteger.ZERO) {
                     val aprovacao = (totalDaCompra <= saldoAtual)
@@ -160,7 +139,7 @@ class MoedasRepository(
             CoroutineScope(IO).launch {
                 val usuario = usuarioDao.buscaUsuario(id = 1)
                 val saldoAtual = usuario.saldo
-                val moedaEmCaixa = buscaMoedaPelaAbreviação(moeda, usuario)
+                val moedaEmCaixa = buscaMoedaPelaAbreviacao(moeda, usuario)
                 val totalDaVenda = quantidade.toBigDecimal() * moeda.sell
                 if (quantidade != BigInteger.ZERO) {
                     val aprovacao = (quantidade <= moedaEmCaixa)

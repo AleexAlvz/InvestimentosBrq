@@ -7,8 +7,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import br.com.alexalves.investimentosbrq.R
-import br.com.alexalves.investimentosbrq.database.UsuarioDao
 import br.com.alexalves.investimentosbrq.model.Moeda
+import br.com.alexalves.investimentosbrq.model.Usuario
 import br.com.alexalves.investimentosbrq.repository.MoedasRepository
 import java.math.BigDecimal
 import java.math.BigInteger
@@ -17,22 +17,33 @@ class CambioViewModel(
     val moedasRepository: MoedasRepository
 ) : ViewModel() {
 
-    val saldoUsuario = MutableLiveData<BigDecimal>()
-    val moedasEmCaixa = MutableLiveData<BigInteger>()
+    private fun buscaMoedaPelaAbreviacao(moedaBuscada: Moeda, usuario: Usuario) =
+        when (moedaBuscada.abreviacao) {
+            "USD" -> usuario.usd
+            "EUR" -> usuario.eur
+            "GBP" -> usuario.gbp
+            "ARS" -> usuario.ars
+            "CAD" -> usuario.cad
+            "AUD" -> usuario.aud
+            "JPY" -> usuario.jpy
+            "CNY" -> usuario.cny
+            "BTC" -> usuario.btc
+            else -> throw Exception("Moeda não encontrada")
+        }
 
-    fun atualizaSaldo() {
-        moedasRepository.buscaSaldo(
+    fun buscaSaldoEMoedasEmCaixa(
+        moeda: Moeda,
+        atualizaSaldoEMoedas: (saldo: BigDecimal, moedasEmCaixa: BigInteger) -> Unit
+    ) {
+        moedasRepository.buscaUsuario(
             quandoFalha = { erro -> Log.i("BuscaSaldo", "Busca do saldo falhou: ${erro}") },
-            quandoSucesso = { saldo -> saldoUsuario.value = saldo }
-        )
-    }
-
-    fun atualizaSaldoEmCaixa(moeda: Moeda) {
-        moedasRepository.buscaMoedaEmCaixa(
-            moeda,
-            quandoSucesso = { saldoEmCaixa -> moedasEmCaixa.value = saldoEmCaixa },
-            quandoFalha = { erro -> Log.i("BuscaSaldoEmCaixa", "Busca do saldo falhou: ${erro}") }
-        )
+            quandoSucesso = { usuario ->
+                run {
+                    val saldo = usuario.saldo
+                    val moeda = buscaMoedaPelaAbreviacao(moeda, usuario)
+                    atualizaSaldoEMoedas.invoke(saldo, moeda)
+                }
+            })
     }
 
     fun buscaCorMoeda(variacao: Double, context: Context): LiveData<Int> {
@@ -48,25 +59,23 @@ class CambioViewModel(
     fun compraMoeda(
         moeda: Moeda,
         quantidade: BigInteger,
-        quandoSucesso: ((totalDaCompra: BigDecimal) -> Unit)?,
-        quandoFalha: ((erro: String) -> Unit)?
+        quandoSucesso: ((totalDaCompra: BigDecimal) -> Unit)?
 
     ) {
         moedasRepository.compraMoeda(moeda, quantidade,
             quandoSucesso = { totalDaCompra -> quandoSucesso?.invoke(totalDaCompra) },
-            quandoFalha = { erro -> quandoFalha?.invoke(erro) }
+            quandoFalha = { erro -> Log.e("ERRO COMPRA", erro) }
         )
     }
 
     fun vendeMoeda(
         moeda: Moeda,
         quantidade: BigInteger,
-        quandoSucesso: ((totalDaVenda: BigDecimal) -> Unit)?,
-        quandoFalha: ((erro: String) -> Unit)?
+        quandoSucesso: ((totalDaVenda: BigDecimal) -> Unit)?
     ) {
         moedasRepository.vendeMoeda(moeda, quantidade,
             quandoSucesso = { totalDaVenda -> quandoSucesso?.invoke(totalDaVenda) },
-            quandoFalha = { erro -> quandoFalha?.invoke(erro) }
+            quandoFalha = { erro -> Log.e("ERRO VENDA", erro) }
         )
     }
 

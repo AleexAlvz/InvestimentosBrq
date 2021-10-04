@@ -9,7 +9,7 @@ class Moeda(
     val sell: BigDecimal,
     val variation: Double,
     var abreviacao: String = "indefinido",
-    var source: String = "indefinido"
+    var source: String = "BRL"
 
 ): Serializable{
 
@@ -38,7 +38,8 @@ class Moeda(
     fun getValorVendaFormatado(): String{
         if (sell!=null){
             if (!source.isBlank()){
-                return source+" "+sell.toString().replace(".",",")
+                val vendaComDecimais = String.format("%.3f", sell)
+                return source+" "+vendaComDecimais.replace(".",",")
             }else return sell.toString().replace(".",",")
         } else return "null"
     }
@@ -46,7 +47,8 @@ class Moeda(
     fun getValorCompraFormatado(): String{
         if (buy!=null){
             if (!source.isBlank()){
-                return source+" "+buy.toString().replace(".",",")
+                val compraComDecimais = String.format("%.3f", buy)
+                return source+" "+compraComDecimais.replace(".",",")
             } else return buy.toString().replace(".",",")
         } else return "null"
     }

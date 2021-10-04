@@ -21,20 +21,10 @@ import java.math.BigInteger
 
 class CambioFragment : Fragment() {
 
-    private lateinit var inflatedView: View
     private lateinit var moeda: Moeda
-    private lateinit var textTituloMoeda: TextView
-    private lateinit var textVariacaoMoeda: TextView
-    private lateinit var textValorCompraMoeda: TextView
-    private lateinit var textValorVendaMoeda: TextView
-    private lateinit var textSaldoUsuario: TextView
-    private lateinit var textMoedasEmCaixa: TextView
     private lateinit var inputLayoutQuantidade: TextInputLayout
     private lateinit var buttonComprar: ButtonBlue
     private lateinit var buttonVender: ButtonBlue
-    private var moedasEmCaixa: BigInteger = BigInteger.ZERO
-    private var saldoUsuario: BigDecimal = BigDecimal.ZERO
-    private var sucessoBuscaUsuario: Boolean = false
     var sucessoCompra: ((quantidadeComprada: BigInteger, valorDaCompra: BigDecimal) -> Unit)? = null
     var sucessoVenda: ((quantidadeVendida: BigInteger, valorDaCompra: BigDecimal) -> Unit)? = null
     val cambioViewModel: CambioViewModel by viewModel()
@@ -44,28 +34,47 @@ class CambioFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        inflatedView = inflater.inflate(R.layout.fragment_cambio, container, false)
-        inicializaCampos()
-        observaUsuario()
-        buscaDadosUsuario()
-        configuraTextoNosCampos()
-        return inflatedView
+        return inflater.inflate(R.layout.fragment_cambio, container, false)
     }
 
-    private fun configuraButtons() {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        inicializaCampos(view)
+        configuraSaldoEMoedas(view)
+        configuraTextoNosCampos(view)
+    }
+
+    private fun configuraSaldoEMoedas(view: View) {
+        cambioViewModel.buscaSaldoEMoedasEmCaixa(
+            moeda,
+            atualizaSaldoEMoedas = { saldo, moedasEmCaixa ->
+                //Configura Text Saldo
+                val saldoFormatado = "Saldo disponível: R$ ${saldo.toString().replace(".", ",")}"
+                view.findViewById<TextView>(R.id.fragment_cambio_text_saldo_disponivel).text =
+                    saldoFormatado
+                //Configura Text Moedas em Caixa
+                val moedaEmCaixaFormatado = "${moedasEmCaixa} ${moeda.name} em caixa"
+                view.findViewById<TextView>(R.id.fragment_cambio_text_moeda_em_caixa).text =
+                    moedaEmCaixaFormatado
+                configuraButtons(moedasEmCaixa, saldo)
+            })
+    }
+
+    private fun configuraButtons(moedasEmCaixa: BigInteger, saldo: BigDecimal) {
         //Configuracao inicial dos buttons
         buttonVender.configuraEstado(false)
         buttonVender.configuraTitulo("Vender")
         buttonComprar.configuraEstado(false)
         buttonComprar.configuraTitulo("Comprar")
-        configuraCampoQuantidadeChangedTextListener()
+        configuraCampoQuantidadeChangedTextListener(moedasEmCaixa, saldo)
         buttonCompraListener()
         buttonVendaListener()
     }
 
     private fun buttonVendaListener() {
         buttonVender.configuraClique = {
-            val quantidadeParaVender = inputLayoutQuantidade.editText?.text.toString().toBigInteger()
+            val quantidadeParaVender =
+                inputLayoutQuantidade.editText?.text.toString().toBigInteger()
             cambioViewModel.vendeMoeda(
                 moeda,
                 quantidadeParaVender,
@@ -75,9 +84,6 @@ class CambioFragment : Fragment() {
                         totalDaVenda
                     )
                 },
-                quandoFalha = { erro ->
-                    Toast.makeText(requireContext(), erro, Toast.LENGTH_LONG).show()
-                }
             )
         }
     }
@@ -85,7 +91,8 @@ class CambioFragment : Fragment() {
     private fun buttonCompraListener() {
         buttonComprar.configuraClique = {
             val textQuantidade = inputLayoutQuantidade.editText?.text.toString()
-            val quantidadeParaComprar = if (textQuantidade.isBlank()) BigInteger.ZERO else textQuantidade.toBigInteger()
+            val quantidadeParaComprar =
+                if (textQuantidade.isBlank()) BigInteger.ZERO else textQuantidade.toBigInteger()
             cambioViewModel.compraMoeda(
                 moeda,
                 quantidadeParaComprar,
@@ -96,14 +103,14 @@ class CambioFragment : Fragment() {
                         totalDaCompra
                     )
                 },
-                quandoFalha = { erro ->
-                    Log.i("ERRO", erro)
-                }
             )
         }
     }
 
-    private fun configuraCampoQuantidadeChangedTextListener() {
+    private fun configuraCampoQuantidadeChangedTextListener(
+        moedasEmCaixa: BigInteger,
+        saldo: BigDecimal
+    ) {
         inputLayoutQuantidade.editText?.doAfterTextChanged { s ->
             val quantidadeTexto = s.toString()
             if (quantidadeTexto.isBlank()) {
@@ -111,96 +118,66 @@ class CambioFragment : Fragment() {
                 buttonVender.configuraEstado(false)
             } else {
                 val quantidadeInt = quantidadeTexto.toBigInteger()
-                configuraButtonVenda(quantidadeInt)
-                configuraButtonCompra(quantidadeInt)
+                configuraButtonVenda(quantidadeInt, moedasEmCaixa)
+                configuraButtonCompra(quantidadeInt, saldo)
             }
         }
     }
 
-    private fun configuraButtonCompra(quantidade: BigInteger) {
+    private fun configuraButtonCompra(quantidade: BigInteger, saldo: BigDecimal) {
         val valorNecessario = quantidade.toBigDecimal() * moeda.buy
-        val aprovacao = ((valorNecessario <= saldoUsuario) && quantidade > BigInteger.ZERO)
+        val aprovacao = ((valorNecessario <= saldo) && quantidade > BigInteger.ZERO)
         buttonComprar.configuraEstado(aprovacao)
     }
 
-    private fun configuraButtonVenda(quantidade: BigInteger) {
+    private fun configuraButtonVenda(quantidade: BigInteger, moedasEmCaixa: BigInteger) {
         val aprovacao = ((quantidade <= moedasEmCaixa) && (quantidade != BigInteger.ZERO))
         buttonVender.configuraEstado(aprovacao)
     }
 
-    private fun buscaDadosUsuario() {
-        cambioViewModel.atualizaSaldoEmCaixa(moeda)
-        cambioViewModel.atualizaSaldo()
-    }
-
-    private fun observaUsuario() {
-        observaSaldoUsuario()
-        observaMoedasEmCaixaUsuario()
-    }
-
-    private fun observaMoedasEmCaixaUsuario() {
-        cambioViewModel.moedasEmCaixa.observe(viewLifecycleOwner, Observer { moedaEmCaixaBuscada ->
-            moedasEmCaixa = moedaEmCaixaBuscada
-            val moedaEmCaixaFormatado = "${moedasEmCaixa} ${moeda.name} em caixa"
-            textMoedasEmCaixa.text = moedaEmCaixaFormatado
-            if (sucessoBuscaUsuario) {
-                configuraButtons()
-            } else sucessoBuscaUsuario = true
-        })
-    }
-
-    private fun observaSaldoUsuario() {
-        cambioViewModel.saldoUsuario.observe(viewLifecycleOwner, Observer { saldoBuscado ->
-            saldoUsuario = saldoBuscado
-            val saldoFormatado = "Saldo disponível: R$ ${saldoBuscado.toString().replace(".", ",")}"
-            textSaldoUsuario.text = saldoFormatado
-            if (sucessoBuscaUsuario) {
-                configuraButtons()
-            } else sucessoBuscaUsuario = true
-        })
-    }
-
-    private fun configuraTextoNosCampos() {
+    private fun configuraTextoNosCampos(view: View) {
         //Titulo
+        val textTituloMoeda = view.findViewById<TextView>(R.id.fragment_cambio_text_titulo_moeda)
         val tituloFormatado = "${moeda.abreviacao} - ${moeda.name}"
         textTituloMoeda.text = tituloFormatado
         //Variacao
+        val textVariacaoMoeda =
+            view.findViewById<TextView>(R.id.fragment_cambio_text_variacao_moeda)
         textVariacaoMoeda.text = moeda.getVariacaoFormatada()
-        setColorVariacao()
+        setColorVariacao(textVariacaoMoeda)
         //Compra
+        val textValorCompraMoeda =
+            view.findViewById<TextView>(R.id.fragment_cambio_text_valor_compra_moeda)
         val valorCompraFormatado = "Compra: ${moeda.getValorCompraFormatado()}"
         textValorCompraMoeda.text = valorCompraFormatado
         //Venda
+        val textValorVendaMoeda =
+            view.findViewById<TextView>(R.id.fragment_cambio_text_valor_venda_moeda)
         val valorVendaFormatado = "Venda: ${moeda.getValorVendaFormatado()}"
         textValorVendaMoeda.text = valorVendaFormatado
         //Saldo
+        val textSaldoUsuario =
+            view.findViewById<TextView>(R.id.fragment_cambio_text_saldo_disponivel)
         textSaldoUsuario.text = "Saldo disponível: R$ 0"
         //Moedas em caixa
+        val textMoedasEmCaixa =
+            view.findViewById<TextView>(R.id.fragment_cambio_text_moeda_em_caixa)
         val moedasEmCaixaFormatado = "0 ${moeda.name} em caixa"
         textMoedasEmCaixa.text = moedasEmCaixaFormatado
     }
 
-    private fun setColorVariacao() {
+    private fun setColorVariacao(textViewVariacao: TextView) {
         cambioViewModel.buscaCorMoeda(moeda.variation, requireContext())
             .observe(viewLifecycleOwner, Observer
             { colorId ->
-                textVariacaoMoeda.setTextColor(colorId)
+                textViewVariacao.setTextColor(colorId)
             })
     }
 
-
-    private fun inicializaCampos() {
-        //Busca moeda no bundle do fragment
+    private fun inicializaCampos(view: View) {
         moeda = arguments?.get(getString(R.string.moeda_argument)) as Moeda
-        //busca textViews do Card Moeda
-        textTituloMoeda = inflatedView.findViewById(R.id.fragment_cambio_text_titulo_moeda)
-        textVariacaoMoeda = inflatedView.findViewById(R.id.fragment_cambio_text_variacao_moeda)
-        textValorCompraMoeda = inflatedView.findViewById(R.id.fragment_cambio_text_valor_compra_moeda)
-        textValorVendaMoeda = inflatedView.findViewById(R.id.fragment_cambio_text_valor_venda_moeda)
-        textSaldoUsuario = inflatedView.findViewById(R.id.fragment_cambio_text_saldo_disponivel)
-        textMoedasEmCaixa = inflatedView.findViewById(R.id.fragment_cambio_text_moeda_em_caixa)
-        inputLayoutQuantidade = inflatedView.findViewById(R.id.fragment_cambio_input_layout_quantidade)
-        buttonComprar = inflatedView.findViewById(R.id.fragment_cambio_button_comprar)
-        buttonVender = inflatedView.findViewById(R.id.fragment_cambio_button_vender)
+        inputLayoutQuantidade = view.findViewById(R.id.fragment_cambio_input_layout_quantidade)
+        buttonComprar = view.findViewById(R.id.fragment_cambio_button_comprar)
+        buttonVender = view.findViewById(R.id.fragment_cambio_button_vender)
     }
 }

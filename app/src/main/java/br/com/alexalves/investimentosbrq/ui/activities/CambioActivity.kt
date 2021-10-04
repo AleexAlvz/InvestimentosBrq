@@ -1,6 +1,5 @@
 package br.com.alexalves.investimentosbrq.ui.activities
 
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
@@ -15,7 +14,6 @@ import br.com.alexalves.investimentosbrq.ui.fragments.CambioFragment
 import br.com.alexalves.investimentosbrq.ui.fragments.OperacaoSucedidaFragment
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import java.math.BigDecimal
 import java.math.BigInteger
 
@@ -57,13 +55,17 @@ class CambioActivity : AppCompatActivity() {
 
     private fun configuraQuandoSucessoCompraCambio(cambioFragment: CambioFragment) {
         cambioFragment.sucessoCompra = { quantidadeComprada, valorDaCompra ->
-            val fragmentCompra = fragmentCompraSucedidaConfigurado(quantidadeComprada, valorDaCompra)
+            val fragmentCompra =
+                fragmentCompraSucedidaConfigurado(quantidadeComprada, valorDaCompra)
             configuraToolbarEmCompraSucesso()
             inicializaFragment(fragmentCompra)
         }
     }
 
-    private fun fragmentVendaSucedidaConfigurado(quantidadeVendida: BigInteger, valorTotal: BigDecimal): Fragment {
+    private fun fragmentVendaSucedidaConfigurado(
+        quantidadeVendida: BigInteger,
+        valorTotal: BigDecimal
+    ): Fragment {
         val fragmentVenda = OperacaoSucedidaFragment()
         fragmentVenda.quantidade = quantidadeVendida
         fragmentVenda.valorTotal = valorTotal
@@ -73,7 +75,10 @@ class CambioActivity : AppCompatActivity() {
         return fragmentVenda
     }
 
-    private fun fragmentCompraSucedidaConfigurado(quantidadeComprada: BigInteger, valorTotal: BigDecimal): Fragment {
+    private fun fragmentCompraSucedidaConfigurado(
+        quantidadeComprada: BigInteger,
+        valorTotal: BigDecimal
+    ): Fragment {
         val fragmentCompra = OperacaoSucedidaFragment()
         fragmentCompra.quantidade = quantidadeComprada
         fragmentCompra.valorTotal = valorTotal
@@ -83,7 +88,7 @@ class CambioActivity : AppCompatActivity() {
         return fragmentCompra
     }
 
-    fun voltarParaHome(){
+    fun voltarParaHome() {
         val intent = Intent(this, HomeActivity::class.java)
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         startActivity(intent)
@@ -96,8 +101,8 @@ class CambioActivity : AppCompatActivity() {
     }
 
     private fun inicializaCampos() {
-        if (intent.hasExtra(getString(R.string.moeda_argument))){
-            moeda = intent.getSerializableExtra(getString(R.string.moeda_argument)) as Moeda
+        intent.getSerializableExtra(getString(R.string.moeda_argument))?.let { moedaExtra ->
+            moeda = moedaExtra as Moeda
         }
         toolbar_titulo = findViewById(R.id.toolbar_titulo)
         toolbar_voltar = findViewById(R.id.toolbar_back_option)
@@ -110,16 +115,11 @@ class CambioActivity : AppCompatActivity() {
     }
 
     private fun configuraToolbarEmCambio() {
-        val context: Context = this
         MainScope().launch {
             toolbar_titulo.text = "Cambio"
             toolbar_voltar.text = "Moedas"
             toolbar_voltar.visibility = View.VISIBLE
-            toolbar_voltar.setOnClickListener {
-                val intent = Intent(context, HomeActivity::class.java)
-                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                startActivity(intent)
-            }
+            toolbar_voltar.setOnClickListener { voltarParaHome() }
         }
     }
 
