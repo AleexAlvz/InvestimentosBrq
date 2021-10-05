@@ -1,23 +1,24 @@
 package br.com.alexalves.investimentosbrq.viewmodel
 
-import android.util.Log
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import br.com.alexalves.investimentosbrq.model.Moeda
-import br.com.alexalves.investimentosbrq.repository.MoedasRepository
+import br.com.alexalves.investimentosbrq.model.HomeState
+import br.com.alexalves.investimentosbrq.repository.CurrencyRepository
 
 class HomeViewModel(
-    val moedasRepository: MoedasRepository
+    val currencyRepository: CurrencyRepository
 ) : ViewModel() {
 
-    val listaDeMoedas = MutableLiveData<List<Moeda>>()
+    private val homeEvent = MutableLiveData<HomeState>()
+    val viewHomeState: LiveData<HomeState> = homeEvent
 
     fun buscaMoedas() {
-        moedasRepository.buscaMoedas(
-            quandoSucesso = { moedas ->
-                listaDeMoedas.value = moedas
-            }, quandoFalha = { erro ->
-                Log.i("Busca Moedas", "Erro na busca de moedas: ${erro}")
+        currencyRepository.searchCurrencies(
+            whenSucess = { currencies ->
+                homeEvent.value = HomeState.FoundCurrencies(currencies)
+            }, whenFails = { error ->
+                homeEvent.value = HomeState.FailureInSearchCurrencies(error)
             })
     }
 }

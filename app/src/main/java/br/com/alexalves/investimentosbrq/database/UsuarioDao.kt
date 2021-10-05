@@ -4,17 +4,17 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Update
-import br.com.alexalves.investimentosbrq.model.Usuario
+import br.com.alexalves.investimentosbrq.model.User
 
 @Dao
 abstract class UsuarioDao {
 
     @Update
-    abstract fun atualizaUsuario(usuario: Usuario)
+    abstract fun updateUser(user: User)
 
-    @Query("SELECT * FROM Usuario WHERE id == :id")
-    abstract fun buscaUsuario(id: Long): Usuario
+    @Query("SELECT * FROM User WHERE id == :id")
+    abstract fun searchUser(id: Long): User
 
     @Insert
-    abstract fun adicionaUsuario(usuario: Usuario)
+    abstract fun addUser(user: User)
 }

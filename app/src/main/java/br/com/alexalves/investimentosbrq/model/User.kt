@@ -2,12 +2,14 @@ package br.com.alexalves.investimentosbrq.model
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.google.gson.annotations.SerializedName
 import java.math.BigDecimal
 import java.math.BigInteger
 
 @Entity
-class Usuario(
-    var saldo: BigDecimal = BigDecimal(10000000.0),
+data class User(
+    @SerializedName("saldo")
+    var balance: BigDecimal = BigDecimal(10000000.0),
     var usd: BigInteger = BigInteger.ZERO,
     var eur: BigInteger = BigInteger.ZERO,
     var gbp: BigInteger = BigInteger.ZERO,
@@ -19,6 +21,4 @@ class Usuario(
     var btc: BigInteger = BigInteger.ZERO,
     @PrimaryKey(autoGenerate = true)
     var id: Long = 0
-){
-
-}
+)

@@ -5,21 +5,21 @@ import com.google.gson.annotations.SerializedName
 class Currencies(
     val source: String,
     @SerializedName("USD")
-    val usd: Moeda,
+    val usd: Currency,
     @SerializedName("EUR")
-    val eur: Moeda,
+    val eur: Currency,
     @SerializedName("GBP")
-    val gbp: Moeda,
+    val gbp: Currency,
     @SerializedName("ARS")
-    val ars: Moeda,
+    val ars: Currency,
     @SerializedName("CAD")
-    val cad: Moeda,
+    val cad: Currency,
     @SerializedName("AUD")
-    val aud: Moeda,
+    val aud: Currency,
     @SerializedName("JPY")
-    val jpy: Moeda,
+    val jpy: Currency,
     @SerializedName("CNY")
-    val cny: Moeda,
+    val cny: Currency,
     @SerializedName("BTC")
-    val btc: Moeda
+    val btc: Currency
 )

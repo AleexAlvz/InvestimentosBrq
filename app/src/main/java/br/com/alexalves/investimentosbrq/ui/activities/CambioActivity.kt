@@ -8,8 +8,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
 import br.com.alexalves.investimentosbrq.R
-import br.com.alexalves.investimentosbrq.model.Moeda
-import br.com.alexalves.investimentosbrq.model.TipoOperacao
+import br.com.alexalves.investimentosbrq.model.Currency
+import br.com.alexalves.investimentosbrq.model.TypeOperation
 import br.com.alexalves.investimentosbrq.ui.fragments.CambioFragment
 import br.com.alexalves.investimentosbrq.ui.fragments.OperacaoSucedidaFragment
 import kotlinx.coroutines.MainScope
@@ -21,7 +21,7 @@ class CambioActivity : AppCompatActivity() {
 
     lateinit var toolbar_titulo: TextView
     lateinit var toolbar_voltar: TextView
-    lateinit var moeda: Moeda
+    lateinit var currency: Currency
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,12 +41,12 @@ class CambioActivity : AppCompatActivity() {
 
     private fun configuraBundleMoedaEmCambioFragment(cambioFragment: CambioFragment) {
         val bundle = Bundle()
-        bundle.putSerializable(getString(R.string.moeda_argument), moeda)
+        bundle.putSerializable(getString(R.string.currency_argument), currency)
         cambioFragment.arguments = bundle
     }
 
     private fun configuraQuandoSucessoVendaCambio(cambioFragment: CambioFragment) {
-        cambioFragment.sucessoVenda = { quantidadeVendida, valorDaCompra ->
+        cambioFragment.sucessSale = { quantidadeVendida, valorDaCompra ->
             val fragmentVenda = fragmentVendaSucedidaConfigurado(quantidadeVendida, valorDaCompra)
             configuraToolbarEmVendaSucesso()
             inicializaFragment(fragmentVenda)
@@ -54,7 +54,7 @@ class CambioActivity : AppCompatActivity() {
     }
 
     private fun configuraQuandoSucessoCompraCambio(cambioFragment: CambioFragment) {
-        cambioFragment.sucessoCompra = { quantidadeComprada, valorDaCompra ->
+        cambioFragment.sucessPurchase = { quantidadeComprada, valorDaCompra ->
             val fragmentCompra =
                 fragmentCompraSucedidaConfigurado(quantidadeComprada, valorDaCompra)
             configuraToolbarEmCompraSucesso()
@@ -69,8 +69,8 @@ class CambioActivity : AppCompatActivity() {
         val fragmentVenda = OperacaoSucedidaFragment()
         fragmentVenda.quantidade = quantidadeVendida
         fragmentVenda.valorTotal = valorTotal
-        fragmentVenda.moeda = moeda
-        fragmentVenda.tipoOperacao = TipoOperacao.Venda
+        fragmentVenda.currency = currency
+        fragmentVenda.typeOperation = TypeOperation.SALE
         fragmentVenda.buttonHomeListener = { voltarParaHome() }
         return fragmentVenda
     }
@@ -82,8 +82,8 @@ class CambioActivity : AppCompatActivity() {
         val fragmentCompra = OperacaoSucedidaFragment()
         fragmentCompra.quantidade = quantidadeComprada
         fragmentCompra.valorTotal = valorTotal
-        fragmentCompra.moeda = moeda
-        fragmentCompra.tipoOperacao = TipoOperacao.Compra
+        fragmentCompra.currency = currency
+        fragmentCompra.typeOperation = TypeOperation.PURCHASE
         fragmentCompra.buttonHomeListener = { voltarParaHome() }
         return fragmentCompra
     }
@@ -101,8 +101,8 @@ class CambioActivity : AppCompatActivity() {
     }
 
     private fun inicializaCampos() {
-        intent.getSerializableExtra(getString(R.string.moeda_argument))?.let { moedaExtra ->
-            moeda = moedaExtra as Moeda
+        intent.getSerializableExtra(getString(R.string.currency_argument))?.let { moedaExtra ->
+            currency = moedaExtra as Currency
         }
         toolbar_titulo = findViewById(R.id.toolbar_titulo)
         toolbar_voltar = findViewById(R.id.toolbar_back_option)
