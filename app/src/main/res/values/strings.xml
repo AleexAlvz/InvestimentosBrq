@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">InvestimentosBrq</string>
     <string name="currency_argument">currency</string>
+    <string name="OperationNotApproved">Operation not approved</string>
 </resources>

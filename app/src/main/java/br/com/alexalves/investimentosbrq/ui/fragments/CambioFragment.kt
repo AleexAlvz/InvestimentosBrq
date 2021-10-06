@@ -111,6 +111,7 @@ class CambioFragment : Fragment() {
             }
         })
     }
+
     private fun observerSellButtonEvent() {
         exchangeViewModel.viewSellButtonEvent.observe(viewLifecycleOwner, Observer {
             when (it) {
@@ -123,6 +124,7 @@ class CambioFragment : Fragment() {
             }
         })
     }
+
     private fun observerScreenState() {
         exchangeViewModel.viewScreenState.observe(viewLifecycleOwner, Observer {
             when (it) {
@@ -132,6 +134,7 @@ class CambioFragment : Fragment() {
             }
         })
     }
+
     private fun observerBusinessState() {
         exchangeViewModel.viewBusinessExchangeState.observe(viewLifecycleOwner, Observer {
             when (it) {
@@ -165,14 +168,17 @@ class CambioFragment : Fragment() {
         }
 
     }
+
     private fun configureBuyButtonState(state: Boolean) {
         val buyButton = inflatedView.findViewById<ButtonBlue>(R.id.fragment_cambio_button_comprar)
         buyButton.configuraEstado(state)
     }
+
     private fun configureSellButtonState(state: Boolean) {
         val sellButton = inflatedView.findViewById<ButtonBlue>(R.id.fragment_cambio_button_vender)
         sellButton.configuraEstado(state)
     }
+
     private fun configureOnTextQuantidadeChanged(inputLayoutQuantidade: TextInputLayout) {
         inputLayoutQuantidade.editText?.doAfterTextChanged { s ->
             val amountText = s.toString()
@@ -180,6 +186,7 @@ class CambioFragment : Fragment() {
             exchangeViewModel.configureSellButtonEvent(amountText)
         }
     }
+
     private fun configureInitStateButtons(buttonComprar: ButtonBlue, buttonVender: ButtonBlue) {
         buttonComprar.configuraTitulo("Comprar")
         buttonComprar.configuraEstado(false)

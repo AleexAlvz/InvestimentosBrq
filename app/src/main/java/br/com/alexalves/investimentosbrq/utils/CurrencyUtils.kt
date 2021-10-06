@@ -2,6 +2,7 @@ package br.com.alexalves.investimentosbrq.utils
 
 import android.content.Context
 import androidx.core.content.ContextCompat
+import br.com.alexalves.investimentosbrq.consts.AbbreviationCurrenciesConsts
 import br.com.alexalves.investimentosbrq.R
 import br.com.alexalves.investimentosbrq.model.Currency
 import br.com.alexalves.investimentosbrq.model.User
@@ -11,16 +12,16 @@ class CurrencyUtils {
 
     fun filterCurrency(currency: Currency, user: User): BigInteger {
         return when (currency.abbreviation) {
-            "USD" -> user.usd
-            "EUR" -> user.eur
-            "GBP" -> user.gbp
-            "ARS" -> user.ars
-            "CAD" -> user.cad
-            "AUD" -> user.aud
-            "JPY" -> user.jpy
-            "CNY" -> user.cny
-            "BTC" -> user.btc
-            else -> throw Exception("Moeda não encontrada")
+            AbbreviationCurrenciesConsts().USD -> user.usd
+            AbbreviationCurrenciesConsts().EUR -> user.eur
+            AbbreviationCurrenciesConsts().GBP -> user.gbp
+            AbbreviationCurrenciesConsts().ARS -> user.ars
+            AbbreviationCurrenciesConsts().CAD -> user.cad
+            AbbreviationCurrenciesConsts().AUD -> user.aud
+            AbbreviationCurrenciesConsts().JPY -> user.jpy
+            AbbreviationCurrenciesConsts().CNY -> user.cny
+            AbbreviationCurrenciesConsts().BTC -> user.btc
+            else -> throw Exception(AbbreviationCurrenciesConsts().CURRENCY_NOT_FOUND)
         }
     }
 
@@ -47,5 +48,4 @@ class CurrencyUtils {
         } else ContextCompat.getColor(context, R.color.white)
         return color
     }
-
 }

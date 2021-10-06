@@ -1,9 +1,10 @@
 package br.com.alexalves.investimentosbrq.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import br.com.alexalves.investimentosbrq.consts.AbbreviationCurrenciesConsts
+import br.com.alexalves.investimentosbrq.consts.OperationConsts
 import br.com.alexalves.investimentosbrq.model.*
 import br.com.alexalves.investimentosbrq.repository.CurrencyRepository
 import br.com.alexalves.investimentosbrq.utils.CurrencyUtils
@@ -31,8 +32,6 @@ class ExchangeViewModel(
 
     private val sellButtonEvent = MutableLiveData<SellButtonEvent>()
     val viewSellButtonEvent = sellButtonEvent
-
-
 
     fun saleCurrency(currency: Currency, quantity: BigInteger) {
         currencyRepository.searchUser(1L,
@@ -62,47 +61,57 @@ class ExchangeViewModel(
     ) {
         try {
             CoroutineScope(IO).launch {
-                val balance = user.balance
                 val currencyAmount = CurrencyUtils().filterCurrency(currency, user)
                 val totalSaleValue = quantity.toBigDecimal() * currency.sell
 
                 val approval = (quantity <= currencyAmount)
                 if (approval) {
-                    val finalBalance = balance + totalSaleValue
-                    val finalCurrencyAmount = currencyAmount - quantity
-                    saveBusinessChangeInUser(
-                        finalBalance,
-                        finalCurrencyAmount,
-                        currency,
-                        user
-                    )
+                    saveSaleInUser(quantity, currency, user)
                     currencyRepository.updateUser(
                         user,
-                        whenSucess = {
-                            MainScope().launch {
-                                businessState.value =
-                                    BusinessExchangeState.SucessSale(quantity, totalSaleValue)
-                            }
-                        }, whenFails = { error ->
-                            MainScope().launch {
-                                businessState.value = BusinessExchangeState.FailureSale(error)
-                            }
+                        whenSucess = { sucessInSale(quantity, totalSaleValue) },
+                        whenFails = { error ->
+                            failureInSale(error)
                         })
                 } else {
-                    MainScope().launch {
-                        businessState.value =
-                            BusinessExchangeState.FailureSale(Exception("Operation not approved"))
-                    }
+                    failureInSale(Exception(OperationConsts().OPERATION_NOT_APPROVED))
                 }
             }
         } catch (error: Exception) {
-            MainScope().launch {
-                businessState.value =
-                    BusinessExchangeState.FailureSale(Exception("Fails in sale"))
-            }
+            failureInSale(Exception(OperationConsts().FAILS_IN_SALE))
         }
     }
 
+    private fun failureInSale(error: Exception) {
+        MainScope().launch {
+            businessState.value = BusinessExchangeState.FailureSale(error)
+        }
+    }
+
+    private fun sucessInSale(quantity: BigInteger, totalSaleValue: BigDecimal) {
+        MainScope().launch {
+            businessState.value =
+                BusinessExchangeState.SucessSale(quantity, totalSaleValue)
+        }
+    }
+
+    private fun saveSaleInUser(
+        quantity: BigInteger,
+        currency: Currency,
+        user: User
+    ) {
+        val balance = user.balance
+        val currencyAmount = CurrencyUtils().filterCurrency(currency, user)
+        val totalSaleValue = quantity.toBigDecimal() * currency.sell
+        val finalBalance = balance + totalSaleValue
+        val finalCurrencyAmount = currencyAmount - quantity
+        saveBusinessChangeInUser(
+            finalBalance,
+            finalCurrencyAmount,
+            currency,
+            user
+        )
+    }
 
     private fun updatePurchaseInUser(
         user: User,
@@ -111,48 +120,57 @@ class ExchangeViewModel(
     ) {
         try {
             CoroutineScope(IO).launch {
-                val balance = user.balance
-                val currencyAmount = CurrencyUtils().filterCurrency(currency, user)
                 val totalPurchaseValue = quantity.toBigDecimal() * currency.buy
-
-                val approval = (totalPurchaseValue <= balance)
+                val approval = (totalPurchaseValue <= user.balance)
                 if (approval) {
-                    val finalBalance = balance - totalPurchaseValue
-                    val finalCurrencyAmount = currencyAmount + quantity
-                    saveBusinessChangeInUser(
-                        finalBalance,
-                        finalCurrencyAmount,
-                        currency,
-                        user
-                    )
+                    savePurchaseInUser(quantity, currency, user)
                     currencyRepository.updateUser(
                         user,
-                        whenSucess = {
-                            MainScope().launch {
-                                businessState.value = BusinessExchangeState.SucessPurchase(
-                                    quantity,
-                                    totalPurchaseValue
-                                )
-                            }
-                        }, whenFails = { error ->
-                            MainScope().launch {
-                                businessState.value =
-                                    BusinessExchangeState.FailurePurchase(error)
-                            }
-                        })
+                        whenSucess = { sucessInPurchase(quantity, totalPurchaseValue) },
+                        whenFails = { error -> failureInPurchase(error) })
                 } else {
-                    MainScope().launch {
-                        businessState.value =
-                            BusinessExchangeState.FailurePurchase(Exception("Não aprovado"))
-                    }
+                    failureInPurchase(Exception(OperationConsts().OPERATION_NOT_APPROVED))
                 }
             }
         } catch (erro: Exception) {
-            MainScope().launch {
-                businessState.value =
-                    BusinessExchangeState.FailurePurchase(Exception("Fails in purchase"))
-            }
+            failureInPurchase(Exception(OperationConsts().FAILS_IN_PURCHASE))
         }
+    }
+
+    private fun failureInPurchase(error: Exception) {
+        MainScope().launch {
+            businessState.value =
+                BusinessExchangeState.FailurePurchase(error)
+        }
+    }
+
+    private fun sucessInPurchase(
+        quantity: BigInteger,
+        totalPurchaseValue: BigDecimal
+    ) {
+        MainScope().launch {
+            businessState.value = BusinessExchangeState.SucessPurchase(
+                quantity,
+                totalPurchaseValue
+            )
+        }
+    }
+
+    private fun savePurchaseInUser(
+        quantity: BigInteger,
+        currency: Currency,
+        user: User
+    ) {
+        val currencyAmount = CurrencyUtils().filterCurrency(currency, user)
+        val totalPurchaseValue = quantity.toBigDecimal() * currency.buy
+        val finalBalance = user.balance - totalPurchaseValue
+        val finalCurrencyAmount = currencyAmount + quantity
+        saveBusinessChangeInUser(
+            finalBalance,
+            finalCurrencyAmount,
+            currency,
+            user
+        )
     }
 
     fun initCambioFragment(currency: Currency, userId: Long) {
@@ -218,15 +236,15 @@ class ExchangeViewModel(
     ) {
         user.balance = finalBalance
         when (currency.abbreviation) {
-            "USD" -> user.usd = finalCurrencyAmount
-            "EUR" -> user.eur = finalCurrencyAmount
-            "GBP" -> user.gbp = finalCurrencyAmount
-            "ARS" -> user.ars = finalCurrencyAmount
-            "CAD" -> user.cad = finalCurrencyAmount
-            "AUD" -> user.aud = finalCurrencyAmount
-            "JPY" -> user.jpy = finalCurrencyAmount
-            "CNY" -> user.cny = finalCurrencyAmount
-            "BTC" -> user.btc = finalCurrencyAmount
+            AbbreviationCurrenciesConsts().USD -> user.usd = finalCurrencyAmount
+            AbbreviationCurrenciesConsts().EUR -> user.eur = finalCurrencyAmount
+            AbbreviationCurrenciesConsts().GBP -> user.gbp = finalCurrencyAmount
+            AbbreviationCurrenciesConsts().ARS -> user.ars = finalCurrencyAmount
+            AbbreviationCurrenciesConsts().CAD -> user.cad = finalCurrencyAmount
+            AbbreviationCurrenciesConsts().AUD -> user.aud = finalCurrencyAmount
+            AbbreviationCurrenciesConsts().JPY -> user.jpy = finalCurrencyAmount
+            AbbreviationCurrenciesConsts().CNY -> user.cny = finalCurrencyAmount
+            AbbreviationCurrenciesConsts().BTC -> user.btc = finalCurrencyAmount
         }
     }
 
