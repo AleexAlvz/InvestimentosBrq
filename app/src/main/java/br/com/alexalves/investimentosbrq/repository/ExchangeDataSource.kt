@@ -1,55 +1,57 @@
 package br.com.alexalves.investimentosbrq.repository
 
+import br.com.alexalves.investimentosbrq.consts.OperationConsts
 import br.com.alexalves.investimentosbrq.database.UsuarioDao
-import br.com.alexalves.investimentosbrq.model.Currency
-import br.com.alexalves.investimentosbrq.model.ServiceInvestimentos
-import br.com.alexalves.investimentosbrq.model.User
+import br.com.alexalves.investimentosbrq.model.*
 import br.com.alexalves.investimentosbrq.retrofit.InvestimentosServiceAPI
-import br.com.alexalves.investimentosbrq.utils.CurrencyUtils
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.math.BigDecimal
-import java.math.BigInteger
 
-class CurrencyRepository(
+class ExchangeDataSource(
     private val userDao: UsuarioDao
-) {
+) : ExchangeRepository {
     private val service = InvestimentosServiceAPI().getInvestimentosService()
 
-    fun searchUser(
+    override fun searchUser(
         userId: Long,
-        whenSucess: ((user: User) -> Unit),
-        whenFails: ((error: Exception) -> Unit)
+        callBackSearchUser: (result: OperateUser) -> Unit
     ) {
-        try {
-            CoroutineScope(IO).launch {
+        CoroutineScope(IO).launch {
+            try {
                 val user = userDao.searchUser(id = userId)
                 withContext(Main) {
-                    whenSucess.invoke(user)
+                    callBackSearchUser.invoke(OperateUser.Success(user))
+                }
+            } catch (error: Exception) {
+                withContext(Main) {
+                    callBackSearchUser.invoke(OperateUser.Error(Exception(OperationConsts().FAILS_IN_SEARCH_USER)))
                 }
             }
-        } catch (error: Exception) {
-            whenFails.invoke(error)
         }
     }
 
-    fun updateUser(
+    override fun updateUser(
         user: User,
-        whenSucess: (() -> Unit),
-        whenFails: ((error: Exception) -> Unit)
+        callBackUpdateUser: (result: OperateUser) -> Unit
     ) {
-        try {
-            userDao.updateUser(user)
-            whenSucess.invoke()
-        } catch (error: Exception){
-            whenFails.invoke(error)
+        CoroutineScope(IO).launch {
+            try {
+                userDao.updateUser(user)
+                withContext(Main){
+                    callBackUpdateUser.invoke(OperateUser.Success(user))
+                }
+            } catch (error: Exception) {
+                withContext(Main){
+                    callBackUpdateUser.invoke(OperateUser.Error(java.lang.Exception(OperationConsts().FAILS_IN_SEARCH_USER)))
+                }
+            }
         }
     }
 
-    fun searchCurrencies(
+    override fun searchCurrencies(
         whenSucess: ((currencies: List<Currency>) -> Unit),
         whenFails: ((error: Exception) -> Unit)
     ) {
@@ -62,7 +64,9 @@ class CurrencyRepository(
                     whenSucess.invoke(foundCurrencies)
                 }
             } catch (error: Exception) {
-                whenFails.invoke(error)
+                withContext(Main){
+                    whenFails.invoke(error)
+                }
             }
         }
     }
@@ -88,7 +92,7 @@ class CurrencyRepository(
             jpy.setAbbreviationAndSource(it.source)
             val usd = it.usd
             usd.setAbbreviationAndSource(it.source)
-            val configuredCurrencies = listOf<Currency>(ars, aud, btc, cad, cny, eur, gbp, jpy, usd)
+            val configuredCurrencies = listOf(ars, aud, btc, cad, cny, eur, gbp, jpy, usd)
             for (currency in configuredCurrencies) {
                 if (currency.sell != null && currency.buy != null) {
                     currencies.add(currency)

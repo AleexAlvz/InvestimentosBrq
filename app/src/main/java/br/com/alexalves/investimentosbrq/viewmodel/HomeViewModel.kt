@@ -4,17 +4,17 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import br.com.alexalves.investimentosbrq.model.HomeState
-import br.com.alexalves.investimentosbrq.repository.CurrencyRepository
+import br.com.alexalves.investimentosbrq.repository.ExchangeDataSource
 
 class HomeViewModel(
-    val currencyRepository: CurrencyRepository
+    val exchangeDataSource: ExchangeDataSource
 ) : ViewModel() {
 
     private val homeEvent = MutableLiveData<HomeState>()
     val viewHomeState: LiveData<HomeState> = homeEvent
 
     fun buscaMoedas() {
-        currencyRepository.searchCurrencies(
+        exchangeDataSource.searchCurrencies(
             whenSucess = { currencies ->
                 homeEvent.value = HomeState.FoundCurrencies(currencies)
             }, whenFails = { error ->

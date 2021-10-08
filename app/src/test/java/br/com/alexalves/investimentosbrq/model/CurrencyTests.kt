@@ -1,5 +1,6 @@
 package br.com.alexalves.investimentosbrq.model
 
+import br.com.alexalves.investimentosbrq.utils.CurrencyUtils
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.CoreMatchers.equalTo
 import org.hamcrest.MatcherAssert.assertThat
@@ -74,35 +75,37 @@ class CurrencyTests {
 
     @Test
     fun testGetVariacaoFormatada(){
-        val moeda = Currency("TESTE", BigDecimal.ZERO, BigDecimal.ZERO, 25.75)
-        val formatacao = moeda.getVariacaoFormatada()
-        assertThat(formatacao, `is`(equalTo("25,75%")))
+        val currency = Currency("TESTE", BigDecimal.ZERO, BigDecimal.ZERO, 25.75)
+        val formatted = CurrencyUtils().getVariacaoFormatada(currency.variation)
+        assertThat(formatted, `is`(equalTo("25,75%")))
     }
 
     @Test
     fun testGetValorVendaFormatadoQuandoValorZero(){
-        val moeda = Currency("TESTE", BigDecimal.ZERO, BigDecimal.ZERO, 0.0)
-        val formatacao = moeda.getValorVendaFormatado()
-        assertThat(formatacao, `is`(equalTo("BRL 0,000")))
+        val currency = Currency("TESTE", BigDecimal.ZERO, BigDecimal.ZERO, 0.0)
+        val formatted = CurrencyUtils().getValorVendaFormatado(currency)
+        assertThat(formatted, `is`(equalTo("BRL 0,000")))
     }
 
     @Test
     fun testGetValorVendaFormatadoQuandoValorMaiorQueZero(){
-
+        val currency = Currency("TESTE", BigDecimal.ZERO, BigDecimal(3.751), 0.0)
+        val formatted = CurrencyUtils().getValorVendaFormatado(currency)
+        assertThat(formatted, `is`(equalTo("BRL 3,751")))
     }
 
     @Test
     fun testGetValorCompraFormatadoQuandoValorZero(){
         val moeda = Currency("TESTE", BigDecimal.ZERO, BigDecimal.ZERO, 0.0)
-        val formatacao = moeda.getValorCompraFormatado()
-        assertThat(formatacao, `is`(equalTo("BRL 0,000")))
+        val formatted = CurrencyUtils().getValorCompraFormatado(moeda)
+        assertThat(formatted, `is`(equalTo("BRL 0,000")))
     }
 
     @Test
     fun testGetValorCompraFormatadoQuandoValorMaiorQueZero(){
-        val moeda = Currency("TESTE", BigDecimal(3.751), BigDecimal.ZERO, 0.0)
-        val formatacao = moeda.getValorCompraFormatado()
-        assertThat(formatacao, `is`(equalTo("BRL 3,751")))
+        val currency = Currency("TESTE", BigDecimal(3.751), BigDecimal.ZERO, 0.0)
+        val formatted = CurrencyUtils().getValorCompraFormatado(currency)
+        assertThat(formatted, `is`(equalTo("BRL 3,751")))
     }
 
 }

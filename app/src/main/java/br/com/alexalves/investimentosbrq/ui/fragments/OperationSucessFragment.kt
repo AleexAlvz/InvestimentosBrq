@@ -13,7 +13,7 @@ import br.com.alexalves.investimentosbrq.ui.customview.ButtonBlue
 import java.math.BigDecimal
 import java.math.BigInteger
 
-class OperacaoSucedidaFragment: Fragment() {
+class OperationSucessFragment: Fragment() {
 
     private lateinit var inflatedView: View
     private lateinit var textSucesso: TextView
@@ -32,7 +32,6 @@ class OperacaoSucedidaFragment: Fragment() {
         inflatedView = inflater.inflate(R.layout.fragment_operacao_sucedida, container, false)
         buscaCampos()
         configuraButtonHome()
-
         configuraTextoSucesso()
         return inflatedView
     }

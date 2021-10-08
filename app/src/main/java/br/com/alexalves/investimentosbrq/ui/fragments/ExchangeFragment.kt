@@ -18,7 +18,7 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.math.BigDecimal
 import java.math.BigInteger
 
-class CambioFragment : Fragment() {
+class ExchangeFragment : Fragment() {
 
     lateinit var inflatedView: View
     var sucessPurchase: ((quantityPurchased: BigInteger, purchaseValue: BigDecimal) -> Unit)? = null

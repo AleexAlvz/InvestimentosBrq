@@ -10,8 +10,8 @@ import androidx.fragment.app.Fragment
 import br.com.alexalves.investimentosbrq.R
 import br.com.alexalves.investimentosbrq.model.Currency
 import br.com.alexalves.investimentosbrq.model.TypeOperation
-import br.com.alexalves.investimentosbrq.ui.fragments.CambioFragment
-import br.com.alexalves.investimentosbrq.ui.fragments.OperacaoSucedidaFragment
+import br.com.alexalves.investimentosbrq.ui.fragments.ExchangeFragment
+import br.com.alexalves.investimentosbrq.ui.fragments.OperationSucessFragment
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 import java.math.BigDecimal
@@ -31,32 +31,31 @@ class CambioActivity : AppCompatActivity() {
         inicializaFragment(fragmentCambioConfigurado())
     }
 
-    private fun fragmentCambioConfigurado(): CambioFragment {
-        val cambioFragment = CambioFragment()
+    private fun fragmentCambioConfigurado(): ExchangeFragment {
+        val cambioFragment = ExchangeFragment()
         configuraQuandoSucessoCompraCambio(cambioFragment)
         configuraQuandoSucessoVendaCambio(cambioFragment)
         configuraBundleMoedaEmCambioFragment(cambioFragment)
         return cambioFragment
     }
 
-    private fun configuraBundleMoedaEmCambioFragment(cambioFragment: CambioFragment) {
+    private fun configuraBundleMoedaEmCambioFragment(exchangeFragment: ExchangeFragment) {
         val bundle = Bundle()
         bundle.putSerializable(getString(R.string.currency_argument), currency)
-        cambioFragment.arguments = bundle
+        exchangeFragment.arguments = bundle
     }
 
-    private fun configuraQuandoSucessoVendaCambio(cambioFragment: CambioFragment) {
-        cambioFragment.sucessSale = { quantidadeVendida, valorDaCompra ->
+    private fun configuraQuandoSucessoVendaCambio(exchangeFragment: ExchangeFragment) {
+        exchangeFragment.sucessSale = { quantidadeVendida, valorDaCompra ->
             val fragmentVenda = fragmentVendaSucedidaConfigurado(quantidadeVendida, valorDaCompra)
             configuraToolbarEmVendaSucesso()
             inicializaFragment(fragmentVenda)
         }
     }
 
-    private fun configuraQuandoSucessoCompraCambio(cambioFragment: CambioFragment) {
-        cambioFragment.sucessPurchase = { quantidadeComprada, valorDaCompra ->
-            val fragmentCompra =
-                fragmentCompraSucedidaConfigurado(quantidadeComprada, valorDaCompra)
+    private fun configuraQuandoSucessoCompraCambio(exchangeFragment: ExchangeFragment) {
+        exchangeFragment.sucessPurchase = { quantidadeComprada, valorDaCompra ->
+            val fragmentCompra = fragmentCompraSucedidaConfigurado(quantidadeComprada, valorDaCompra)
             configuraToolbarEmCompraSucesso()
             inicializaFragment(fragmentCompra)
         }
@@ -66,7 +65,7 @@ class CambioActivity : AppCompatActivity() {
         quantidadeVendida: BigInteger,
         valorTotal: BigDecimal
     ): Fragment {
-        val fragmentVenda = OperacaoSucedidaFragment()
+        val fragmentVenda = OperationSucessFragment()
         fragmentVenda.quantidade = quantidadeVendida
         fragmentVenda.valorTotal = valorTotal
         fragmentVenda.currency = currency
@@ -79,7 +78,7 @@ class CambioActivity : AppCompatActivity() {
         quantidadeComprada: BigInteger,
         valorTotal: BigDecimal
     ): Fragment {
-        val fragmentCompra = OperacaoSucedidaFragment()
+        val fragmentCompra = OperationSucessFragment()
         fragmentCompra.quantidade = quantidadeComprada
         fragmentCompra.valorTotal = valorTotal
         fragmentCompra.currency = currency
