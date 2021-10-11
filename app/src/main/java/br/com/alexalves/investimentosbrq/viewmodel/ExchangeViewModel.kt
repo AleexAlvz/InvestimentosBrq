@@ -5,11 +5,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import br.com.alexalves.investimentosbrq.consts.AbbreviationCurrenciesConsts
 import br.com.alexalves.investimentosbrq.model.*
-import br.com.alexalves.investimentosbrq.repository.ExchangeDataSource
 import br.com.alexalves.investimentosbrq.repository.ExchangeRepository
 import br.com.alexalves.investimentosbrq.utils.CurrencyUtils
-import kotlinx.coroutines.MainScope
-import kotlinx.coroutines.launch
 import java.math.BigDecimal
 import java.math.BigInteger
 
@@ -37,13 +34,7 @@ class ExchangeViewModel(
                 is OperateUser.Success -> {
                     try {
                         val amountCurrency = CurrencyUtils().filterCurrency(currency, it.user)
-                        val newFields = ScreenExchangeState.InitExchangeFragment(
-                            currency = currency,
-                            userBalance = it.user.balance,
-                            amountCurrency = amountCurrency
-                        )
-                        screenState.value = newFields
-                        fields.value = newFields
+                        screenExchangeStateToInitFragment(currency, it.user.balance, amountCurrency)
                     } catch (error: Exception) {
                         screenState.value = ScreenExchangeState.CurrencyNotFound(error)
                     }
@@ -53,6 +44,20 @@ class ExchangeViewModel(
                 }
             }
         }
+    }
+
+    fun screenExchangeStateToInitFragment(
+        currency: Currency,
+        balance: BigDecimal,
+        amountCurrency: BigInteger
+    ) {
+        val newFields = ScreenExchangeState.InitExchangeFragment(
+            currency = currency,
+            userBalance = balance,
+            amountCurrency = amountCurrency
+        )
+        screenState.value = newFields
+        fields.value = newFields
     }
 
     fun purchaseCurrency(currency: Currency, quantity: BigInteger) {

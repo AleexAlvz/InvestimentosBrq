@@ -31,7 +31,7 @@ class HomeActivity : AppCompatActivity() {
         configuraToolbar()
         configuraRecyclerView()
         observeCurrencies()
-        homeViewModel.buscaMoedas()
+        homeViewModel.findCurrencies()
     }
 
     private fun observeCurrencies() {

@@ -28,32 +28,23 @@ class ExchangeViewModelTest : TestCase() {
     val rule = InstantTaskExecutorRule()
 
     @Mock
-    private lateinit var fieldsObserver: Observer<ScreenExchangeState.InitExchangeFragment>
-
-    @Mock
     private lateinit var screenStateObserver: Observer<ScreenExchangeState>
 
-    val currencyDollar = Currency("DOLLAR", BigDecimal(5), BigDecimal(5), 2.0, "USD")
-
-    @Test()
+    @Test
     fun testInitCambioFragmentSucess() {
 
-        val exchangeRepositoryMock = mock(ExchangeRepository::class.java)
+        //Arrange
+        val exchangeViewModel = mock(ExchangeViewModel::class.java)
 
-        val user = mock(User::class.java)
-        user.balance = BigDecimal(10000000)
-        user.usd = BigInteger.ZERO
+        val currencyDollar = Currency("DOLLAR", BigDecimal(5), BigDecimal(5), 2.0, "USD")
+        val user = User()
+        user.id = 1L
 
-        val callback = mock(Unit::class.java)
-
-        `when`(exchangeRepositoryMock.searchUser(anyLong(), callback)).thenAnswer{
-            val callback = it.getArgument<(result: OperateUser)->Unit>(1)
-            callback.invoke(OperateUser.Success(user))
+        `when`(exchangeViewModel.initCambioFragment(currencyDollar, 1L)).thenAnswer{
+            exchangeViewModel.screenExchangeStateToInitFragment(currencyDollar, user.balance, user.usd)
         }
 
-        //Arrange
-        val exchangeViewModel = ExchangeViewModel(exchangeRepositoryMock)
-        exchangeViewModel.viewScreenState.observeForever( screenStateObserver )
+        exchangeViewModel.viewScreenState.observeForever(screenStateObserver)
 
         //Act
         exchangeViewModel.initCambioFragment(currencyDollar, 1L)
@@ -71,21 +62,5 @@ class ExchangeViewModelTest : TestCase() {
     fun testInitCambioFragmentCurrencyNotFound(){
     }
 
-}
-
-class MockExchangeRepositorySucessInSearchUser : ExchangeRepository {
-
-    override fun searchUser(userId: Long, callBackSearchUser: (result: OperateUser) -> Unit) {
-        callBackSearchUser.invoke(OperateUser.Success(User()))
-    }
-
-    override fun updateUser(user: User, callBackUpdateUser: (result: OperateUser) -> Unit) {
-    }
-
-    override fun searchCurrencies(
-        whenSucess: (currencies: List<Currency>) -> Unit,
-        whenFails: (error: Exception) -> Unit
-    ) {
-    }
 }
 

@@ -13,7 +13,7 @@ class HomeViewModel(
     private val homeEvent = MutableLiveData<HomeState>()
     val viewHomeState: LiveData<HomeState> = homeEvent
 
-    fun buscaMoedas() {
+    fun findCurrencies() {
         exchangeDataSource.searchCurrencies(
             whenSucess = { currencies ->
                 homeEvent.value = HomeState.FoundCurrencies(currencies)

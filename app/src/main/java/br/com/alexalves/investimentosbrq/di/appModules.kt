@@ -16,5 +16,5 @@ val appModules = module {
     single<ExchangeDataSource> { ExchangeDataSource(get()) }
 
     viewModel<HomeViewModel> { HomeViewModel(get<ExchangeDataSource>()) }
-    viewModel<ExchangeViewModel> { ExchangeViewModel(get<ExchangeRepository>())}
+    viewModel<ExchangeViewModel> { ExchangeViewModel(get<ExchangeDataSource>())}
 }
