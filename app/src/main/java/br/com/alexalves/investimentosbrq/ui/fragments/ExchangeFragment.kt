@@ -24,6 +24,7 @@ class ExchangeFragment : Fragment() {
     var sucessPurchase: ((quantityPurchased: BigInteger, purchaseValue: BigDecimal) -> Unit)? = null
     var sucessSale: ((quantitySold: BigInteger, saleValue: BigDecimal) -> Unit)? = null
     val exchangeViewModel: ExchangeViewModel by viewModel()
+    val userId = 1L
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -45,7 +46,7 @@ class ExchangeFragment : Fragment() {
     }
     private fun initCambioFragment() {
         val currency = arguments?.get(getString(R.string.currency_argument)) as Currency
-        exchangeViewModel.initCambioFragment(currency = currency, userId = 1L)
+        exchangeViewModel.initCambioFragment(currency = currency, userId = userId)
     }
     private fun initCambioComponents(fields: ScreenExchangeState.InitExchangeFragment) {
         initTextFields(fields)
@@ -100,7 +101,7 @@ class ExchangeFragment : Fragment() {
         observerBuyButtonEvent()
     }
     private fun observerBuyButtonEvent() {
-        exchangeViewModel.viewBuyButtonEvent.observe(viewLifecycleOwner, Observer {
+        exchangeViewModel.viewBuyButtonEvent.observe(viewLifecycleOwner, {
             when (it) {
                 is BuyButtonEvent.Enabled -> {
                     configureBuyButtonState(true)
@@ -113,7 +114,7 @@ class ExchangeFragment : Fragment() {
     }
 
     private fun observerSellButtonEvent() {
-        exchangeViewModel.viewSellButtonEvent.observe(viewLifecycleOwner, Observer {
+        exchangeViewModel.viewSellButtonEvent.observe(viewLifecycleOwner, {
             when (it) {
                 is SellButtonEvent.Enabled -> {
                     configureSellButtonState(true)
@@ -126,7 +127,7 @@ class ExchangeFragment : Fragment() {
     }
 
     private fun observerScreenState() {
-        exchangeViewModel.viewScreenState.observe(viewLifecycleOwner, Observer {
+        exchangeViewModel.viewScreenState.observe(viewLifecycleOwner, {
             when (it) {
                 is ScreenExchangeState.InitExchangeFragment -> {
                     initCambioComponents(it)
@@ -136,7 +137,7 @@ class ExchangeFragment : Fragment() {
     }
 
     private fun observerBusinessState() {
-        exchangeViewModel.viewBusinessExchangeState.observe(viewLifecycleOwner, Observer {
+        exchangeViewModel.viewBusinessExchangeState.observe(viewLifecycleOwner, {
             when (it) {
                 is BusinessExchangeState.SucessPurchase -> {
                     sucessPurchase?.invoke(it.amount, it.value)
@@ -159,12 +160,12 @@ class ExchangeFragment : Fragment() {
 
         buyButton.configuraClique = {
             val amount = inputLayoutQuantidade.editText?.text.toString().toBigInteger()
-            exchangeViewModel.purchaseCurrency(fields.currency, amount)
+            exchangeViewModel.purchaseCurrency(fields.currency, amount, userId)
         }
 
         sellButton.configuraClique = {
             val amount = inputLayoutQuantidade.editText?.text.toString().toBigInteger()
-            exchangeViewModel.saleCurrency(fields.currency, amount)
+            exchangeViewModel.saleCurrency(fields.currency, amount, userId)
         }
 
     }

@@ -6,19 +6,10 @@ import br.com.alexalves.investimentosbrq.model.User
 
 interface ExchangeRepository {
 
-    fun searchUser(
-        userId: Long,
-        callBackSearchUser: (result: OperateUser) -> Unit
-    )
+    suspend fun searchUser(userId: Long): User
 
-    fun updateUser(
-        user: User,
-        callBackUpdateUser: (result: OperateUser) -> Unit
-    )
+    suspend fun updateUser(user: User)
 
-    fun searchCurrencies(
-        whenSucess: ((currencies: List<Currency>) -> Unit),
-        whenFails: ((error: Exception) -> Unit)
-    )
+    suspend fun searchCurrencies(): List<Currency>
 
 }

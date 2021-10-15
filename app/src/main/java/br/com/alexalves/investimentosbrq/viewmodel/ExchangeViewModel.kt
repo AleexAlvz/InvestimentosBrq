@@ -3,10 +3,16 @@ package br.com.alexalves.investimentosbrq.viewmodel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import br.com.alexalves.investimentosbrq.base.AppContextProvider
 import br.com.alexalves.investimentosbrq.consts.AbbreviationCurrenciesConsts
 import br.com.alexalves.investimentosbrq.model.*
+import br.com.alexalves.investimentosbrq.model.exceptions.PurchaseNotApprovalException
+import br.com.alexalves.investimentosbrq.model.exceptions.SaleNotApprovalException
+import br.com.alexalves.investimentosbrq.model.exceptions.UserNotFoundException
 import br.com.alexalves.investimentosbrq.repository.ExchangeRepository
 import br.com.alexalves.investimentosbrq.utils.CurrencyUtils
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 import java.math.BigDecimal
 import java.math.BigInteger
 
@@ -29,59 +35,43 @@ class ExchangeViewModel(
     val viewSellButtonEvent = sellButtonEvent
 
     fun initCambioFragment(currency: Currency, userId: Long) {
-        exchangeDataSource.searchUser(userId) {
-            when (it) {
-                is OperateUser.Success -> {
-                    try {
-                        val amountCurrency = CurrencyUtils().filterCurrency(currency, it.user)
-                        screenExchangeStateToInitFragment(currency, it.user.balance, amountCurrency)
-                    } catch (error: Exception) {
-                        screenState.value = ScreenExchangeState.CurrencyNotFound(error)
-                    }
-                }
-                is OperateUser.Error -> {
-                    screenState.value = ScreenExchangeState.UserNotFound(it.error)
-                }
+
+        CoroutineScope(AppContextProvider.io).launch {
+            try {
+                val user = exchangeDataSource.searchUser(userId)
+                val amountCurrency = CurrencyUtils().filterCurrency(currency, user)
+                val newFields = ScreenExchangeState
+                    .InitExchangeFragment(currency, user.balance, amountCurrency)
+                screenState.postValue(newFields)
+                fields.postValue(newFields)
+            } catch (error: Exception) {
+                screenState.postValue(
+                    ScreenExchangeState.FailureInInitExchangeFragment(
+                        UserNotFoundException()
+                    )
+                )
             }
         }
     }
 
-    fun screenExchangeStateToInitFragment(
-        currency: Currency,
-        balance: BigDecimal,
-        amountCurrency: BigInteger
-    ) {
-        val newFields = ScreenExchangeState.InitExchangeFragment(
-            currency = currency,
-            userBalance = balance,
-            amountCurrency = amountCurrency
-        )
-        screenState.value = newFields
-        fields.value = newFields
-    }
-
-    fun purchaseCurrency(currency: Currency, quantity: BigInteger) {
-        exchangeDataSource.searchUser(1L) {
-            when (it) {
-                is OperateUser.Success -> {
-                    updatePurchaseInUser(it.user, currency, quantity)
-                }
-                is OperateUser.Error -> {
-                    screenState.value = ScreenExchangeState.UserNotFound(it.error)
-                }
+    fun purchaseCurrency(currency: Currency, quantity: BigInteger, userId: Long) {
+        CoroutineScope(AppContextProvider.io).launch {
+            try {
+                val user = exchangeDataSource.searchUser(userId)
+                updatePurchaseInUser(user, currency, quantity)
+            } catch (error: Exception) {
+                businessState.postValue(BusinessExchangeState.FailurePurchase(UserNotFoundException()))
             }
         }
     }
 
-    fun saleCurrency(currency: Currency, quantity: BigInteger) {
-        exchangeDataSource.searchUser(1L) {
-            when (it) {
-                is OperateUser.Success -> {
-                    updateSaleInUser(it.user, currency, quantity)
-                }
-                is OperateUser.Error -> {
-                    screenState.value = ScreenExchangeState.UserNotFound(it.error)
-                }
+    fun saleCurrency(currency: Currency, quantity: BigInteger, userId: Long) {
+        CoroutineScope(AppContextProvider.io).launch {
+            try {
+                val user = exchangeDataSource.searchUser(userId)
+                updateSaleInUser(user, currency, quantity)
+            } catch (error: Exception) {
+                businessState.postValue(BusinessExchangeState.FailureSale(UserNotFoundException()))
             }
         }
     }
@@ -91,21 +81,27 @@ class ExchangeViewModel(
         currency: Currency,
         quantity: BigInteger
     ) {
-        val totalPurchaseValue = quantity.toBigDecimal() * currency.buy
-        val approval = (totalPurchaseValue <= user.balance)
-        if (approval) {
-            savePurchaseInUser(quantity, currency, user)
-            exchangeDataSource.updateUser(user) {
-                when (it) {
-                    is OperateUser.Success -> {
-                        businessState.value =
-                            BusinessExchangeState.SucessPurchase(quantity, totalPurchaseValue)
-                    }
-                    is OperateUser.Error -> {
-                        businessState.value =
-                            BusinessExchangeState.FailurePurchase(it.error)
-                    }
-                }
+        CoroutineScope(AppContextProvider.io).launch {
+            try {
+                val totalPurchaseValue = quantity.toBigDecimal() * currency.buy
+                val approval = (totalPurchaseValue <= user.balance)
+                if (approval) {
+                    savePurchaseInUser(quantity, currency, user)
+                    exchangeDataSource.updateUser(user)
+                    businessState.postValue(
+                        BusinessExchangeState.SucessPurchase(quantity, totalPurchaseValue)
+                    )
+                } else businessState.postValue(
+                    BusinessExchangeState.FailurePurchase(
+                        PurchaseNotApprovalException()
+                    )
+                )
+            } catch (error: Exception) {
+                businessState.postValue(
+                    BusinessExchangeState.FailurePurchase(
+                        PurchaseNotApprovalException()
+                    )
+                )
             }
         }
     }
@@ -115,22 +111,25 @@ class ExchangeViewModel(
         currency: Currency,
         quantity: BigInteger
     ) {
-        val currencyAmount = CurrencyUtils().filterCurrency(currency, user)
-        val totalSaleValue = quantity.toBigDecimal() * currency.sell
-
-        val approval = (quantity <= currencyAmount)
-        if (approval) {
-            saveSaleInUser(quantity, currency, user)
-            exchangeDataSource.updateUser(user) {
-                when (it) {
-                    is OperateUser.Success -> {
-                        businessState.value =
-                            BusinessExchangeState.SucessSale(quantity, totalSaleValue)
-                    }
-                    is OperateUser.Error -> {
-                        businessState.value = BusinessExchangeState.FailureSale(it.error)
-                    }
+        CoroutineScope(AppContextProvider.io).launch {
+            try {
+                val currencyAmount = CurrencyUtils().filterCurrency(currency, user)
+                val totalSaleValue = quantity.toBigDecimal() * currency.sell
+                val approval = (quantity <= currencyAmount)
+                if (approval) {
+                    saveSaleInUser(quantity, currency, user)
+                    exchangeDataSource.updateUser(user)
+                    businessState.postValue(
+                        BusinessExchangeState.SucessSale(
+                            quantity,
+                            totalSaleValue
+                        )
+                    )
+                } else {
+                    businessState.postValue(BusinessExchangeState.FailureSale(SaleNotApprovalException()))
                 }
+            } catch (error: Exception) {
+                businessState.postValue(BusinessExchangeState.FailureSale(SaleNotApprovalException()))
             }
         }
     }
@@ -144,6 +143,7 @@ class ExchangeViewModel(
         val totalPurchaseValue = quantity.toBigDecimal() * currency.buy
         val finalBalance = user.balance - totalPurchaseValue
         val finalCurrencyAmount = currencyAmount + quantity
+
         saveBusinessChangeInUser(
             finalBalance,
             finalCurrencyAmount,
@@ -157,11 +157,11 @@ class ExchangeViewModel(
         currency: Currency,
         user: User
     ) {
-        val balance = user.balance
         val currencyAmount = CurrencyUtils().filterCurrency(currency, user)
         val totalSaleValue = quantity.toBigDecimal() * currency.sell
-        val finalBalance = balance + totalSaleValue
+        val finalBalance = user.balance + totalSaleValue
         val finalCurrencyAmount = currencyAmount - quantity
+
         saveBusinessChangeInUser(
             finalBalance,
             finalCurrencyAmount,

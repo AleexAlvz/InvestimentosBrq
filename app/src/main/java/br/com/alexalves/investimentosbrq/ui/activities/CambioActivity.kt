@@ -8,12 +8,14 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
 import br.com.alexalves.investimentosbrq.R
+import br.com.alexalves.investimentosbrq.consts.TextsConsts
 import br.com.alexalves.investimentosbrq.model.Currency
 import br.com.alexalves.investimentosbrq.model.TypeOperation
 import br.com.alexalves.investimentosbrq.ui.fragments.ExchangeFragment
 import br.com.alexalves.investimentosbrq.ui.fragments.OperationSucessFragment
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
+import org.w3c.dom.Text
 import java.math.BigDecimal
 import java.math.BigInteger
 
@@ -26,6 +28,10 @@ class CambioActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_cambio)
+        init()
+    }
+
+    private fun init() {
         inicializaCampos()
         configuraToolbar()
         inicializaFragment(fragmentCambioConfigurado())
@@ -115,8 +121,8 @@ class CambioActivity : AppCompatActivity() {
 
     private fun configuraToolbarEmCambio() {
         MainScope().launch {
-            toolbar_titulo.text = "Cambio"
-            toolbar_voltar.text = "Moedas"
+            toolbar_titulo.text = TextsConsts.ExchangeToolbarTitleText
+            toolbar_voltar.text = TextsConsts.ExchangeToolbarBackText
             toolbar_voltar.visibility = View.VISIBLE
             toolbar_voltar.setOnClickListener { voltarParaHome() }
         }
@@ -124,8 +130,8 @@ class CambioActivity : AppCompatActivity() {
 
     private fun configuraToolbarEmVendaSucesso() {
         MainScope().launch {
-            toolbar_titulo.text = "Vender"
-            toolbar_voltar.text = "Câmbio"
+            toolbar_titulo.text = TextsConsts.OperationVendaToolbarTitleText
+            toolbar_voltar.text = TextsConsts.OperationSucessToolbarBackText
             toolbar_voltar.visibility = View.VISIBLE
             toolbar_voltar.setOnClickListener {
                 configuraToolbarEmCambio()
@@ -136,8 +142,8 @@ class CambioActivity : AppCompatActivity() {
 
     private fun configuraToolbarEmCompraSucesso() {
         MainScope().launch {
-            toolbar_titulo.text = "Comprar"
-            toolbar_voltar.text = "Câmbio"
+            toolbar_titulo.text = TextsConsts.OperationComprarToolbarTitleText
+            toolbar_voltar.text = TextsConsts.OperationSucessToolbarBackText
             toolbar_voltar.visibility = View.VISIBLE
             toolbar_voltar.setOnClickListener {
                 configuraToolbarEmCambio()

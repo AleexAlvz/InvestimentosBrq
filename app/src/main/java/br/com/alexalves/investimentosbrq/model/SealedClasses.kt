@@ -9,13 +9,11 @@ sealed class BusinessExchangeState(){
     data class SucessSale(val amount: BigInteger, val value: BigDecimal): BusinessExchangeState()
     data class FailurePurchase(val error: Exception): BusinessExchangeState()
     data class FailureSale(val error: Exception): BusinessExchangeState()
-    data class UserNotFound(val error: Exception): BusinessExchangeState()
 }
 
 sealed class ScreenExchangeState(){
     data class InitExchangeFragment(val currency: Currency, val userBalance: BigDecimal, val amountCurrency: BigInteger ): ScreenExchangeState()
-    data class CurrencyNotFound(val error: Exception): ScreenExchangeState()
-    data class UserNotFound(val error: Exception): ScreenExchangeState()
+    data class FailureInInitExchangeFragment(val error: Exception): ScreenExchangeState()
 }
 
 sealed class SellButtonEvent(){

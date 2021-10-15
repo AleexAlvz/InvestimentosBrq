@@ -5,6 +5,9 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import br.com.alexalves.investimentosbrq.model.HomeState
 import br.com.alexalves.investimentosbrq.repository.ExchangeDataSource
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.launch
 
 class HomeViewModel(
     val exchangeDataSource: ExchangeDataSource
@@ -14,11 +17,13 @@ class HomeViewModel(
     val viewHomeState: LiveData<HomeState> = homeEvent
 
     fun findCurrencies() {
-        exchangeDataSource.searchCurrencies(
-            whenSucess = { currencies ->
-                homeEvent.value = HomeState.FoundCurrencies(currencies)
-            }, whenFails = { error ->
-                homeEvent.value = HomeState.FailureInSearchCurrencies(error)
-            })
+        CoroutineScope(IO).launch {
+            try {
+                val currencies = exchangeDataSource.searchCurrencies()
+                homeEvent.postValue(HomeState.FoundCurrencies(currencies))
+            } catch (error: Exception) {
+                homeEvent.postValue(HomeState.FailureInSearchCurrencies(error))
+            }
+        }
     }
 }

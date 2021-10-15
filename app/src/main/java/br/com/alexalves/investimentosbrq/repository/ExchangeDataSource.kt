@@ -15,64 +15,15 @@ class ExchangeDataSource(
 ) : ExchangeRepository {
     private val service = InvestimentosServiceAPI().getInvestimentosService()
 
-    override fun searchUser(
-        userId: Long,
-        callBackSearchUser: (result: OperateUser) -> Unit
-    ) {
-        CoroutineScope(IO).launch {
-            try {
-                val user = userDao.searchUser(id = userId)
-                withContext(Main) {
-                    callBackSearchUser.invoke(OperateUser.Success(user))
-                }
-            } catch (error: Exception) {
-                withContext(Main) {
-                    callBackSearchUser.invoke(OperateUser.Error(Exception(OperationConsts().FAILS_IN_SEARCH_USER)))
-                }
-            }
-        }
-    }
+    override suspend fun searchUser(userId: Long): User = userDao.searchUser(userId)
 
-    override fun updateUser(
-        user: User,
-        callBackUpdateUser: (result: OperateUser) -> Unit
-    ) {
-        CoroutineScope(IO).launch {
-            try {
-                userDao.updateUser(user)
-                withContext(Main){
-                    callBackUpdateUser.invoke(OperateUser.Success(user))
-                }
-            } catch (error: Exception) {
-                withContext(Main){
-                    callBackUpdateUser.invoke(OperateUser.Error(java.lang.Exception(OperationConsts().FAILS_IN_SEARCH_USER)))
-                }
-            }
-        }
-    }
+    override suspend fun updateUser(user: User) = userDao.updateUser(user)
 
-    override fun searchCurrencies(
-        whenSucess: ((currencies: List<Currency>) -> Unit),
-        whenFails: ((error: Exception) -> Unit)
-    ) {
-        val callService = service.getService()
-        CoroutineScope(IO).launch {
-            try {
-                val service = callService.execute().body()
-                val foundCurrencies = configureAndFilterCurrencies(service)
-                withContext(Main) {
-                    whenSucess.invoke(foundCurrencies)
-                }
-            } catch (error: Exception) {
-                withContext(Main){
-                    whenFails.invoke(error)
-                }
-            }
-        }
-    }
+    override suspend fun searchCurrencies(): List<Currency> =
+        configureAndFilterCurrencies(service.getService().execute().body())
 
     private fun configureAndFilterCurrencies(service: ServiceInvestimentos?): List<Currency> {
-        var currencies = arrayListOf<Currency>()
+        val currencies = arrayListOf<Currency>()
         service?.results?.currencies?.let {
             val ars = it.ars
             ars.setAbbreviationAndSource(it.source)
