@@ -7,7 +7,7 @@ import androidx.room.Update
 import br.com.alexalves.investimentosbrq.model.User
 
 @Dao
-abstract class UsuarioDao {
+abstract class UserDAO {
 
     @Update
     abstract fun updateUser(user: User)

@@ -3,26 +3,32 @@ package br.com.alexalves.investimentosbrq.viewmodel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import br.com.alexalves.investimentosbrq.base.AppContextProvider
 import br.com.alexalves.investimentosbrq.model.HomeState
-import br.com.alexalves.investimentosbrq.repository.ExchangeDataSource
+import br.com.alexalves.investimentosbrq.model.exceptions.FailureInFoundCurrenciesException
+import br.com.alexalves.investimentosbrq.repository.ExchangeRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
 
 class HomeViewModel(
-    val exchangeDataSource: ExchangeDataSource
+    val exchangeDataSource: ExchangeRepository
 ) : ViewModel() {
 
-    private val homeEvent = MutableLiveData<HomeState>()
-    val viewHomeState: LiveData<HomeState> = homeEvent
+    private val homeState = MutableLiveData<HomeState>()
+    val viewHomeState: LiveData<HomeState> = homeState
 
     fun findCurrencies() {
-        CoroutineScope(IO).launch {
+        CoroutineScope(AppContextProvider.io).launch {
             try {
                 val currencies = exchangeDataSource.searchCurrencies()
-                homeEvent.postValue(HomeState.FoundCurrencies(currencies))
+                if (currencies.isNotEmpty()){
+                    homeState.postValue(HomeState.FoundCurrencies(currencies))
+                } else {
+                    homeState.postValue(HomeState.FailureInSearchCurrencies(FailureInFoundCurrenciesException("List isn't valid")))
+                }
             } catch (error: Exception) {
-                homeEvent.postValue(HomeState.FailureInSearchCurrencies(error))
+                homeState.postValue(HomeState.FailureInSearchCurrencies(FailureInFoundCurrenciesException()))
             }
         }
     }

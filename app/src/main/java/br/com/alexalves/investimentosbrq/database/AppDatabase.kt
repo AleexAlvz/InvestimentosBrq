@@ -9,5 +9,5 @@ import br.com.alexalves.investimentosbrq.model.User
 @TypeConverters(BigDecimalConverter::class, BigIntegerConverter::class)
 abstract class AppDatabase: RoomDatabase() {
 
-    abstract val usuarioDao: UsuarioDao
+    abstract val userDAO: UserDAO
 }

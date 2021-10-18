@@ -12,7 +12,7 @@ import androidx.recyclerview.widget.RecyclerView
 import br.com.alexalves.investimentosbrq.R
 import br.com.alexalves.investimentosbrq.model.Currency
 import br.com.alexalves.investimentosbrq.model.HomeState
-import br.com.alexalves.investimentosbrq.ui.adapter.MoedasAdapter
+import br.com.alexalves.investimentosbrq.ui.adapter.CurrencyAdapter
 import br.com.alexalves.investimentosbrq.viewmodel.HomeViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -48,7 +48,7 @@ class HomeActivity : AppCompatActivity() {
     }
 
     private fun configuraAdapter(currencies: List<Currency>) {
-        val moedasAdapter = MoedasAdapter(currencies, this, this::onClickItemMoedas)
+        val moedasAdapter = CurrencyAdapter(currencies, this, this::onClickItemMoedas)
         recyclerView.adapter = moedasAdapter
         moedasAdapter.notifyDataSetChanged()
     }

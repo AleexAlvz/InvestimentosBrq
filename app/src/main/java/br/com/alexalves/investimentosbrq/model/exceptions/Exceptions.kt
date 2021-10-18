@@ -5,3 +5,5 @@ class UserNotFoundException(override val message: String = "User not found"): Ex
 class PurchaseNotApprovalException(override val message: String = "Purchase not approval"): Exception()
 
 class SaleNotApprovalException(override val message: String = "Sale not approval"): Exception()
+
+class FailureInFoundCurrenciesException(override val message: String = "Failure in found currencies"): Exception()

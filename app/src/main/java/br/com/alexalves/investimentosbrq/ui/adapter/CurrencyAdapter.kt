@@ -10,11 +10,11 @@ import br.com.alexalves.investimentosbrq.R
 import br.com.alexalves.investimentosbrq.model.Currency
 import br.com.alexalves.investimentosbrq.utils.CurrencyUtils
 
-class MoedasAdapter(
+class CurrencyAdapter(
     private val currencies: List<Currency>,
     private val context: Context?,
     private val onItemClick: (currency: Currency) -> Unit
-) : RecyclerView.Adapter<MoedasAdapter.MoedasViewHolder>() {
+) : RecyclerView.Adapter<CurrencyAdapter.MoedasViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MoedasViewHolder {
         val layout = LayoutInflater.from(context).inflate(R.layout.item_moeda, parent, false)
