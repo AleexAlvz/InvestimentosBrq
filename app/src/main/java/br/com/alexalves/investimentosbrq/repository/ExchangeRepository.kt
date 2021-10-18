@@ -1,7 +1,6 @@
 package br.com.alexalves.investimentosbrq.repository
 
 import br.com.alexalves.investimentosbrq.model.Currency
-import br.com.alexalves.investimentosbrq.model.OperateUser
 import br.com.alexalves.investimentosbrq.model.User
 
 interface ExchangeRepository {

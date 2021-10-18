@@ -10,6 +10,7 @@ import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import br.com.alexalves.investimentosbrq.R
+import br.com.alexalves.investimentosbrq.consts.TextsConsts
 import br.com.alexalves.investimentosbrq.model.Currency
 import br.com.alexalves.investimentosbrq.model.HomeState
 import br.com.alexalves.investimentosbrq.ui.adapter.CurrencyAdapter
@@ -28,8 +29,8 @@ class HomeActivity : AppCompatActivity() {
     }
 
     private fun init() {
-        configuraToolbar()
-        configuraRecyclerView()
+        configureToolbar()
+        configureRecyclerView()
         observeCurrencies()
         homeViewModel.findCurrencies()
     }
@@ -38,7 +39,7 @@ class HomeActivity : AppCompatActivity() {
         homeViewModel.viewHomeState.observe(this, Observer {
             when (it) {
                 is HomeState.FoundCurrencies -> {
-                    configuraAdapter(it.currencies)
+                    configureAdapter(it.currencies)
                 }
                 is HomeState.FailureInSearchCurrencies -> {
                     Log.e("ERRO", it.error.message.toString())
@@ -47,20 +48,20 @@ class HomeActivity : AppCompatActivity() {
         })
     }
 
-    private fun configuraAdapter(currencies: List<Currency>) {
-        val moedasAdapter = CurrencyAdapter(currencies, this, this::onClickItemMoedas)
-        recyclerView.adapter = moedasAdapter
-        moedasAdapter.notifyDataSetChanged()
+    private fun configureAdapter(currencies: List<Currency>) {
+        val currencyAdapter = CurrencyAdapter(currencies, this, this::onClickItemMoedas)
+        recyclerView.adapter = currencyAdapter
+        currencyAdapter.notifyDataSetChanged()
     }
 
-    private fun configuraToolbar() {
+    private fun configureToolbar() {
         val toolbar = findViewById<Toolbar>(R.id.toolbar_investimentos)
         val titulo = findViewById<TextView>(R.id.toolbar_titulo)
         setSupportActionBar(toolbar)
-        titulo.text = "Moedas"
+        titulo.text = TextsConsts.TextMoedas
     }
 
-    private fun configuraRecyclerView() {
+    private fun configureRecyclerView() {
         recyclerView = findViewById(R.id.recycler_view_moedas_home)
         recyclerView.layoutManager = LinearLayoutManager(this)
     }

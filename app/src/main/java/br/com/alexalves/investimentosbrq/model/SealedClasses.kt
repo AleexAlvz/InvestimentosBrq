@@ -30,8 +30,3 @@ sealed class HomeState(){
     data class FoundCurrencies(val currencies: List<Currency>): HomeState()
     data class FailureInSearchCurrencies(val error: Exception): HomeState()
 }
-
-sealed class OperateUser{
-    class Success(val user: User): OperateUser()
-    class Error(val error: Exception): OperateUser()
-}

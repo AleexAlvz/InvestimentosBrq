@@ -15,7 +15,6 @@ import br.com.alexalves.investimentosbrq.ui.fragments.ExchangeFragment
 import br.com.alexalves.investimentosbrq.ui.fragments.OperationSucessFragment
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
-import org.w3c.dom.Text
 import java.math.BigDecimal
 import java.math.BigInteger
 
@@ -121,8 +120,8 @@ class CambioActivity : AppCompatActivity() {
 
     private fun configuraToolbarEmCambio() {
         MainScope().launch {
-            toolbar_titulo.text = TextsConsts.ExchangeToolbarTitleText
-            toolbar_voltar.text = TextsConsts.ExchangeToolbarBackText
+            toolbar_titulo.text = TextsConsts.TextCambio
+            toolbar_voltar.text = TextsConsts.TextMoedas
             toolbar_voltar.visibility = View.VISIBLE
             toolbar_voltar.setOnClickListener { voltarParaHome() }
         }
@@ -130,8 +129,8 @@ class CambioActivity : AppCompatActivity() {
 
     private fun configuraToolbarEmVendaSucesso() {
         MainScope().launch {
-            toolbar_titulo.text = TextsConsts.OperationVendaToolbarTitleText
-            toolbar_voltar.text = TextsConsts.OperationSucessToolbarBackText
+            toolbar_titulo.text = TextsConsts.TextVender
+            toolbar_voltar.text = TextsConsts.TextCambio
             toolbar_voltar.visibility = View.VISIBLE
             toolbar_voltar.setOnClickListener {
                 configuraToolbarEmCambio()
@@ -142,8 +141,8 @@ class CambioActivity : AppCompatActivity() {
 
     private fun configuraToolbarEmCompraSucesso() {
         MainScope().launch {
-            toolbar_titulo.text = TextsConsts.OperationComprarToolbarTitleText
-            toolbar_voltar.text = TextsConsts.OperationSucessToolbarBackText
+            toolbar_titulo.text = TextsConsts.TextComprar
+            toolbar_voltar.text = TextsConsts.TextCambio
             toolbar_voltar.visibility = View.VISIBLE
             toolbar_voltar.setOnClickListener {
                 configuraToolbarEmCambio()

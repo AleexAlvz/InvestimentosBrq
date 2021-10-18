@@ -13,7 +13,7 @@ class Currency(
 
 ): Serializable{
 
-    fun setAbbreviationAndSource(sourceBuscada: String = "indefinido"){
+    fun setAbbreviationAndSource(source: String = "indefinido"){
         when(this.name){
             "Dollar" -> this.abbreviation = "USD"
             "Euro" -> this.abbreviation = "EUR"
@@ -25,7 +25,7 @@ class Currency(
             "Renminbi" -> this.abbreviation = "CNY"
             "Bitcoin" -> this.abbreviation = "BTC"
         }
-        this.source = sourceBuscada
+        this.source = source
     }
 
 }

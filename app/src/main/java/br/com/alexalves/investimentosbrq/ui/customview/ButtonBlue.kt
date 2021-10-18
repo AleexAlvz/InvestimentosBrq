@@ -72,7 +72,6 @@ class ButtonBlue @JvmOverloads constructor(
             )
             if (titleResId != 0) {
                 title = context.getString(titleResId)
-                Log.i("TESTE", title.toString())
             }
 
             attributes.recycle()
