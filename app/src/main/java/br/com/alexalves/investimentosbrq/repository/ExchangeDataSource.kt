@@ -17,4 +17,6 @@ class ExchangeDataSource(
 
     override suspend fun searchCurrencies(): List<Currency> = exchangeDataSourceWrapper
         .filterCurrencies(service.getService().execute().body())
+
+    override suspend fun saveUser(user: User) = userDao.saveUser(user)
 }

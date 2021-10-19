@@ -11,4 +11,6 @@ interface ExchangeRepository {
 
     suspend fun searchCurrencies(): List<Currency>
 
+    suspend fun saveUser(user: User)
+
 }

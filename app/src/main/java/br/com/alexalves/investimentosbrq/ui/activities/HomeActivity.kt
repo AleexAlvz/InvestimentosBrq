@@ -10,6 +10,7 @@ import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import br.com.alexalves.investimentosbrq.R
+import br.com.alexalves.investimentosbrq.consts.StaticConsts
 import br.com.alexalves.investimentosbrq.consts.TextsConsts
 import br.com.alexalves.investimentosbrq.model.Currency
 import br.com.alexalves.investimentosbrq.model.HomeState
@@ -29,6 +30,7 @@ class HomeActivity : AppCompatActivity() {
     }
 
     private fun init() {
+        homeViewModel.verifyExistingUser(StaticConsts.UserStaticID)
         configureToolbar()
         configureRecyclerView()
         observeCurrencies()

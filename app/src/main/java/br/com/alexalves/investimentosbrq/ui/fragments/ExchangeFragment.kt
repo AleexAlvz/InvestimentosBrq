@@ -9,6 +9,7 @@ import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import br.com.alexalves.investimentosbrq.R
+import br.com.alexalves.investimentosbrq.consts.StaticConsts
 import br.com.alexalves.investimentosbrq.model.*
 import br.com.alexalves.investimentosbrq.ui.customview.ButtonBlue
 import br.com.alexalves.investimentosbrq.utils.CurrencyUtils
@@ -24,7 +25,7 @@ class ExchangeFragment : Fragment() {
     var sucessPurchase: ((quantityPurchased: BigInteger, purchaseValue: BigDecimal) -> Unit)? = null
     var sucessSale: ((quantitySold: BigInteger, saleValue: BigDecimal) -> Unit)? = null
     val exchangeViewModel: ExchangeViewModel by viewModel()
-    val userId = 1L
+    val userId = StaticConsts.UserStaticID
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -167,7 +168,6 @@ class ExchangeFragment : Fragment() {
             val amount = inputLayoutQuantidade.editText?.text.toString().toBigInteger()
             exchangeViewModel.saleCurrency(fields.currency, amount, userId)
         }
-
     }
 
     private fun configureBuyButtonState(state: Boolean) {

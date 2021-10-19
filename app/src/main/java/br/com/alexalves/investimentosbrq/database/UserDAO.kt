@@ -16,5 +16,5 @@ abstract class UserDAO {
     abstract fun searchUser(id: Long): User
 
     @Insert
-    abstract fun addUser(user: User)
+    abstract fun saveUser(user: User)
 }

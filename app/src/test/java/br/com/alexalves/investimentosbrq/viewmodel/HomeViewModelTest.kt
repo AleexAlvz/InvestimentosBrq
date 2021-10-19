@@ -55,8 +55,6 @@ class HomeViewModelTest : TestCase(){
     @Test
     fun `When findCurrencies fails then throws FailureInFoundCurrenciesException`(){
         //Arrange
-        val moedas = listOf<Currency>(mockk(name="Dollar"), mockk(name="Bitcoin"), mockk(name="Euro"))
-
         coEvery { exchangeRepository.searchCurrencies() } throws FailureInFoundCurrenciesException()
 
         //Act

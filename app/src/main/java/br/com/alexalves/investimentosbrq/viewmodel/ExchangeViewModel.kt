@@ -35,7 +35,6 @@ class ExchangeViewModel(
     val viewSellButtonEvent = sellButtonEvent
 
     fun initCambioFragment(currency: Currency, userId: Long) {
-
         CoroutineScope(AppContextProvider.io).launch {
             try {
                 val user = exchangeDataSource.searchUser(userId)

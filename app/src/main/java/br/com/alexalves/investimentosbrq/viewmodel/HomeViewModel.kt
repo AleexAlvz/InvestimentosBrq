@@ -5,10 +5,10 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import br.com.alexalves.investimentosbrq.base.AppContextProvider
 import br.com.alexalves.investimentosbrq.model.HomeState
+import br.com.alexalves.investimentosbrq.model.User
 import br.com.alexalves.investimentosbrq.model.exceptions.FailureInFoundCurrenciesException
 import br.com.alexalves.investimentosbrq.repository.ExchangeRepository
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
 
 class HomeViewModel(
@@ -29,6 +29,15 @@ class HomeViewModel(
                 }
             } catch (error: Exception) {
                 homeState.postValue(HomeState.FailureInSearchCurrencies(FailureInFoundCurrenciesException()))
+            }
+        }
+    }
+
+    fun verifyExistingUser(userId: Long) {
+        CoroutineScope(AppContextProvider.io).launch{
+            val user = exchangeDataSource.searchUser(userId)
+            if (user==null){
+                exchangeDataSource.saveUser(User(id = userId))
             }
         }
     }
