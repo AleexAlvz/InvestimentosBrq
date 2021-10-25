@@ -10,6 +10,7 @@ import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import br.com.alexalves.investimentosbrq.R
+import br.com.alexalves.investimentosbrq.consts.ArgumentConsts
 import br.com.alexalves.investimentosbrq.consts.StaticConsts
 import br.com.alexalves.investimentosbrq.consts.TextsConsts
 import br.com.alexalves.investimentosbrq.model.Currency
@@ -69,8 +70,8 @@ class HomeActivity : AppCompatActivity() {
     }
 
     fun onClickItemMoedas(currency: Currency) {
-        val intent = Intent(this, CambioActivity::class.java)
-        intent.putExtra(getString(R.string.currency_argument), currency)
+        val intent = Intent(this, ExchangeActivity::class.java)
+        intent.putExtra(ArgumentConsts.currency_argument, currency)
         startActivity(intent)
     }
 }

@@ -9,6 +9,7 @@ import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import br.com.alexalves.investimentosbrq.R
+import br.com.alexalves.investimentosbrq.consts.ArgumentConsts
 import br.com.alexalves.investimentosbrq.consts.StaticConsts
 import br.com.alexalves.investimentosbrq.model.*
 import br.com.alexalves.investimentosbrq.ui.customview.ButtonBlue
@@ -46,7 +47,7 @@ class ExchangeFragment : Fragment() {
         initCambioFragment()
     }
     private fun initCambioFragment() {
-        val currency = arguments?.get(getString(R.string.currency_argument)) as Currency
+        val currency = arguments?.get(ArgumentConsts.currency_argument) as Currency
         exchangeViewModel.initCambioFragment(currency = currency, userId = userId)
     }
     private fun initCambioComponents(fields: ScreenExchangeState.InitExchangeFragment) {

@@ -12,7 +12,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 class HomeViewModel(
-    val exchangeDataSource: ExchangeRepository
+    private val exchangeDataSource: ExchangeRepository
 ) : ViewModel() {
 
     private val homeState = MutableLiveData<HomeState>()

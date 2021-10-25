@@ -8,6 +8,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
 import br.com.alexalves.investimentosbrq.R
+import br.com.alexalves.investimentosbrq.consts.ArgumentConsts
 import br.com.alexalves.investimentosbrq.consts.TextsConsts
 import br.com.alexalves.investimentosbrq.model.Currency
 import br.com.alexalves.investimentosbrq.model.TypeOperation
@@ -18,7 +19,7 @@ import kotlinx.coroutines.launch
 import java.math.BigDecimal
 import java.math.BigInteger
 
-class CambioActivity : AppCompatActivity() {
+class ExchangeActivity : AppCompatActivity() {
 
     lateinit var toolbar_titulo: TextView
     lateinit var toolbar_voltar: TextView
@@ -46,7 +47,7 @@ class CambioActivity : AppCompatActivity() {
 
     private fun configuraBundleMoedaEmCambioFragment(exchangeFragment: ExchangeFragment) {
         val bundle = Bundle()
-        bundle.putSerializable(getString(R.string.currency_argument), currency)
+        bundle.putSerializable(ArgumentConsts.currency_argument, currency)
         exchangeFragment.arguments = bundle
     }
 
@@ -105,9 +106,7 @@ class CambioActivity : AppCompatActivity() {
     }
 
     private fun inicializaCampos() {
-        intent.getSerializableExtra(getString(R.string.currency_argument))?.let { moedaExtra ->
-            currency = moedaExtra as Currency
-        }
+        intent.getSerializableExtra(ArgumentConsts.currency_argument)?.let { moedaExtra -> currency = moedaExtra as Currency }
         toolbar_titulo = findViewById(R.id.toolbar_titulo)
         toolbar_voltar = findViewById(R.id.toolbar_back_option)
     }

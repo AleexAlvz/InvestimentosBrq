@@ -14,7 +14,7 @@
         android:name=".AppApplication"
         android:theme="@style/Theme.InvestimentosBrq" >
 
-        <activity android:name=".ui.activities.CambioActivity"/>
+        <activity android:name=".ui.activities.ExchangeActivity"/>
         <activity android:name=".ui.activities.HomeActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

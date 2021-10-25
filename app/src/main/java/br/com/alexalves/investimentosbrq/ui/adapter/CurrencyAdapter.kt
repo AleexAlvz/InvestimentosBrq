@@ -14,18 +14,18 @@ class CurrencyAdapter(
     private val currencies: List<Currency>,
     private val context: Context?,
     private val onItemClick: (currency: Currency) -> Unit
-) : RecyclerView.Adapter<CurrencyAdapter.MoedasViewHolder>() {
+) : RecyclerView.Adapter<CurrencyAdapter.CurrenciesViewHolder>() {
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MoedasViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CurrenciesViewHolder {
         val layout = LayoutInflater.from(context).inflate(R.layout.item_moeda, parent, false)
-        return MoedasViewHolder(layout)
+        return CurrenciesViewHolder(layout)
     }
 
-    override fun onBindViewHolder(holder: MoedasViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: CurrenciesViewHolder, position: Int) {
         vinculaCampos(holder, currencies[position])
     }
 
-    fun vinculaCampos(holder: MoedasViewHolder, currency: Currency) {
+    fun vinculaCampos(holder: CurrenciesViewHolder, currency: Currency) {
         holder.itemView.setOnClickListener { onItemClick(currency) }
         holder.nomeMoeda.setText(currency.abbreviation)
         holder.variacaoMoeda.text = CurrencyUtils().getVariacaoFormatada(currency.variation)
@@ -35,7 +35,7 @@ class CurrencyAdapter(
 
     override fun getItemCount(): Int { return currencies.size }
 
-    class MoedasViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    class CurrenciesViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val nomeMoeda = itemView.findViewById<TextView>(R.id.item_moeda_text_moeda)
         val variacaoMoeda = itemView.findViewById<TextView>(R.id.item_moeda_text_variacao)
     }
