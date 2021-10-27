@@ -3,13 +3,10 @@ package br.com.alexalves.investimentosbrq.ui.activities
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
-import android.widget.TextView
-import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.Toolbar
-import androidx.fragment.app.Fragment
-import br.com.alexalves.investimentosbrq.R
+import br.com.alexalves.base.BaseActivity
 import br.com.alexalves.investimentosbrq.consts.ArgumentConsts
 import br.com.alexalves.investimentosbrq.consts.TextsConsts
+import br.com.alexalves.investimentosbrq.databinding.ActivityExchangeBinding
 import br.com.alexalves.investimentosbrq.model.Currency
 import br.com.alexalves.investimentosbrq.model.TypeOperation
 import br.com.alexalves.investimentosbrq.ui.fragments.ExchangeFragment
@@ -19,78 +16,65 @@ import kotlinx.coroutines.launch
 import java.math.BigDecimal
 import java.math.BigInteger
 
-class ExchangeActivity : AppCompatActivity() {
+class ExchangeActivity : BaseActivity() {
 
-    lateinit var toolbar_titulo: TextView
-    lateinit var toolbar_voltar: TextView
     lateinit var currency: Currency
+    lateinit var binding: ActivityExchangeBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_cambio)
+        binding = ActivityExchangeBinding.inflate(layoutInflater)
+        currency = intent.getSerializableExtra(ArgumentConsts.currency_argument) as Currency
+        setContentView(binding.root)
         init()
     }
 
     private fun init() {
-        inicializaCampos()
-        configuraToolbar()
-        inicializaFragment(fragmentCambioConfigurado())
+        setSupportActionBar(binding.toolbarActivityCambio.toolbarInvestimentos)
+        startExchangeFragment()
     }
 
-    private fun fragmentCambioConfigurado(): ExchangeFragment {
-        val cambioFragment = ExchangeFragment()
-        configuraQuandoSucessoCompraCambio(cambioFragment)
-        configuraQuandoSucessoVendaCambio(cambioFragment)
-        configuraBundleMoedaEmCambioFragment(cambioFragment)
-        return cambioFragment
+    private fun startExchangeFragment() {
+        configureExchangeToolbar()
+        replaceFragmentNoStack(binding.cambioContainer, getExchangeFragmentConfigured())
     }
 
-    private fun configuraBundleMoedaEmCambioFragment(exchangeFragment: ExchangeFragment) {
+    private fun getExchangeFragmentConfigured(): ExchangeFragment {
+        val exchangeFragment = ExchangeFragment()
+        //Configure events
+        exchangeFragment.sucessPurchase = { quantidadeComprada, valorDaCompra -> iniciaSucessoCompraFragment(quantidadeComprada, valorDaCompra) }
+        exchangeFragment.sucessSale = { quantidadeVendida, valorDaCompra -> iniciaSucessoVendaFragment(quantidadeVendida, valorDaCompra) }
+        //Configure Bundle with currency
         val bundle = Bundle()
         bundle.putSerializable(ArgumentConsts.currency_argument, currency)
         exchangeFragment.arguments = bundle
+
+        return exchangeFragment
     }
 
-    private fun configuraQuandoSucessoVendaCambio(exchangeFragment: ExchangeFragment) {
-        exchangeFragment.sucessSale = { quantidadeVendida, valorDaCompra ->
-            val fragmentVenda = fragmentVendaSucedidaConfigurado(quantidadeVendida, valorDaCompra)
-            configuraToolbarEmVendaSucesso()
-            inicializaFragment(fragmentVenda)
-        }
-    }
-
-    private fun configuraQuandoSucessoCompraCambio(exchangeFragment: ExchangeFragment) {
-        exchangeFragment.sucessPurchase = { quantidadeComprada, valorDaCompra ->
-            val fragmentCompra = fragmentCompraSucedidaConfigurado(quantidadeComprada, valorDaCompra)
-            configuraToolbarEmCompraSucesso()
-            inicializaFragment(fragmentCompra)
-        }
-    }
-
-    private fun fragmentVendaSucedidaConfigurado(
+    private fun iniciaSucessoVendaFragment(
         quantidadeVendida: BigInteger,
         valorTotal: BigDecimal
-    ): Fragment {
+    ){
         val fragmentVenda = OperationSucessFragment()
         fragmentVenda.quantidade = quantidadeVendida
         fragmentVenda.valorTotal = valorTotal
         fragmentVenda.currency = currency
         fragmentVenda.typeOperation = TypeOperation.SALE
         fragmentVenda.buttonHomeListener = { voltarParaHome() }
-        return fragmentVenda
+        configureToolbarSucessFragment(TypeOperation.SALE)
+        replaceFragmentNoStack(binding.cambioContainer, fragmentVenda)
     }
 
-    private fun fragmentCompraSucedidaConfigurado(
-        quantidadeComprada: BigInteger,
-        valorTotal: BigDecimal
-    ): Fragment {
+    private fun iniciaSucessoCompraFragment(quantidadeComprada: BigInteger, valorTotal: BigDecimal){
         val fragmentCompra = OperationSucessFragment()
         fragmentCompra.quantidade = quantidadeComprada
         fragmentCompra.valorTotal = valorTotal
         fragmentCompra.currency = currency
         fragmentCompra.typeOperation = TypeOperation.PURCHASE
         fragmentCompra.buttonHomeListener = { voltarParaHome() }
-        return fragmentCompra
+        configureToolbarSucessFragment(TypeOperation.PURCHASE)
+        replaceFragmentNoStack(binding.cambioContainer, fragmentCompra)
     }
 
     fun voltarParaHome() {
@@ -99,53 +83,24 @@ class ExchangeActivity : AppCompatActivity() {
         startActivity(intent)
     }
 
-    private fun inicializaFragment(fragment: Fragment) {
-        supportFragmentManager.beginTransaction()
-            .replace(R.id.activity_cambio_container_fragment, fragment)
-            .commit()
-    }
-
-    private fun inicializaCampos() {
-        intent.getSerializableExtra(ArgumentConsts.currency_argument)?.let { moedaExtra -> currency = moedaExtra as Currency }
-        toolbar_titulo = findViewById(R.id.toolbar_titulo)
-        toolbar_voltar = findViewById(R.id.toolbar_back_option)
-    }
-
-    private fun configuraToolbar() {
-        val toolbar = findViewById<Toolbar>(R.id.toolbar_investimentos)
-        setSupportActionBar(toolbar)
-        configuraToolbarEmCambio()
-    }
-
-    private fun configuraToolbarEmCambio() {
+    private fun configureExchangeToolbar() {
         MainScope().launch {
-            toolbar_titulo.text = TextsConsts.TextCambio
-            toolbar_voltar.text = TextsConsts.TextMoedas
-            toolbar_voltar.visibility = View.VISIBLE
-            toolbar_voltar.setOnClickListener { voltarParaHome() }
+            binding.toolbarActivityCambio.let {
+                it.toolbarTitulo.text = TextsConsts.TextCambio
+                it.toolbarBackOption.text = TextsConsts.TextMoedas
+                it.toolbarBackOption.visibility = View.VISIBLE
+                it.toolbarBackOption.setOnClickListener { voltarParaHome() }
+             }
         }
     }
 
-    private fun configuraToolbarEmVendaSucesso() {
+    fun configureToolbarSucessFragment(typeOperation: TypeOperation){
         MainScope().launch {
-            toolbar_titulo.text = TextsConsts.TextVender
-            toolbar_voltar.text = TextsConsts.TextCambio
-            toolbar_voltar.visibility = View.VISIBLE
-            toolbar_voltar.setOnClickListener {
-                configuraToolbarEmCambio()
-                inicializaFragment(fragmentCambioConfigurado())
-            }
-        }
-    }
-
-    private fun configuraToolbarEmCompraSucesso() {
-        MainScope().launch {
-            toolbar_titulo.text = TextsConsts.TextComprar
-            toolbar_voltar.text = TextsConsts.TextCambio
-            toolbar_voltar.visibility = View.VISIBLE
-            toolbar_voltar.setOnClickListener {
-                configuraToolbarEmCambio()
-                inicializaFragment(fragmentCambioConfigurado())
+            binding.toolbarActivityCambio.let {
+                it.toolbarTitulo.text = if (typeOperation == TypeOperation.PURCHASE) TextsConsts.TextComprar else TextsConsts.TextVender
+                it.toolbarBackOption.text = TextsConsts.TextCambio
+                it.toolbarBackOption.visibility = View.VISIBLE
+                it.toolbarBackOption.setOnClickListener { startExchangeFragment() }
             }
         }
     }

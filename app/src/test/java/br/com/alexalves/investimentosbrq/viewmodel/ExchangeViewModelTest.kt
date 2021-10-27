@@ -1,8 +1,8 @@
 package br.com.alexalves.investimentosbrq.viewmodel
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
-import br.com.alexalves.investimentosbrq.base.AppContextProvider
-import br.com.alexalves.investimentosbrq.base.TestContextProvider
+import br.com.alexalves.base.coroutines.AppContextProvider
+import br.com.alexalves.base.coroutines.TestContextProvider
 import br.com.alexalves.investimentosbrq.model.BusinessExchangeState
 import br.com.alexalves.investimentosbrq.model.Currency
 import br.com.alexalves.investimentosbrq.model.ScreenExchangeState
@@ -36,7 +36,8 @@ class ExchangeViewModelTest {
     @Before
     fun setUp() {
         MockKAnnotations.init(this, relaxUnitFun = true)
-        AppContextProvider.coroutinesContextProviderDelegate = TestContextProvider()
+        br.com.alexalves.base.coroutines.AppContextProvider.coroutinesContextProviderDelegate =
+            br.com.alexalves.base.coroutines.TestContextProvider()
         exchangeViewModel = ExchangeViewModel(exchangeRepository)
     }
 

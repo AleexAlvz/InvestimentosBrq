@@ -11,21 +11,16 @@ import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.contrib.RecyclerViewActions
 import androidx.test.espresso.intent.Intents
 import androidx.test.espresso.intent.Intents.intended
-import androidx.test.espresso.intent.Intents.times
 import androidx.test.espresso.intent.matcher.IntentMatchers.hasComponent
-import androidx.test.espresso.intent.rule.IntentsTestRule
 import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import br.com.alexalves.investimentosbrq.CustomMatchers.Companion.childAtPosition
 import br.com.alexalves.investimentosbrq.CustomMatchers.Companion.verifyItemInPositionOfRecyclerView
 import br.com.alexalves.investimentosbrq.R
-import br.com.alexalves.investimentosbrq.base.AppContextProvider
-import br.com.alexalves.investimentosbrq.base.TestContextProvider
 import br.com.alexalves.investimentosbrq.model.Currency
 import br.com.alexalves.investimentosbrq.model.User
 import br.com.alexalves.investimentosbrq.repository.ExchangeRepository
 import br.com.alexalves.investimentosbrq.ui.adapter.CurrencyAdapter
-import br.com.alexalves.investimentosbrq.ui.fragments.ExchangeFragment
 import br.com.alexalves.investimentosbrq.viewmodel.HomeViewModel
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
@@ -33,10 +28,8 @@ import io.mockk.impl.annotations.MockK
 import org.hamcrest.Matchers
 import org.hamcrest.Matchers.allOf
 import org.hamcrest.Matchers.instanceOf
-import org.hamcrest.core.IsInstanceOf
 import org.junit.After
 import org.junit.Before
-import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.koin.androidx.viewmodel.dsl.viewModel
@@ -75,7 +68,7 @@ class HomeScreenTest {
     }
 
     @After
-    fun tearDown(){
+    fun tearDown() {
         Intents.release()
     }
 
@@ -110,7 +103,7 @@ class HomeScreenTest {
             .perform(RecyclerViewActions.scrollToPosition<CurrencyAdapter.CurrenciesViewHolder>(0))
             .check(matches(verifyItemInPositionOfRecyclerView(0, "BTC", "0,09%")))
             .perform(RecyclerViewActions.scrollToPosition<CurrencyAdapter.CurrenciesViewHolder>(1))
-            .check(matches(verifyItemInPositionOfRecyclerView(1, "EUR","0,10%")))
+            .check(matches(verifyItemInPositionOfRecyclerView(1, "EUR", "0,10%")))
             .perform(RecyclerViewActions.scrollToPosition<CurrencyAdapter.CurrenciesViewHolder>(2))
             .check(matches(verifyItemInPositionOfRecyclerView(2, "USD", "0,11%")))
     }
@@ -134,40 +127,8 @@ class HomeScreenTest {
                 ViewActions.click()
             )
         )
-
         //Verify if is called ExchangeFragment
         intended(hasComponent(ExchangeActivity::class.qualifiedName))
-
-        val toolbar = onView(
-        allOf(
-            withParent(
-                allOf(
-                    withId(R.id.toolbar_activity_cambio),
-                    withParent(IsInstanceOf.instanceOf(android.view.ViewGroup::class.java))
-                )
-            ),
-            isDisplayed()
-        )
-    )
-    toolbar.check(matches(isDisplayed()))
-
-    val tituloToolbar = onView(
-        allOf(
-            withId(R.id.toolbar_titulo), withText("Câmbio"),
-            withParent(withParent(withId(R.id.toolbar_activity_cambio))),
-            isDisplayed()
-        )
-    )
-    tituloToolbar.check(matches(withText("Câmbio")))
-
-    val backOptionToolbar = onView(
-        allOf(
-            withId(R.id.toolbar_back_option), withText("Moedas"),
-            withParent(withParent(withId(R.id.toolbar_activity_cambio))),
-            isDisplayed()
-        )
-    )
-    backOptionToolbar.check(matches(withText("Moedas")))
-}
+    }
 }
 

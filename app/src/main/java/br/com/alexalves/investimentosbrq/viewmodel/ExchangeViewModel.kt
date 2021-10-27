@@ -3,7 +3,7 @@ package br.com.alexalves.investimentosbrq.viewmodel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import br.com.alexalves.investimentosbrq.base.AppContextProvider
+import br.com.alexalves.base.coroutines.AppContextProvider
 import br.com.alexalves.investimentosbrq.consts.AbbreviationCurrenciesConsts
 import br.com.alexalves.investimentosbrq.model.*
 import br.com.alexalves.investimentosbrq.model.exceptions.PurchaseNotApprovalException
@@ -35,7 +35,7 @@ class ExchangeViewModel(
     val viewSellButtonEvent = sellButtonEvent
 
     fun initCambioFragment(currency: Currency, userId: Long) {
-        CoroutineScope(AppContextProvider.io).launch {
+        CoroutineScope(br.com.alexalves.base.coroutines.AppContextProvider.io).launch {
             try {
                 val user = exchangeDataSource.searchUser(userId)
                 val amountCurrency = CurrencyUtils().filterCurrency(currency, user)
@@ -54,7 +54,7 @@ class ExchangeViewModel(
     }
 
     fun purchaseCurrency(currency: Currency, quantity: BigInteger, userId: Long) {
-        CoroutineScope(AppContextProvider.io).launch {
+        CoroutineScope(br.com.alexalves.base.coroutines.AppContextProvider.io).launch {
             try {
                 val user = exchangeDataSource.searchUser(userId)
                 updatePurchaseInUser(user, currency, quantity)
@@ -65,7 +65,7 @@ class ExchangeViewModel(
     }
 
     fun saleCurrency(currency: Currency, quantity: BigInteger, userId: Long) {
-        CoroutineScope(AppContextProvider.io).launch {
+        CoroutineScope(br.com.alexalves.base.coroutines.AppContextProvider.io).launch {
             try {
                 val user = exchangeDataSource.searchUser(userId)
                 updateSaleInUser(user, currency, quantity)
@@ -80,7 +80,7 @@ class ExchangeViewModel(
         currency: Currency,
         quantity: BigInteger
     ) {
-        CoroutineScope(AppContextProvider.io).launch {
+        CoroutineScope(br.com.alexalves.base.coroutines.AppContextProvider.io).launch {
             try {
                 val totalPurchaseValue = quantity.toBigDecimal() * currency.buy
                 val approval = (totalPurchaseValue <= user.balance)
@@ -110,7 +110,7 @@ class ExchangeViewModel(
         currency: Currency,
         quantity: BigInteger
     ) {
-        CoroutineScope(AppContextProvider.io).launch {
+        CoroutineScope(br.com.alexalves.base.coroutines.AppContextProvider.io).launch {
             try {
                 val currencyAmount = CurrencyUtils().filterCurrency(currency, user)
                 val totalSaleValue = quantity.toBigDecimal() * currency.sell

@@ -28,7 +28,7 @@ class CurrencyAdapter(
     fun vinculaCampos(holder: CurrenciesViewHolder, currency: Currency) {
         holder.itemView.setOnClickListener { onItemClick(currency) }
         holder.nomeMoeda.setText(currency.abbreviation)
-        holder.variacaoMoeda.text = CurrencyUtils().getVariacaoFormatada(currency.variation)
+        holder.variacaoMoeda.text = CurrencyUtils().getFormattedVariation(currency.variation)
         val variationColor = CurrencyUtils().getCurrencyColor(currency.variation, context!!)
         holder.variacaoMoeda.setTextColor(variationColor)
     }

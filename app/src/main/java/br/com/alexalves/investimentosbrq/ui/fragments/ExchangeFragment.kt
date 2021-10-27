@@ -7,7 +7,6 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import br.com.alexalves.investimentosbrq.R
 import br.com.alexalves.investimentosbrq.consts.ArgumentConsts
 import br.com.alexalves.investimentosbrq.consts.StaticConsts
@@ -65,33 +64,33 @@ class ExchangeFragment : Fragment() {
         //Variacao
         val textVariacaoMoeda =
             inflatedView.findViewById<TextView>(R.id.fragment_cambio_text_variacao_moeda)
-        textVariacaoMoeda.text = CurrencyUtils().getVariacaoFormatada(fields.currency.variation)
+        textVariacaoMoeda.text = CurrencyUtils().getFormattedVariation(fields.currency.variation)
         val color = CurrencyUtils().getCurrencyColor(fields.currency.variation, requireContext())
         textVariacaoMoeda.setTextColor(color)
 
         //Compra
         val textValorCompraMoeda =
             inflatedView.findViewById<TextView>(R.id.fragment_cambio_text_valor_compra_moeda)
-        val buyValue = CurrencyUtils().getValorCompraFormatado(fields.currency)
+        val buyValue = CurrencyUtils().getFormattedPurchaseValue(fields.currency)
         val buyValueFormated = "Compra: $buyValue"
         textValorCompraMoeda.text = buyValueFormated
 
         //Venda
         val textValorVendaMoeda =
             inflatedView.findViewById<TextView>(R.id.fragment_cambio_text_valor_venda_moeda)
-        val sellValue = CurrencyUtils().getValorVendaFormatado(fields.currency)
+        val sellValue = CurrencyUtils().getFormattedSaleValue(fields.currency)
         val sellValueFormated = "Venda: $sellValue"
         textValorVendaMoeda.text = sellValueFormated
 
         //Saldo
         val textUserBalance =
             inflatedView.findViewById<TextView>(R.id.fragment_cambio_text_saldo_disponivel)
-        val userBalanceFormated = "Saldo disponível: R$ ${fields.userBalance}"
+        val formattedBalance_toBRLCurrency = CurrencyUtils().getFormattedBalance_ToBRLCurrency(fields.userBalance)
+        val userBalanceFormated = "Saldo disponível: ${formattedBalance_toBRLCurrency}"
         textUserBalance.text = userBalanceFormated
 
         //Moedas em caixa
-        val textAmountCurrency =
-            inflatedView.findViewById<TextView>(R.id.fragment_cambio_text_moeda_em_caixa)
+        val textAmountCurrency = inflatedView.findViewById<TextView>(R.id.fragment_cambio_text_moeda_em_caixa)
         val amountCurrencyFormated = "${fields.amountCurrency} ${fields.currency.name} em caixa"
         textAmountCurrency.text = amountCurrencyFormated
     }

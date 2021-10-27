@@ -6,6 +6,7 @@ import br.com.alexalves.investimentosbrq.consts.AbbreviationCurrenciesConsts
 import br.com.alexalves.investimentosbrq.R
 import br.com.alexalves.investimentosbrq.model.Currency
 import br.com.alexalves.investimentosbrq.model.User
+import java.math.BigDecimal
 import java.math.BigInteger
 
 class CurrencyUtils {
@@ -25,17 +26,22 @@ class CurrencyUtils {
         }
     }
 
-    fun getVariacaoFormatada(variation: Double): String {
-        val variacaoFormatada = String.format("%.2f", variation).replace(".", ",") + "%"
+    fun getFormattedVariation(variation: Double): String {
+        val variacaoString = variation.toString().substring(0,3)
+        val variacaoFormatada = variacaoString.replace(".", ",") + "%"
         return variacaoFormatada
     }
 
-    fun getValorVendaFormatado(currency: Currency): String {
+    fun getFormattedSaleValue(currency: Currency): String {
         val vendaComDecimais = String.format("%.3f", currency.sell)
         return currency.source + " " + vendaComDecimais.replace(".", ",")
     }
 
-    fun getValorCompraFormatado(currency: Currency): String {
+    fun getFormattedBalance_ToBRLCurrency(balance: BigDecimal): String {
+        return "R$ " + String.format("%.2f", balance).replace(".", ",")
+    }
+
+    fun getFormattedPurchaseValue(currency: Currency): String {
         val compraComDecimais = String.format("%.3f", currency.buy)
         return currency.source + " " + compraComDecimais.replace(".", ",")
     }

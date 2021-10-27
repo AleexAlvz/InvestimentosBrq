@@ -1,2 +1,3 @@
 rootProject.name = "InvestimentosBrq"
 include ':app'
+include ':base'

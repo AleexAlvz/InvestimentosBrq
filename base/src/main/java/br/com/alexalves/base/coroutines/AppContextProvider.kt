@@ -1,4 +1,4 @@
-package br.com.alexalves.investimentosbrq.base
+package br.com.alexalves.base.coroutines
 
 import kotlinx.coroutines.Dispatchers
 import kotlin.coroutines.CoroutineContext
