@@ -20,24 +20,26 @@ class ExchangeDataSourceWrapper {
         }
 
         val configuredCurrencies: List<Currency>
-        if (currencies!=null){
-            configuredCurrencies =  listOf(currencies.ars, currencies.aud, currencies.btc, currencies.cad,
-                currencies.cny, currencies.eur, currencies.gbp, currencies.jpy, currencies.usd)
-        } else configuredCurrencies =  listOf()
+        if (currencies != null) {
+            configuredCurrencies = listOf(
+                currencies.ars, currencies.aud, currencies.btc, currencies.cad,
+                currencies.cny, currencies.eur, currencies.gbp, currencies.jpy, currencies.usd
+            )
+        } else configuredCurrencies = listOf()
 
         return configuredCurrencies
     }
 
-     fun filterCurrencies(response: ServiceInvestimentos?): List<Currency> {
-         if (response!=null){
-             val currencies = arrayListOf<Currency>()
-             val configuredCurrencies = configureReturnOfCurrenciesAPI(response)
-             for (currency in configuredCurrencies) {
-                 if (currency.sell != null && currency.buy != null) {
-                     currencies.add(currency)
-                 }
-             }
-             return currencies
-         } else return listOf()
+    fun filterCurrencies(response: ServiceInvestimentos?): List<Currency> {
+        if (response != null) {
+            val currencies = arrayListOf<Currency>()
+            val configuredCurrencies = configureReturnOfCurrenciesAPI(response)
+            for (currency in configuredCurrencies) {
+                if (currency.sell != null && currency.buy != null) {
+                    currencies.add(currency)
+                }
+            }
+            return currencies
+        } else return listOf()
     }
 }

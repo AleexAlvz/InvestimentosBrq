@@ -8,18 +8,19 @@ import br.com.alexalves.investimentosbrq.model.HomeState
 import br.com.alexalves.investimentosbrq.model.User
 import br.com.alexalves.investimentosbrq.model.exceptions.FailureInFoundCurrenciesException
 import br.com.alexalves.investimentosbrq.repository.ExchangeRepository
+import br.com.alexalves.investimentosbrq.repository.HomeRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 class HomeViewModel(
-    private val exchangeDataSource: ExchangeRepository
+    private val exchangeDataSource: HomeRepository
 ) : ViewModel() {
 
     private val homeState = MutableLiveData<HomeState>()
     val viewHomeState: LiveData<HomeState> = homeState
 
     fun findCurrencies() {
-        CoroutineScope(br.com.alexalves.base.coroutines.AppContextProvider.io).launch {
+        CoroutineScope(AppContextProvider.io).launch {
             try {
                 val currencies = exchangeDataSource.searchCurrencies()
                 if (currencies.isNotEmpty()){
@@ -34,7 +35,7 @@ class HomeViewModel(
     }
 
     fun verifyExistingUser(userId: Long) {
-        CoroutineScope(br.com.alexalves.base.coroutines.AppContextProvider.io).launch{
+        CoroutineScope(AppContextProvider.io).launch{
             val user = exchangeDataSource.searchUser(userId)
             if (user==null){
                 exchangeDataSource.saveUser(User(id = userId))

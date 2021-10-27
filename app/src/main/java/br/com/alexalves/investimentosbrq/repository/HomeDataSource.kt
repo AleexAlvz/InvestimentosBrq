@@ -5,12 +5,17 @@ import br.com.alexalves.investimentosbrq.model.Currency
 import br.com.alexalves.investimentosbrq.model.User
 import br.com.alexalves.investimentosbrq.retrofit.InvestimentosService
 
-class ExchangeDataSource(
+class HomeDataSource(
     private val userDao: UserDAO,
-) : ExchangeRepository {
+    private val service: InvestimentosService,
+    private val exchangeDataSourceWrapper: ExchangeDataSourceWrapper
+) : HomeRepository {
 
     override suspend fun searchUser(userId: Long): User = userDao.searchUser(userId)
 
-    override suspend fun updateUser(user: User) = userDao.updateUser(user)
+    override suspend fun saveUser(user: User) = userDao.saveUser(user)
+
+    override suspend fun searchCurrencies(): List<Currency> = exchangeDataSourceWrapper
+        .filterCurrencies(service.getService().execute().body())
 
 }

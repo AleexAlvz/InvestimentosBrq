@@ -1,8 +1,6 @@
 package br.com.alexalves.investimentosbrq.viewmodel
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
-import br.com.alexalves.base.coroutines.AppContextProvider
-import br.com.alexalves.base.coroutines.TestContextProvider
 import br.com.alexalves.investimentosbrq.model.BusinessExchangeState
 import br.com.alexalves.investimentosbrq.model.Currency
 import br.com.alexalves.investimentosbrq.model.ScreenExchangeState
@@ -95,9 +93,9 @@ class ExchangeViewModelTest {
         exchangeViewModel.purchaseCurrency(currency, quantity, user.id)
 
         //Assert
-        val expectedBusinessState = BusinessExchangeState.SucessPurchase(quantity, finalValue)
+        val expectedBusinessState = BusinessExchangeState.Sucess(quantity, finalValue)
 
-        val actualBusinessState = exchangeViewModel.viewBusinessExchangeState.value as BusinessExchangeState.SucessPurchase
+        val actualBusinessState = exchangeViewModel.viewBusinessExchangeState.value as BusinessExchangeState.Sucess
 
         assertEquals(expectedBusinessState, actualBusinessState)
     }
@@ -117,9 +115,9 @@ class ExchangeViewModelTest {
 
         //Assert
 
-        val expectedBusinessState = BusinessExchangeState.SucessPurchase(quantity, finalValue)
+        val expectedBusinessState = BusinessExchangeState.Sucess(quantity, finalValue)
 
-        val actualBusinessState = exchangeViewModel.viewBusinessExchangeState.value as BusinessExchangeState.SucessPurchase
+        val actualBusinessState = exchangeViewModel.viewBusinessExchangeState.value as BusinessExchangeState.Sucess
 
         assertEquals(expectedBusinessState, actualBusinessState)
     }
@@ -138,7 +136,7 @@ class ExchangeViewModelTest {
 
         //Assert
 
-        val actualBusinessState = exchangeViewModel.viewBusinessExchangeState.value as BusinessExchangeState.FailurePurchase
+        val actualBusinessState = exchangeViewModel.viewBusinessExchangeState.value as BusinessExchangeState.Failure
 
         assertEquals(UserNotFoundException().javaClass, actualBusinessState.error.javaClass)
     }
@@ -156,7 +154,7 @@ class ExchangeViewModelTest {
         exchangeViewModel.purchaseCurrency(currency, quantity, user.id)
 
         //Assert
-        val actualBusinessState = exchangeViewModel.viewBusinessExchangeState.value as BusinessExchangeState.FailurePurchase
+        val actualBusinessState = exchangeViewModel.viewBusinessExchangeState.value as BusinessExchangeState.Failure
         assertEquals(PurchaseNotApprovalException().javaClass, actualBusinessState.error.javaClass)
     }
 

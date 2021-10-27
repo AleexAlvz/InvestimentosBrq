@@ -4,26 +4,22 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
-import br.com.alexalves.investimentosbrq.R
 import br.com.alexalves.investimentosbrq.consts.ArgumentConsts
 import br.com.alexalves.investimentosbrq.consts.StaticConsts
+import br.com.alexalves.investimentosbrq.databinding.FragmentExchangeBinding
 import br.com.alexalves.investimentosbrq.model.*
 import br.com.alexalves.investimentosbrq.ui.customview.ButtonBlue
 import br.com.alexalves.investimentosbrq.utils.CurrencyUtils
 import br.com.alexalves.investimentosbrq.viewmodel.ExchangeViewModel
 import com.google.android.material.textfield.TextInputLayout
 import org.koin.androidx.viewmodel.ext.android.viewModel
-import java.math.BigDecimal
-import java.math.BigInteger
 
 class ExchangeFragment : Fragment() {
 
-    lateinit var inflatedView: View
-    var sucessPurchase: ((quantityPurchased: BigInteger, purchaseValue: BigDecimal) -> Unit)? = null
-    var sucessSale: ((quantitySold: BigInteger, saleValue: BigDecimal) -> Unit)? = null
+    lateinit var binding: FragmentExchangeBinding
+    var businessSucessCallBack: ((bussinesSucess: BusinessExchangeState.Sucess) -> Unit)? = null
     val exchangeViewModel: ExchangeViewModel by viewModel()
     val userId = StaticConsts.UserStaticID
 
@@ -32,12 +28,12 @@ class ExchangeFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.fragment_cambio, container, false)
+        binding = FragmentExchangeBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        inflatedView = view
         init()
     }
 
@@ -45,54 +41,47 @@ class ExchangeFragment : Fragment() {
         observerStates()
         initCambioFragment()
     }
+
     private fun initCambioFragment() {
         val currency = arguments?.get(ArgumentConsts.currency_argument) as Currency
         exchangeViewModel.initCambioFragment(currency = currency, userId = userId)
     }
+
     private fun initCambioComponents(fields: ScreenExchangeState.InitExchangeFragment) {
         initTextFields(fields)
         configureBusinessButtons(fields)
     }
+
     private fun initTextFields(fields: ScreenExchangeState.InitExchangeFragment) {
-
-//      Titulo
-        val textTituloMoeda =
-            inflatedView.findViewById<TextView>(R.id.fragment_cambio_text_titulo_moeda)
-        val tituloFormatado = "${fields.currency.abbreviation} - ${fields.currency.name}"
-        textTituloMoeda.text = tituloFormatado
-
-        //Variacao
-        val textVariacaoMoeda =
-            inflatedView.findViewById<TextView>(R.id.fragment_cambio_text_variacao_moeda)
-        textVariacaoMoeda.text = CurrencyUtils().getFormattedVariation(fields.currency.variation)
-        val color = CurrencyUtils().getCurrencyColor(fields.currency.variation, requireContext())
-        textVariacaoMoeda.setTextColor(color)
-
-        //Compra
-        val textValorCompraMoeda =
-            inflatedView.findViewById<TextView>(R.id.fragment_cambio_text_valor_compra_moeda)
-        val buyValue = CurrencyUtils().getFormattedPurchaseValue(fields.currency)
-        val buyValueFormated = "Compra: $buyValue"
-        textValorCompraMoeda.text = buyValueFormated
-
-        //Venda
-        val textValorVendaMoeda =
-            inflatedView.findViewById<TextView>(R.id.fragment_cambio_text_valor_venda_moeda)
-        val sellValue = CurrencyUtils().getFormattedSaleValue(fields.currency)
-        val sellValueFormated = "Venda: $sellValue"
-        textValorVendaMoeda.text = sellValueFormated
-
-        //Saldo
-        val textUserBalance =
-            inflatedView.findViewById<TextView>(R.id.fragment_cambio_text_saldo_disponivel)
-        val formattedBalance_toBRLCurrency = CurrencyUtils().getFormattedBalance_ToBRLCurrency(fields.userBalance)
-        val userBalanceFormated = "Saldo disponível: ${formattedBalance_toBRLCurrency}"
-        textUserBalance.text = userBalanceFormated
-
-        //Moedas em caixa
-        val textAmountCurrency = inflatedView.findViewById<TextView>(R.id.fragment_cambio_text_moeda_em_caixa)
-        val amountCurrencyFormated = "${fields.amountCurrency} ${fields.currency.name} em caixa"
-        textAmountCurrency.text = amountCurrencyFormated
+        binding.let {
+            //Title
+            val tituloFormatado = "${fields.currency.abbreviation} - ${fields.currency.name}"
+            it.fragmentCambioTextTituloMoeda.text = tituloFormatado
+            //Variation
+            it.fragmentCambioTextVariacaoMoeda.text =
+                CurrencyUtils().getFormattedVariation(fields.currency.variation)
+            it.fragmentCambioTextVariacaoMoeda.setTextColor(
+                CurrencyUtils().getCurrencyColor(
+                    fields.currency.variation,
+                    requireContext()
+                )
+            )
+            //Buy
+            val buyValue = CurrencyUtils().getFormattedPurchaseValue(fields.currency)
+            val buyValueFormated = "Compra: $buyValue"
+            it.fragmentCambioTextValorCompraMoeda.text = buyValueFormated
+            //Sell
+            val sellValue = CurrencyUtils().getFormattedSaleValue(fields.currency)
+            val sellValueFormated = "Venda: $sellValue"
+            it.fragmentCambioTextValorVendaMoeda.text = sellValueFormated
+            //Balance
+            val userBalanceFormated =
+                "Saldo disponível: ${CurrencyUtils().getFormattedValue_ToBRLCurrency(fields.userBalance)}"
+            it.fragmentCambioTextSaldoDisponivel.text = userBalanceFormated
+            //AmountCurrency
+            val amountCurrencyFormated = "${fields.amountCurrency} ${fields.currency.name} em caixa"
+            it.fragmentCambioTextMoedaEmCaixa.text = amountCurrencyFormated
+        }
     }
 
     private fun observerStates() {
@@ -101,14 +90,15 @@ class ExchangeFragment : Fragment() {
         observerSellButtonEvent()
         observerBuyButtonEvent()
     }
+
     private fun observerBuyButtonEvent() {
         exchangeViewModel.viewBuyButtonEvent.observe(viewLifecycleOwner, {
             when (it) {
                 is BuyButtonEvent.Enabled -> {
-                    configureBuyButtonState(true)
+                    binding.fragmentCambioButtonComprar.configuraEstado(true)
                 }
                 is BuyButtonEvent.Disabled -> {
-                    configureBuyButtonState(false)
+                    binding.fragmentCambioButtonComprar.configuraEstado(false)
                 }
             }
         })
@@ -118,10 +108,10 @@ class ExchangeFragment : Fragment() {
         exchangeViewModel.viewSellButtonEvent.observe(viewLifecycleOwner, {
             when (it) {
                 is SellButtonEvent.Enabled -> {
-                    configureSellButtonState(true)
+                    binding.fragmentCambioButtonVender.configuraEstado(true)
                 }
                 is SellButtonEvent.Disabled -> {
-                    configureSellButtonState(false)
+                    binding.fragmentCambioButtonVender.configuraEstado(false)
                 }
             }
         })
@@ -140,21 +130,18 @@ class ExchangeFragment : Fragment() {
     private fun observerBusinessState() {
         exchangeViewModel.viewBusinessExchangeState.observe(viewLifecycleOwner, {
             when (it) {
-                is BusinessExchangeState.SucessPurchase -> {
-                    sucessPurchase?.invoke(it.amount, it.value)
+                is BusinessExchangeState.Sucess -> {
+                    businessSucessCallBack?.invoke(it)
                 }
-                is BusinessExchangeState.SucessSale -> {
-                    sucessSale?.invoke(it.amount, it.value)
-                }
+                is BusinessExchangeState.Failure -> { }
             }
         })
     }
 
     private fun configureBusinessButtons(fields: ScreenExchangeState.InitExchangeFragment) {
-        val buyButton = inflatedView.findViewById<ButtonBlue>(R.id.fragment_cambio_button_comprar)
-        val sellButton = inflatedView.findViewById<ButtonBlue>(R.id.fragment_cambio_button_vender)
-        val inputLayoutQuantidade =
-            inflatedView.findViewById<TextInputLayout>(R.id.fragment_cambio_input_layout_quantidade)
+        val buyButton = binding.fragmentCambioButtonComprar
+        val sellButton = binding.fragmentCambioButtonVender
+        val inputLayoutQuantidade = binding.fragmentCambioInputLayoutQuantidade
 
         configureInitStateButtons(buyButton, sellButton)
         configureOnTextQuantidadeChanged(inputLayoutQuantidade)
@@ -168,16 +155,6 @@ class ExchangeFragment : Fragment() {
             val amount = inputLayoutQuantidade.editText?.text.toString().toBigInteger()
             exchangeViewModel.saleCurrency(fields.currency, amount, userId)
         }
-    }
-
-    private fun configureBuyButtonState(state: Boolean) {
-        val buyButton = inflatedView.findViewById<ButtonBlue>(R.id.fragment_cambio_button_comprar)
-        buyButton.configuraEstado(state)
-    }
-
-    private fun configureSellButtonState(state: Boolean) {
-        val sellButton = inflatedView.findViewById<ButtonBlue>(R.id.fragment_cambio_button_vender)
-        sellButton.configuraEstado(state)
     }
 
     private fun configureOnTextQuantidadeChanged(inputLayoutQuantidade: TextInputLayout) {
@@ -194,5 +171,4 @@ class ExchangeFragment : Fragment() {
         buttonVender.configuraTitulo("Vender")
         buttonVender.configuraEstado(false)
     }
-
 }

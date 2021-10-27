@@ -8,32 +8,33 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
+import br.com.alexalves.base.BaseActivity
 import br.com.alexalves.investimentosbrq.R
 import br.com.alexalves.investimentosbrq.consts.ArgumentConsts
 import br.com.alexalves.investimentosbrq.consts.StaticConsts
 import br.com.alexalves.investimentosbrq.consts.TextsConsts
+import br.com.alexalves.investimentosbrq.databinding.ActivityHomeBinding
 import br.com.alexalves.investimentosbrq.model.Currency
 import br.com.alexalves.investimentosbrq.model.HomeState
 import br.com.alexalves.investimentosbrq.ui.adapter.CurrencyAdapter
 import br.com.alexalves.investimentosbrq.viewmodel.HomeViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class HomeActivity : AppCompatActivity() {
+class HomeActivity : BaseActivity() {
 
-    lateinit var recyclerView: RecyclerView
+    lateinit var binding: ActivityHomeBinding
     val homeViewModel: HomeViewModel by viewModel()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_home)
+        binding = ActivityHomeBinding.inflate(layoutInflater)
+        setContentView(binding.root)
         init()
     }
 
     private fun init() {
         homeViewModel.verifyExistingUser(StaticConsts.UserStaticID)
         configureToolbar()
-        configureRecyclerView()
         observeCurrencies()
         homeViewModel.findCurrencies()
     }
@@ -41,37 +42,33 @@ class HomeActivity : AppCompatActivity() {
     private fun observeCurrencies() {
         homeViewModel.viewHomeState.observe(this, Observer {
             when (it) {
-                is HomeState.FoundCurrencies -> {
-                    configureAdapter(it.currencies)
-                }
-                is HomeState.FailureInSearchCurrencies -> {
-                    Log.e("ERRO", it.error.message.toString())
-                }
+                is HomeState.FoundCurrencies -> { configureRecyclerView(it.currencies) }
+                is HomeState.FailureInSearchCurrencies -> { Log.e("ERRO", it.error.message.toString()) }
             }
         })
     }
 
-    private fun configureAdapter(currencies: List<Currency>) {
-        val currencyAdapter = CurrencyAdapter(currencies, this, this::onClickItemMoedas)
-        recyclerView.adapter = currencyAdapter
-        currencyAdapter.notifyDataSetChanged()
+    private fun configureRecyclerView(currencies: List<Currency>) {
+        binding.recyclerViewMoedasHome.let {
+            it.layoutManager = LinearLayoutManager(this)
+            val currencyAdapter = CurrencyAdapter(currencies, this, this::onClickItemMoedas)
+            it.adapter = currencyAdapter
+            currencyAdapter.notifyDataSetChanged()
+        }
     }
 
     private fun configureToolbar() {
-        val toolbar = findViewById<Toolbar>(R.id.toolbar_investimentos)
-        val titulo = findViewById<TextView>(R.id.toolbar_titulo)
-        setSupportActionBar(toolbar)
-        titulo.text = TextsConsts.TextMoedas
-    }
-
-    private fun configureRecyclerView() {
-        recyclerView = findViewById(R.id.recycler_view_moedas_home)
-        recyclerView.layoutManager = LinearLayoutManager(this)
+        binding.toolbarActivityHome.let {
+            setSupportActionBar(it.toolbarInvestimentos)
+            it.toolbarTitulo.text = TextsConsts.TextMoedas
+        }
     }
 
     fun onClickItemMoedas(currency: Currency) {
-        val intent = Intent(this, ExchangeActivity::class.java)
-        intent.putExtra(ArgumentConsts.currency_argument, currency)
-        startActivity(intent)
+        Intent(this, ExchangeActivity::class.java).let {
+            it.putExtra(ArgumentConsts.currency_argument, currency)
+            startActivity(it)
+        }
     }
+
 }

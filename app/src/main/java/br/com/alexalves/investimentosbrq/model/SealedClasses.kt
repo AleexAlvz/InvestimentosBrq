@@ -1,14 +1,13 @@
 package br.com.alexalves.investimentosbrq.model
 
+import java.io.Serializable
 import java.lang.Exception
 import java.math.BigDecimal
 import java.math.BigInteger
 
-sealed class BusinessExchangeState(){
-    data class SucessPurchase(val amount: BigInteger, val value: BigDecimal): BusinessExchangeState()
-    data class SucessSale(val amount: BigInteger, val value: BigDecimal): BusinessExchangeState()
-    data class FailurePurchase(val error: Exception): BusinessExchangeState()
-    data class FailureSale(val error: Exception): BusinessExchangeState()
+sealed class BusinessExchangeState(): Serializable{
+    data class Sucess(val typeOperation: TypeOperation, val message: String): BusinessExchangeState()
+    data class Failure(val typeOperation: TypeOperation, val error: Exception): BusinessExchangeState()
 }
 
 sealed class ScreenExchangeState(){

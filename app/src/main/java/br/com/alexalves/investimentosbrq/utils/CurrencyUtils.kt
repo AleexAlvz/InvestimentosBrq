@@ -37,7 +37,7 @@ class CurrencyUtils {
         return currency.source + " " + vendaComDecimais.replace(".", ",")
     }
 
-    fun getFormattedBalance_ToBRLCurrency(balance: BigDecimal): String {
+    fun getFormattedValue_ToBRLCurrency(balance: BigDecimal): String {
         return "R$ " + String.format("%.2f", balance).replace(".", ",")
     }
 

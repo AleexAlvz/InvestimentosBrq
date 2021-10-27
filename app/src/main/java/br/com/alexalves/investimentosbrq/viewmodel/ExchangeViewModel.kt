@@ -3,7 +3,6 @@ package br.com.alexalves.investimentosbrq.viewmodel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import br.com.alexalves.base.coroutines.AppContextProvider
 import br.com.alexalves.investimentosbrq.consts.AbbreviationCurrenciesConsts
 import br.com.alexalves.investimentosbrq.model.*
 import br.com.alexalves.investimentosbrq.model.exceptions.PurchaseNotApprovalException
@@ -59,7 +58,12 @@ class ExchangeViewModel(
                 val user = exchangeDataSource.searchUser(userId)
                 updatePurchaseInUser(user, currency, quantity)
             } catch (error: Exception) {
-                businessState.postValue(BusinessExchangeState.FailurePurchase(UserNotFoundException()))
+                businessState.postValue(
+                    BusinessExchangeState.Failure(
+                        TypeOperation.PURCHASE,
+                        UserNotFoundException()
+                    )
+                )
             }
         }
     }
@@ -70,7 +74,12 @@ class ExchangeViewModel(
                 val user = exchangeDataSource.searchUser(userId)
                 updateSaleInUser(user, currency, quantity)
             } catch (error: Exception) {
-                businessState.postValue(BusinessExchangeState.FailureSale(UserNotFoundException()))
+                businessState.postValue(
+                    BusinessExchangeState.Failure(
+                        TypeOperation.SALE,
+                        UserNotFoundException()
+                    )
+                )
             }
         }
     }
@@ -87,23 +96,47 @@ class ExchangeViewModel(
                 if (approval) {
                     savePurchaseInUser(quantity, currency, user)
                     exchangeDataSource.updateUser(user)
+
+                    val message = configuraTextoCompra(quantity, currency, totalPurchaseValue)
+
                     businessState.postValue(
-                        BusinessExchangeState.SucessPurchase(quantity, totalPurchaseValue)
+                        BusinessExchangeState.Sucess(TypeOperation.PURCHASE, message)
                     )
+
                 } else businessState.postValue(
-                    BusinessExchangeState.FailurePurchase(
+                    BusinessExchangeState.Failure(
+                        TypeOperation.PURCHASE,
                         PurchaseNotApprovalException()
                     )
                 )
             } catch (error: Exception) {
                 businessState.postValue(
-                    BusinessExchangeState.FailurePurchase(
+                    BusinessExchangeState.Failure(
+                        TypeOperation.PURCHASE,
                         PurchaseNotApprovalException()
                     )
                 )
             }
         }
     }
+
+    private fun configuraTextoVenda(
+        quantity: BigInteger,
+        currency: Currency,
+        totalValue: BigDecimal
+    ) =
+        "Parabéns! \n" + "Você acabou de vender ${quantity} ${currency?.abbreviation} - ${currency?.name}, totalizando\n" +
+                CurrencyUtils().getFormattedValue_ToBRLCurrency(totalValue)
+
+
+    private fun configuraTextoCompra(
+        quantity: BigInteger,
+        currency: Currency,
+        totalValue: BigDecimal
+    ) = "Parabéns! \n" +
+            "Você acabou de comprar ${quantity} ${currency?.abbreviation} - ${currency?.name}, totalizando \n" +
+            "R\$ ${totalValue}"
+
 
     private fun updateSaleInUser(
         user: User,
@@ -118,17 +151,30 @@ class ExchangeViewModel(
                 if (approval) {
                     saveSaleInUser(quantity, currency, user)
                     exchangeDataSource.updateUser(user)
+
+                    val message = configuraTextoVenda(quantity, currency, totalSaleValue)
+
                     businessState.postValue(
-                        BusinessExchangeState.SucessSale(
-                            quantity,
-                            totalSaleValue
+                        BusinessExchangeState.Sucess(
+                            TypeOperation.SALE,
+                            message
                         )
                     )
                 } else {
-                    businessState.postValue(BusinessExchangeState.FailureSale(SaleNotApprovalException()))
+                    businessState.postValue(
+                        BusinessExchangeState.Failure(
+                            TypeOperation.SALE,
+                            SaleNotApprovalException()
+                        )
+                    )
                 }
             } catch (error: Exception) {
-                businessState.postValue(BusinessExchangeState.FailureSale(SaleNotApprovalException()))
+                businessState.postValue(
+                    BusinessExchangeState.Failure(
+                        TypeOperation.SALE,
+                        SaleNotApprovalException()
+                    )
+                )
             }
         }
     }

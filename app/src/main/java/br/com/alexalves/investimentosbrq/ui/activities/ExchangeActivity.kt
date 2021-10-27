@@ -7,14 +7,13 @@ import br.com.alexalves.base.BaseActivity
 import br.com.alexalves.investimentosbrq.consts.ArgumentConsts
 import br.com.alexalves.investimentosbrq.consts.TextsConsts
 import br.com.alexalves.investimentosbrq.databinding.ActivityExchangeBinding
+import br.com.alexalves.investimentosbrq.model.BusinessExchangeState
 import br.com.alexalves.investimentosbrq.model.Currency
 import br.com.alexalves.investimentosbrq.model.TypeOperation
 import br.com.alexalves.investimentosbrq.ui.fragments.ExchangeFragment
 import br.com.alexalves.investimentosbrq.ui.fragments.OperationSucessFragment
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
-import java.math.BigDecimal
-import java.math.BigInteger
 
 class ExchangeActivity : BaseActivity() {
 
@@ -42,8 +41,7 @@ class ExchangeActivity : BaseActivity() {
     private fun getExchangeFragmentConfigured(): ExchangeFragment {
         val exchangeFragment = ExchangeFragment()
         //Configure events
-        exchangeFragment.sucessPurchase = { quantidadeComprada, valorDaCompra -> iniciaSucessoCompraFragment(quantidadeComprada, valorDaCompra) }
-        exchangeFragment.sucessSale = { quantidadeVendida, valorDaCompra -> iniciaSucessoVendaFragment(quantidadeVendida, valorDaCompra) }
+        exchangeFragment.businessSucessCallBack = { sucess -> iniciaSucessoCompraFragment(sucess) }
         //Configure Bundle with currency
         val bundle = Bundle()
         bundle.putSerializable(ArgumentConsts.currency_argument, currency)
@@ -52,29 +50,16 @@ class ExchangeActivity : BaseActivity() {
         return exchangeFragment
     }
 
-    private fun iniciaSucessoVendaFragment(
-        quantidadeVendida: BigInteger,
-        valorTotal: BigDecimal
-    ){
-        val fragmentVenda = OperationSucessFragment()
-        fragmentVenda.quantidade = quantidadeVendida
-        fragmentVenda.valorTotal = valorTotal
-        fragmentVenda.currency = currency
-        fragmentVenda.typeOperation = TypeOperation.SALE
-        fragmentVenda.buttonHomeListener = { voltarParaHome() }
-        configureToolbarSucessFragment(TypeOperation.SALE)
-        replaceFragmentNoStack(binding.cambioContainer, fragmentVenda)
-    }
+    private fun iniciaSucessoCompraFragment(operationSucess: BusinessExchangeState.Sucess){
+        val fragmentSucess = OperationSucessFragment()
 
-    private fun iniciaSucessoCompraFragment(quantidadeComprada: BigInteger, valorTotal: BigDecimal){
-        val fragmentCompra = OperationSucessFragment()
-        fragmentCompra.quantidade = quantidadeComprada
-        fragmentCompra.valorTotal = valorTotal
-        fragmentCompra.currency = currency
-        fragmentCompra.typeOperation = TypeOperation.PURCHASE
-        fragmentCompra.buttonHomeListener = { voltarParaHome() }
-        configureToolbarSucessFragment(TypeOperation.PURCHASE)
-        replaceFragmentNoStack(binding.cambioContainer, fragmentCompra)
+        val bundle = Bundle()
+        bundle.putSerializable("BusinessSucess", operationSucess)
+        fragmentSucess.arguments = bundle
+
+        fragmentSucess.buttonHomeListener = { voltarParaHome() }
+        configureToolbarSucessFragment(operationSucess.typeOperation)
+        replaceFragmentNoStack(binding.cambioContainer, fragmentSucess)
     }
 
     fun voltarParaHome() {
