@@ -7,8 +7,8 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import br.com.alexalves.investimentosbrq.R
-import br.com.alexalves.investimentosbrq.model.Currency
-import br.com.alexalves.investimentosbrq.utils.CurrencyUtils
+import br.com.alexalves.models.Currency
+import br.com.alexalves.utils.CurrencyUtils
 
 class CurrencyAdapter(
     private val currencies: List<Currency>,
@@ -29,7 +29,8 @@ class CurrencyAdapter(
         holder.itemView.setOnClickListener { onItemClick(currency) }
         holder.nomeMoeda.setText(currency.abbreviation)
         holder.variacaoMoeda.text = CurrencyUtils().getFormattedVariation(currency.variation)
-        val variationColor = CurrencyUtils().getCurrencyColor(currency.variation, context!!)
+        val variationColor = CurrencyUtils()
+            .getCurrencyColor(currency.variation, context!!)
         holder.variacaoMoeda.setTextColor(variationColor)
     }
 

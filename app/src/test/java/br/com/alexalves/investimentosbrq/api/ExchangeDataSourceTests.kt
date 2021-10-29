@@ -1,11 +1,9 @@
 package br.com.alexalves.investimentosbrq.api
 
-import br.com.alexalves.investimentosbrq.database.UserDAO
-import br.com.alexalves.investimentosbrq.model.Currency
-import br.com.alexalves.investimentosbrq.model.User
-import br.com.alexalves.investimentosbrq.repository.ExchangeDataSource
-import br.com.alexalves.investimentosbrq.repository.ExchangeDataSourceWrapper
-import br.com.alexalves.investimentosbrq.retrofit.InvestimentosService
+import br.com.alexalves.base.database.UserDAO
+import br.com.alexalves.base.repository.ExchangeDataSource
+import br.com.alexalves.base.repository.InvestimentoServiceAPIWrapper
+import br.com.alexalves.api.InvestimentosService
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
 import io.mockk.impl.annotations.MockK
@@ -23,9 +21,9 @@ class ExchangeDataSourceTests {
     @MockK
     lateinit var userDao: UserDAO
     @MockK
-    lateinit var service: InvestimentosService
+    lateinit var service: br.com.alexalves.api.InvestimentosService
     @MockK
-    lateinit var exchangeWrapper: ExchangeDataSourceWrapper
+    lateinit var exchangeWrapper: InvestimentoServiceAPIWrapper
     lateinit var exchangeDataSource: ExchangeDataSource
 
     @Before
@@ -38,7 +36,7 @@ class ExchangeDataSourceTests {
     fun `When searchUser then returns the correct User`(){
 
         //Arrange
-        val user = User(id = 1L)
+        val user = br.com.alexalves.models.User(id = 1L)
 
         coEvery { userDao.searchUser(user.id) } returns user
 
@@ -52,7 +50,7 @@ class ExchangeDataSourceTests {
     @Test
     fun `When searchCurrencies then return currencies`(){
         //Arrange
-        val currencies = listOf<Currency>(mockk(name="Dollar"), mockk(name="Bitcoin"), mockk(name="Euro"))
+        val currencies = listOf<br.com.alexalves.models.Currency>(mockk(name="Dollar"), mockk(name="Bitcoin"), mockk(name="Euro"))
 
         coEvery { service.getService().execute().body() } answers { nothing }
         coEvery { exchangeWrapper.filterCurrencies(null) } returns currencies

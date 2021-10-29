@@ -17,9 +17,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import br.com.alexalves.investimentosbrq.CustomMatchers.Companion.childAtPosition
 import br.com.alexalves.investimentosbrq.CustomMatchers.Companion.verifyItemInPositionOfRecyclerView
 import br.com.alexalves.investimentosbrq.R
-import br.com.alexalves.investimentosbrq.model.Currency
-import br.com.alexalves.investimentosbrq.model.User
-import br.com.alexalves.investimentosbrq.repository.ExchangeRepository
+import br.com.alexalves.base.repository.ExchangeRepository
 import br.com.alexalves.investimentosbrq.ui.adapter.CurrencyAdapter
 import br.com.alexalves.investimentosbrq.viewmodel.HomeViewModel
 import io.mockk.MockKAnnotations
@@ -48,16 +46,28 @@ class HomeScreenTest {
         MockKAnnotations.init(this, relaxUnitFun = true)
 
         val currencies = listOf(
-            Currency("Bitcoin", BigDecimal.ZERO, BigDecimal.ZERO, 0.09, "BTC"),
-            Currency("Euro", BigDecimal.ZERO, BigDecimal.ZERO, 0.10, "EUR"),
-            Currency("Dollar", BigDecimal.ZERO, BigDecimal.ZERO, 0.11, "USD"),
+            br.com.alexalves.models.Currency(
+                "Bitcoin",
+                BigDecimal.ZERO,
+                BigDecimal.ZERO,
+                0.09,
+                "BTC"
+            ),
+            br.com.alexalves.models.Currency("Euro", BigDecimal.ZERO, BigDecimal.ZERO, 0.10, "EUR"),
+            br.com.alexalves.models.Currency(
+                "Dollar",
+                BigDecimal.ZERO,
+                BigDecimal.ZERO,
+                0.11,
+                "USD"
+            ),
         )
 
-        coEvery { homeRepository.searchCurrencies() } returns currencies
-        coEvery { homeRepository.searchUser(1L) } returns User(id = 1L)
+//        coEvery { homeRepository.searchCurrencies() } returns currencies
+        coEvery { homeRepository.searchUser(1L) } returns br.com.alexalves.models.User(id = 1L)
 
         val homeTestModule = module {
-            viewModel<HomeViewModel>(override = true) { HomeViewModel(homeRepository) }
+//            viewModel<HomeViewModel>(override = true) { HomeViewModel(homeRepository) }
         }
 
         loadKoinModules(homeTestModule)
@@ -128,7 +138,7 @@ class HomeScreenTest {
             )
         )
         //Verify if is called ExchangeFragment
-        intended(hasComponent(ExchangeActivity::class.qualifiedName))
+        intended(hasComponent(br.com.alexalves.feature_exchange.ui.activities.ExchangeActivity::class.qualifiedName))
     }
 }
 

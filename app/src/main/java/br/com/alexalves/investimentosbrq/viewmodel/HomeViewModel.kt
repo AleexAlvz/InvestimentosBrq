@@ -2,34 +2,33 @@ package br.com.alexalves.investimentosbrq.viewmodel
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
+import br.com.alexalves.base.BaseViewModel
 import br.com.alexalves.base.coroutines.AppContextProvider
-import br.com.alexalves.investimentosbrq.model.HomeState
-import br.com.alexalves.investimentosbrq.model.User
-import br.com.alexalves.investimentosbrq.model.exceptions.FailureInFoundCurrenciesException
-import br.com.alexalves.investimentosbrq.repository.ExchangeRepository
-import br.com.alexalves.investimentosbrq.repository.HomeRepository
+import br.com.alexalves.base.repository.HomeRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 class HomeViewModel(
     private val exchangeDataSource: HomeRepository
-) : ViewModel() {
+) : BaseViewModel() {
 
-    private val homeState = MutableLiveData<HomeState>()
-    val viewHomeState: LiveData<HomeState> = homeState
+    private val homeState = MutableLiveData<br.com.alexalves.models.HomeState>()
+    val viewHomeState: LiveData<br.com.alexalves.models.HomeState> = homeState
 
     fun findCurrencies() {
         CoroutineScope(AppContextProvider.io).launch {
             try {
                 val currencies = exchangeDataSource.searchCurrencies()
                 if (currencies.isNotEmpty()){
-                    homeState.postValue(HomeState.FoundCurrencies(currencies))
+                    homeState.postValue(br.com.alexalves.models.HomeState.FoundCurrencies(currencies))
                 } else {
-                    homeState.postValue(HomeState.FailureInSearchCurrencies(FailureInFoundCurrenciesException("List isn't valid")))
+                    homeState.postValue(
+                        br.com.alexalves.models.HomeState.FailureInSearchCurrencies(
+                            br.com.alexalves.models.exceptions.FailureInFoundCurrenciesException("List isn't valid")
+                        ))
                 }
             } catch (error: Exception) {
-                homeState.postValue(HomeState.FailureInSearchCurrencies(FailureInFoundCurrenciesException()))
+                homeState.postValue(br.com.alexalves.models.HomeState.FailureInSearchCurrencies(br.com.alexalves.models.exceptions.FailureInFoundCurrenciesException()))
             }
         }
     }
@@ -38,7 +37,7 @@ class HomeViewModel(
         CoroutineScope(AppContextProvider.io).launch{
             val user = exchangeDataSource.searchUser(userId)
             if (user==null){
-                exchangeDataSource.saveUser(User(id = userId))
+                exchangeDataSource.saveUser(br.com.alexalves.models.User(id = userId))
             }
         }
     }

@@ -14,12 +14,9 @@ import androidx.test.espresso.intent.Intents
 import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import br.com.alexalves.investimentosbrq.R
-import br.com.alexalves.investimentosbrq.consts.ArgumentConsts
-import br.com.alexalves.investimentosbrq.model.Currency
-import br.com.alexalves.investimentosbrq.model.User
-import br.com.alexalves.investimentosbrq.repository.ExchangeRepository
-import br.com.alexalves.investimentosbrq.viewmodel.ExchangeViewModel
-import br.com.alexalves.investimentosbrq.viewmodel.HomeViewModel
+import br.com.alexalves.models.consts.ArgumentConsts
+import br.com.alexalves.base.repository.ExchangeRepository
+import br.com.alexalves.feature_exchange.ui.viewmodels.ExchangeViewModel
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
 import io.mockk.impl.annotations.MockK
@@ -33,7 +30,6 @@ import org.junit.runner.RunWith
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.core.context.loadKoinModules
 import org.koin.dsl.module
-import org.w3c.dom.Text
 import java.math.BigDecimal
 import java.math.BigInteger
 
@@ -47,7 +43,7 @@ class ExchangeScreenTest {
     fun setup() {
         MockKAnnotations.init(this, relaxUnitFun = true)
 
-        coEvery { homeRepository.searchUser(1L) } returns User(
+        coEvery { homeRepository.searchUser(1L) } returns br.com.alexalves.models.User(
             id = 1L,
             balance = BigDecimal(250),
             usd = BigInteger("20")
@@ -59,13 +55,14 @@ class ExchangeScreenTest {
 
         loadKoinModules(exchangeModuleTest)
 
-        val currency = Currency("Dollar", BigDecimal(5), BigDecimal(4), 2.435, "USD")
+        val currency =
+            br.com.alexalves.models.Currency("Dollar", BigDecimal(5), BigDecimal(4), 2.435, "USD")
         val intent =
-            Intent(ApplicationProvider.getApplicationContext(), ExchangeActivity::class.java)
+            Intent(ApplicationProvider.getApplicationContext(), br.com.alexalves.feature_exchange.ui.activities.ExchangeActivity::class.java)
         intent.putExtra(ArgumentConsts.currency_argument, currency)
 
         Intents.init()
-        launchActivity<ExchangeActivity>(intent)
+        launchActivity<br.com.alexalves.feature_exchange.ui.activities.ExchangeActivity>(intent)
     }
 
     @After
