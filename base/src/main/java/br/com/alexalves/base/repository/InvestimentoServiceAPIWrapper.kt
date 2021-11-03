@@ -7,15 +7,15 @@ class InvestimentoServiceAPIWrapper {
     private fun configureReturnOfCurrenciesAPI(response: br.com.alexalves.models.ServiceInvestimentos): List<br.com.alexalves.models.Currency> {
         val currencies = response?.results?.currencies
         currencies?.let {
-            CurrencyUtils().setAbbreviationAndSource(it.ars, it.source)
-            CurrencyUtils().setAbbreviationAndSource(it.aud, it.source)
-            CurrencyUtils().setAbbreviationAndSource(it.btc, it.source)
-            CurrencyUtils().setAbbreviationAndSource(it.cad, it.source)
-            CurrencyUtils().setAbbreviationAndSource(it.cny, it.source)
-            CurrencyUtils().setAbbreviationAndSource(it.eur, it.source)
-            CurrencyUtils().setAbbreviationAndSource(it.gbp, it.source)
-            CurrencyUtils().setAbbreviationAndSource(it.jpy, it.source)
-            CurrencyUtils().setAbbreviationAndSource(it.usd, it.source)
+            CurrencyUtils.setAbbreviationAndSource(it.ars, it.source)
+            CurrencyUtils.setAbbreviationAndSource(it.aud, it.source)
+            CurrencyUtils.setAbbreviationAndSource(it.btc, it.source)
+            CurrencyUtils.setAbbreviationAndSource(it.cad, it.source)
+            CurrencyUtils.setAbbreviationAndSource(it.cny, it.source)
+            CurrencyUtils.setAbbreviationAndSource(it.eur, it.source)
+            CurrencyUtils.setAbbreviationAndSource(it.gbp, it.source)
+            CurrencyUtils.setAbbreviationAndSource(it.jpy, it.source)
+            CurrencyUtils.setAbbreviationAndSource(it.usd, it.source)
         }
 
         val configuredCurrencies: List<br.com.alexalves.models.Currency>

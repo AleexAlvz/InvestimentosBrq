@@ -8,7 +8,7 @@ import br.com.alexalves.models.consts.AbbreviationCurrenciesConsts
 import java.math.BigDecimal
 import java.math.BigInteger
 
-class CurrencyUtils {
+object CurrencyUtils {
 
     fun getFormattedSaleValue(currency: Currency): String {
         val vendaComDecimais = String.format("%.3f", currency.sell)
@@ -34,9 +34,8 @@ class CurrencyUtils {
     }
 
     fun getFormattedVariation(variation: Double): String {
-        val variacaoString = variation.toString().substring(0,3)
-        val variacaoFormatada = variacaoString.replace(".", ",") + "%"
-        return variacaoFormatada
+        val variacao = String.format("%.2f", variation).replace(".", ",") + "%"
+        return variacao
     }
 
     fun setAbbreviationAndSource(currency: Currency, source: String = "indefinido"){

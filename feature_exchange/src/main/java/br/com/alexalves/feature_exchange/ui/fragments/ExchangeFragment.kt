@@ -58,24 +58,24 @@ class ExchangeFragment : BaseFragment() {
             it.fragmentCambioTextTituloMoeda.text = tituloFormatado
             //Variation
             it.fragmentCambioTextVariacaoMoeda.text =
-                CurrencyUtils().getFormattedVariation(fields.currency.variation)
+                CurrencyUtils.getFormattedVariation(fields.currency.variation)
             it.fragmentCambioTextVariacaoMoeda.setTextColor(
-                CurrencyUtils().getCurrencyColor(
+                CurrencyUtils.getCurrencyColor(
                     fields.currency.variation,
                     requireContext()
                 )
             )
             //Buy
-            val buyValue = CurrencyUtils().getFormattedPurchaseValue(fields.currency)
+            val buyValue = CurrencyUtils.getFormattedPurchaseValue(fields.currency)
             val buyValueFormated = "Compra: $buyValue"
             it.fragmentCambioTextValorCompraMoeda.text = buyValueFormated
             //Sell
-            val sellValue = CurrencyUtils().getFormattedSaleValue(fields.currency)
+            val sellValue = CurrencyUtils.getFormattedSaleValue(fields.currency)
             val sellValueFormated = "Venda: $sellValue"
             it.fragmentCambioTextValorVendaMoeda.text = sellValueFormated
             //Balance
             val userBalanceFormated =
-                "Saldo disponível: ${CurrencyUtils().getFormattedValue_ToBRLCurrency(fields.userBalance)}"
+                "Saldo disponível: ${CurrencyUtils.getFormattedValue_ToBRLCurrency(fields.userBalance)}"
             it.fragmentCambioTextSaldoDisponivel.text = userBalanceFormated
             //AmountCurrency
             val amountCurrencyFormated = "${fields.amountCurrency} ${fields.currency.name} em caixa"

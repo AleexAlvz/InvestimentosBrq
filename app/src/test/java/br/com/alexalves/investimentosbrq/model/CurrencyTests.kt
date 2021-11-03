@@ -13,7 +13,7 @@ class CurrencyTests {
     fun deve_configurarAbreviacao_quandoConfiguraMoedaDollar() {
         val moedaDollar =
             br.com.alexalves.models.Currency("Dollar", BigDecimal.ZERO, BigDecimal.ZERO, 0.0)
-        moedaDollar.setAbbreviationAndSource()
+        CurrencyUtils.setAbbreviationAndSource(moedaDollar)
         assertThat("USD", `is`(equalTo(moedaDollar.abbreviation)))
     }
 
@@ -21,7 +21,7 @@ class CurrencyTests {
     fun deve_configurarAbreviacao_quandoConfiguraMoedaEuro() {
         val moedaEuro =
             br.com.alexalves.models.Currency("Euro", BigDecimal.ZERO, BigDecimal.ZERO, 0.0)
-        moedaEuro.setAbbreviationAndSource()
+        CurrencyUtils.setAbbreviationAndSource(moedaEuro)
         assertThat("EUR", `is`(equalTo(moedaEuro.abbreviation)))
     }
 
@@ -33,7 +33,7 @@ class CurrencyTests {
             BigDecimal.ZERO,
             0.0
         )
-        moedaPoundSterling.setAbbreviationAndSource()
+        CurrencyUtils.setAbbreviationAndSource(moedaPoundSterling)
         assertThat("GBP", `is`(equalTo(moedaPoundSterling.abbreviation)))
     }
 
@@ -45,7 +45,7 @@ class CurrencyTests {
             BigDecimal.ZERO,
             0.0
         )
-        moedaArgentinePeso.setAbbreviationAndSource()
+        CurrencyUtils.setAbbreviationAndSource(moedaArgentinePeso)
         assertThat("ARS", `is`(equalTo(moedaArgentinePeso.abbreviation)))
     }
 
@@ -57,7 +57,7 @@ class CurrencyTests {
             BigDecimal.ZERO,
             0.0
         )
-        moedaCanadianDollar.setAbbreviationAndSource()
+        CurrencyUtils.setAbbreviationAndSource(moedaCanadianDollar)
         assertThat("CAD", `is`(equalTo(moedaCanadianDollar.abbreviation)))
     }
 
@@ -70,7 +70,7 @@ class CurrencyTests {
                 BigDecimal.ZERO,
                 0.0
             )
-        moedaAustralianDollar.setAbbreviationAndSource()
+        CurrencyUtils.setAbbreviationAndSource(moedaAustralianDollar)
         assertThat("AUD", `is`(equalTo(moedaAustralianDollar.abbreviation)))
     }
 
@@ -78,7 +78,7 @@ class CurrencyTests {
     fun deve_configurarAbreviacao_quandoConfiguraMoedaJapaneseYen() {
         val moedaJapaneseYen =
             br.com.alexalves.models.Currency("Japanese Yen", BigDecimal.ZERO, BigDecimal.ZERO, 0.0)
-        moedaJapaneseYen.setAbbreviationAndSource()
+        CurrencyUtils.setAbbreviationAndSource(moedaJapaneseYen)
         assertThat("JPY", `is`(equalTo(moedaJapaneseYen.abbreviation)))
     }
 
@@ -86,7 +86,7 @@ class CurrencyTests {
     fun deve_configurarAbreviacao_quandoConfiguraMoedaRenminbi() {
         val moedaRenminbi =
             br.com.alexalves.models.Currency("Renminbi", BigDecimal.ZERO, BigDecimal.ZERO, 0.0)
-        moedaRenminbi.setAbbreviationAndSource()
+        CurrencyUtils.setAbbreviationAndSource(moedaRenminbi)
         assertThat("CNY", `is`(equalTo(moedaRenminbi.abbreviation)))
     }
 
@@ -94,7 +94,7 @@ class CurrencyTests {
     fun deve_configurarAbreviacao_quandoConfiguraMoedaBitcoin() {
         val moedaBitcoin =
             br.com.alexalves.models.Currency("Bitcoin", BigDecimal.ZERO, BigDecimal.ZERO, 0.0)
-        moedaBitcoin.setAbbreviationAndSource()
+        CurrencyUtils.setAbbreviationAndSource(moedaBitcoin)
         assertThat("BTC", `is`(equalTo(moedaBitcoin.abbreviation)))
     }
 
@@ -102,7 +102,7 @@ class CurrencyTests {
     fun testGetVariacaoFormatada(){
         val currency =
             br.com.alexalves.models.Currency("TESTE", BigDecimal.ZERO, BigDecimal.ZERO, 25.75)
-        val formatted = br.com.alexalves.utils.CurrencyUtils().getFormattedVariation(currency.variation)
+        val formatted = CurrencyUtils.getFormattedVariation(currency.variation)
         assertThat(formatted, `is`(equalTo("25,75%")))
     }
 
@@ -110,7 +110,7 @@ class CurrencyTests {
     fun testGetValorVendaFormatadoQuandoValorZero(){
         val currency =
             br.com.alexalves.models.Currency("TESTE", BigDecimal.ZERO, BigDecimal.ZERO, 0.0)
-        val formatted = br.com.alexalves.utils.CurrencyUtils().getFormattedSaleValue(currency)
+        val formatted = CurrencyUtils.getFormattedSaleValue(currency)
         assertThat(formatted, `is`(equalTo("BRL 0,000")))
     }
 
@@ -118,14 +118,14 @@ class CurrencyTests {
     fun testGetValorVendaFormatadoQuandoValorMaiorQueZero(){
         val currency =
             br.com.alexalves.models.Currency("TESTE", BigDecimal.ZERO, BigDecimal(3.751), 0.0)
-        val formatted = br.com.alexalves.utils.CurrencyUtils().getFormattedSaleValue(currency)
+        val formatted = CurrencyUtils.getFormattedSaleValue(currency)
         assertThat(formatted, `is`(equalTo("BRL 3,751")))
     }
 
     @Test
     fun testGetValorCompraFormatadoQuandoValorZero(){
         val moeda = br.com.alexalves.models.Currency("TESTE", BigDecimal.ZERO, BigDecimal.ZERO, 0.0)
-        val formatted = br.com.alexalves.utils.CurrencyUtils().getFormattedPurchaseValue(moeda)
+        val formatted = CurrencyUtils.getFormattedPurchaseValue(moeda)
         assertThat(formatted, `is`(equalTo("BRL 0,000")))
     }
 
@@ -133,7 +133,7 @@ class CurrencyTests {
     fun testGetValorCompraFormatadoQuandoValorMaiorQueZero(){
         val currency =
             br.com.alexalves.models.Currency("TESTE", BigDecimal(3.751), BigDecimal.ZERO, 0.0)
-        val formatted = br.com.alexalves.utils.CurrencyUtils().getFormattedPurchaseValue(currency)
+        val formatted = CurrencyUtils.getFormattedPurchaseValue(currency)
         assertThat(formatted, `is`(equalTo("BRL 3,751")))
     }
 

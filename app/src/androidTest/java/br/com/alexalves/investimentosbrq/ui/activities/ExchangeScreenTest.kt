@@ -56,7 +56,7 @@ class ExchangeScreenTest {
         loadKoinModules(exchangeModuleTest)
 
         val currency =
-            br.com.alexalves.models.Currency("Dollar", BigDecimal(5), BigDecimal(4), 2.435, "USD")
+            br.com.alexalves.models.Currency("Dollar", BigDecimal(5), BigDecimal(4), 2.44, "USD")
         val intent =
             Intent(ApplicationProvider.getApplicationContext(), br.com.alexalves.feature_exchange.ui.activities.ExchangeActivity::class.java)
         intent.putExtra(ArgumentConsts.currency_argument, currency)
@@ -148,7 +148,7 @@ class ExchangeScreenTest {
                 withId(R.id.fragment_cambio_text_variacao_moeda),
                 instanceOf(TextView::class.java)
             )
-        ).check(matches(withText("2,43%")))
+        ).check(matches(withText("2,44%")))
 
         //Verify text in buy value of card
         onView(

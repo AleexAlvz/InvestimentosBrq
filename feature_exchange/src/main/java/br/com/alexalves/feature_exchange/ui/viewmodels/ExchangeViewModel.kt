@@ -33,8 +33,7 @@ class ExchangeViewModel(
         CoroutineScope(br.com.alexalves.base.coroutines.AppContextProvider.io).launch {
             try {
                 val user = exchangeDataSource.searchUser(userId)
-                val amountCurrency = CurrencyUtils()
-                    .filterCurrency(currency, user)
+                val amountCurrency = CurrencyUtils.filterCurrency(currency, user)
                 val newFields = br.com.alexalves.models.ScreenExchangeState
                     .InitExchangeFragment(currency, user.balance, amountCurrency)
                 screenState.postValue(newFields)
@@ -123,7 +122,7 @@ class ExchangeViewModel(
         totalValue: BigDecimal
     ) =
         "Parabéns! \n" + "Você acabou de vender ${quantity} ${currency?.abbreviation} - ${currency?.name}, totalizando\n" +
-                br.com.alexalves.utils.CurrencyUtils().getFormattedValue_ToBRLCurrency(totalValue)
+                CurrencyUtils.getFormattedValue_ToBRLCurrency(totalValue)
 
 
     private fun configuraTextoCompra(
@@ -142,8 +141,7 @@ class ExchangeViewModel(
     ) {
         CoroutineScope(br.com.alexalves.base.coroutines.AppContextProvider.io).launch {
             try {
-                val currencyAmount = br.com.alexalves.utils.CurrencyUtils()
-                    .filterCurrency(currency, user)
+                val currencyAmount = CurrencyUtils.filterCurrency(currency, user)
                 val totalSaleValue = quantity.toBigDecimal() * currency.sell
                 val approval = (quantity <= currencyAmount)
                 if (approval) {
@@ -182,7 +180,7 @@ class ExchangeViewModel(
         currency: br.com.alexalves.models.Currency,
         user: br.com.alexalves.models.User
     ) {
-        val currencyAmount = br.com.alexalves.utils.CurrencyUtils().filterCurrency(currency, user)
+        val currencyAmount = CurrencyUtils.filterCurrency(currency, user)
         val totalPurchaseValue = quantity.toBigDecimal() * currency.buy
         val finalBalance = user.balance - totalPurchaseValue
         val finalCurrencyAmount = currencyAmount + quantity
@@ -200,7 +198,7 @@ class ExchangeViewModel(
         currency: br.com.alexalves.models.Currency,
         user: br.com.alexalves.models.User
     ) {
-        val currencyAmount = br.com.alexalves.utils.CurrencyUtils().filterCurrency(currency, user)
+        val currencyAmount = CurrencyUtils.filterCurrency(currency, user)
         val totalSaleValue = quantity.toBigDecimal() * currency.sell
         val finalBalance = user.balance + totalSaleValue
         val finalCurrencyAmount = currencyAmount - quantity

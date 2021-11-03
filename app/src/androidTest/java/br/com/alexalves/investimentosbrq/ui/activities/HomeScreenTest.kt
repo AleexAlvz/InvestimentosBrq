@@ -14,10 +14,12 @@ import androidx.test.espresso.intent.Intents.intended
 import androidx.test.espresso.intent.matcher.IntentMatchers.hasComponent
 import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import br.com.alexalves.base.repository.ExchangeRepository
+import br.com.alexalves.base.repository.HomeRepository
+import br.com.alexalves.feature_exchange.ui.activities.ExchangeActivity
 import br.com.alexalves.investimentosbrq.CustomMatchers.Companion.childAtPosition
 import br.com.alexalves.investimentosbrq.CustomMatchers.Companion.verifyItemInPositionOfRecyclerView
 import br.com.alexalves.investimentosbrq.R
-import br.com.alexalves.base.repository.ExchangeRepository
 import br.com.alexalves.investimentosbrq.ui.adapter.CurrencyAdapter
 import br.com.alexalves.investimentosbrq.viewmodel.HomeViewModel
 import io.mockk.MockKAnnotations
@@ -39,7 +41,7 @@ import java.math.BigDecimal
 class HomeScreenTest {
 
     @MockK
-    lateinit var homeRepository: ExchangeRepository
+    lateinit var homeRepository: HomeRepository
 
     @Before
     fun setup() {
@@ -63,11 +65,11 @@ class HomeScreenTest {
             ),
         )
 
-//        coEvery { homeRepository.searchCurrencies() } returns currencies
+        coEvery { homeRepository.searchCurrencies() } returns currencies
         coEvery { homeRepository.searchUser(1L) } returns br.com.alexalves.models.User(id = 1L)
 
         val homeTestModule = module {
-//            viewModel<HomeViewModel>(override = true) { HomeViewModel(homeRepository) }
+            viewModel<HomeViewModel>(override = true) { HomeViewModel(homeRepository) }
         }
 
         loadKoinModules(homeTestModule)
@@ -138,7 +140,7 @@ class HomeScreenTest {
             )
         )
         //Verify if is called ExchangeFragment
-        intended(hasComponent(br.com.alexalves.feature_exchange.ui.activities.ExchangeActivity::class.qualifiedName))
+        intended(hasComponent(ExchangeActivity::class.qualifiedName))
     }
 }
 
