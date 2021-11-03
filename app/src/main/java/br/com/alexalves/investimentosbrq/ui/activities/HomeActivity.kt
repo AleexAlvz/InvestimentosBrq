@@ -3,22 +3,21 @@ package br.com.alexalves.investimentosbrq.ui.activities
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import br.com.alexalves.base.BaseActivity
-import br.com.alexalves.feature_exchange.ui.activities.ExchangeActivity
 import br.com.alexalves.investimentosbrq.databinding.ActivityHomeBinding
 import br.com.alexalves.investimentosbrq.ui.adapter.CurrencyAdapter
 import br.com.alexalves.investimentosbrq.viewmodel.HomeViewModel
 import br.com.alexalves.models.consts.ArgumentConsts
 import br.com.alexalves.models.consts.StaticConsts
 import br.com.alexalves.models.consts.TextsConsts
+import br.com.alexalves.models.consts.UIConsts
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class HomeActivity : BaseActivity() {
 
-    lateinit var binding: ActivityHomeBinding
-    val homeViewModel: HomeViewModel by viewModel()
+    private lateinit var binding: ActivityHomeBinding
+    private val homeViewModel: HomeViewModel by viewModel()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,10 +34,10 @@ class HomeActivity : BaseActivity() {
     }
 
     private fun observeCurrencies() {
-        homeViewModel.viewHomeState.observe(this, Observer {
+        homeViewModel.viewHomeState.observe(this, {
             when (it) {
                 is br.com.alexalves.models.HomeState.FoundCurrencies -> { configureRecyclerView(it.currencies) }
-                is br.com.alexalves.models.HomeState.FailureInSearchCurrencies -> { Log.e("ERRO", it.error.message.toString()) }
+                is br.com.alexalves.models.HomeState.FailureInSearchCurrencies -> { Log.e(TextsConsts.Erro, it.error.message.toString()) }
             }
         })
     }
@@ -46,24 +45,22 @@ class HomeActivity : BaseActivity() {
     private fun configureRecyclerView(currencies: List<br.com.alexalves.models.Currency>) {
         binding.recyclerViewMoedasHome.let {
             it.layoutManager = LinearLayoutManager(this)
-            val currencyAdapter = CurrencyAdapter(currencies, this, this::onClickItemMoedas)
+            val currencyAdapter = CurrencyAdapter(currencies, this, this::onClickItemCurrency)
             it.adapter = currencyAdapter
             currencyAdapter.notifyDataSetChanged()
         }
     }
 
     private fun configureToolbar() {
-        binding.toolbarActivityHome.toolbarInvestimentos
-
         binding.toolbarActivityHome.let {
-            setSupportActionBar(it.toolbarInvestimentos)
+            setSupportActionBar(it.homeToolbar)
             it.toolbarTitulo.text = TextsConsts.TextMoedas
         }
     }
 
-    fun onClickItemMoedas(currency: br.com.alexalves.models.Currency) {
+    private fun onClickItemCurrency(currency: br.com.alexalves.models.Currency) {
         Intent().let {
-            it.setClassName(this, "br.com.alexalves.feature_exchange.ui.activities.ExchangeActivity")
+            it.setClassName(this, UIConsts.exchangeActivityDirectory)
             it.putExtra(ArgumentConsts.currency_argument, currency)
             startActivity(it)
         }

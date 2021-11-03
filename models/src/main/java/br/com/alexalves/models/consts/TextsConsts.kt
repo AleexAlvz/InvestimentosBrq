@@ -5,4 +5,5 @@ object TextsConsts {
     val TextMoedas = "Moedas"
     val TextVender = "Vender"
     val TextComprar = "Comprar"
+    val Erro = "ERRO"
 }

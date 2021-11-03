@@ -4,20 +4,20 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import br.com.alexalves.base.BaseActivity
-import br.com.alexalves.feature_exchange.R
 import br.com.alexalves.feature_exchange.databinding.ActivityExchangeBinding
 import br.com.alexalves.feature_exchange.ui.fragments.ExchangeFragment
 import br.com.alexalves.feature_exchange.ui.fragments.OperationSucessFragment
 import br.com.alexalves.models.Currency
 import br.com.alexalves.models.consts.ArgumentConsts
 import br.com.alexalves.models.consts.TextsConsts
+import br.com.alexalves.models.consts.UIConsts
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 
 class ExchangeActivity : BaseActivity() {
 
-    lateinit var currency: Currency
-    lateinit var binding: ActivityExchangeBinding
+    private lateinit var currency: Currency
+    private lateinit var binding: ActivityExchangeBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -28,7 +28,7 @@ class ExchangeActivity : BaseActivity() {
     }
 
     private fun init() {
-        setSupportActionBar(findViewById(R.id.toolbar_activity_cambio))
+        setSupportActionBar(binding.toolbarActivityCambio.exchangeToolbar)
         startExchangeFragment()
     }
 
@@ -63,30 +63,30 @@ class ExchangeActivity : BaseActivity() {
 
     fun voltarParaHome() {
         val intent = Intent()
-        intent.setClassName(this, "br.com.alexalves.investimentosbrq.ui.activities.HomeActivity")
+        intent.setClassName(this, UIConsts.homeActivityDirectory)
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         startActivity(intent)
     }
 
     private fun configureExchangeToolbar() {
         MainScope().launch {
-//            binding.toolbarActivityCambio.let {
-//                it.text = TextsConsts.TextCambio
-//                it.toolbarBackOption.text = TextsConsts.TextMoedas
-//                it.toolbarBackOption.visibility = View.VISIBLE
-//                it.toolbarBackOption.setOnClickListener { voltarParaHome() }
-//             }
+            binding.toolbarActivityCambio.let {
+                it.toolbarTitulo.text = TextsConsts.TextCambio
+                it.toolbarBackOption.text = TextsConsts.TextMoedas
+                it.toolbarBackOption.visibility = View.VISIBLE
+                it.toolbarBackOption.setOnClickListener { voltarParaHome() }
+             }
         }
     }
 
     fun configureToolbarSucessFragment(typeOperation: br.com.alexalves.models.TypeOperation){
         MainScope().launch {
-//            binding.toolbarActivityCambio.let {
-//                it.toolbarTitulo.text = if (typeOperation == br.com.alexalves.models.TypeOperation.PURCHASE) TextsConsts.TextComprar else TextsConsts.TextVender
-//                it.toolbarBackOption.text = TextsConsts.TextCambio
-//                it.toolbarBackOption.visibility = View.VISIBLE
-//                it.toolbarBackOption.setOnClickListener { startExchangeFragment() }
-//            }
+            binding.toolbarActivityCambio.let {
+                it.toolbarTitulo.text = if (typeOperation == br.com.alexalves.models.TypeOperation.PURCHASE) TextsConsts.TextComprar else TextsConsts.TextVender
+                it.toolbarBackOption.text = TextsConsts.TextCambio
+                it.toolbarBackOption.visibility = View.VISIBLE
+                it.toolbarBackOption.setOnClickListener { startExchangeFragment() }
+            }
         }
     }
 }

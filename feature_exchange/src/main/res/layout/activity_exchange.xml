@@ -7,7 +7,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <include android:id="@+id/toolbar_activity_cambio"
-        layout="@layout/toolbar"/>
+        layout="@layout/exchange_toolbar"/>
 
     <FrameLayout
         android:id="@+id/cambio_container"

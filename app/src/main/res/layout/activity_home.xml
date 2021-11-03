@@ -10,7 +10,7 @@
 
     <include
         android:id="@+id/toolbar_activity_home"
-        layout="@layout/toolbar" />
+        layout="@layout/home_toolbar" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_view_moedas_home"
@@ -29,6 +29,4 @@
         />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
-
-
 

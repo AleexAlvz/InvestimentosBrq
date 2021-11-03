@@ -13,10 +13,6 @@
         <activity
             android:name=".ui.activities.ExchangeActivity"
             android:exported="true">
-            <intent-filter>
-                <action android:name="br.com.alexalves.feature_exchange.ui.activities.ExchangeActivity" />
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
         </activity>
 
     </application>

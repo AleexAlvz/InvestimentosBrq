@@ -1,12 +1,12 @@
 package br.com.alexalves.investimentosbrq.viewmodel
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
-import br.com.alexalves.base.repository.ExchangeRepository
+import br.com.alexalves.base.repository.HomeRepository
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
 import io.mockk.impl.annotations.MockK
 import io.mockk.mockk
-import junit.framework.TestCase
+import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -14,13 +14,13 @@ import org.junit.runner.RunWith
 import org.junit.runners.JUnit4
 
 @RunWith(JUnit4::class)
-class HomeViewModelTest : TestCase(){
+class HomeViewModelTest{
 
     @get:Rule
     val instantTaskExecutor = InstantTaskExecutorRule()
 
     @MockK
-    lateinit var exchangeRepository: ExchangeRepository
+    lateinit var homeRepository: HomeRepository
     lateinit var homeViewModel: HomeViewModel
 
     @Before
@@ -28,7 +28,7 @@ class HomeViewModelTest : TestCase(){
         MockKAnnotations.init(this, relaxUnitFun = true)
         br.com.alexalves.base.coroutines.AppContextProvider.coroutinesContextProviderDelegate =
             br.com.alexalves.base.coroutines.TestContextProvider()
-        homeViewModel = HomeViewModel(exchangeRepository)
+        homeViewModel = HomeViewModel(homeRepository)
     }
 
     @Test
@@ -36,7 +36,7 @@ class HomeViewModelTest : TestCase(){
         //Arrange
         val moedas = listOf<br.com.alexalves.models.Currency>(mockk(name="Dollar"), mockk(name="Bitcoin"), mockk(name="Euro"))
 
-        coEvery { exchangeRepository.searchCurrencies() } returns moedas
+        coEvery { homeRepository.searchCurrencies() } returns moedas
 
         //Act
         homeViewModel.findCurrencies()
@@ -51,7 +51,7 @@ class HomeViewModelTest : TestCase(){
     @Test
     fun `When findCurrencies fails then throws FailureInFoundCurrenciesException`(){
         //Arrange
-        coEvery { exchangeRepository.searchCurrencies() } throws br.com.alexalves.models.exceptions.FailureInFoundCurrenciesException()
+        coEvery { homeRepository.searchCurrencies() } throws br.com.alexalves.models.exceptions.FailureInFoundCurrenciesException()
 
         //Act
         homeViewModel.findCurrencies()
@@ -69,7 +69,7 @@ class HomeViewModelTest : TestCase(){
         //Arrange
         val moedas = listOf<br.com.alexalves.models.Currency>()
 
-        coEvery { exchangeRepository.searchCurrencies() } returns moedas
+        coEvery { homeRepository.searchCurrencies() } returns moedas
 
         //Act
         homeViewModel.findCurrencies()
