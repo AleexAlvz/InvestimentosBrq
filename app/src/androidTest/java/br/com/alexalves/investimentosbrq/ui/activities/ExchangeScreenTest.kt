@@ -16,7 +16,10 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import br.com.alexalves.investimentosbrq.R
 import br.com.alexalves.models.consts.ArgumentConsts
 import br.com.alexalves.base.repository.ExchangeRepository
+import br.com.alexalves.feature_exchange.ui.activities.ExchangeActivity
 import br.com.alexalves.feature_exchange.ui.viewmodels.ExchangeViewModel
+import br.com.alexalves.models.Currency
+import br.com.alexalves.models.User
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
 import io.mockk.impl.annotations.MockK
@@ -43,7 +46,7 @@ class ExchangeScreenTest {
     fun setup() {
         MockKAnnotations.init(this, relaxUnitFun = true)
 
-        coEvery { homeRepository.searchUser(1L) } returns br.com.alexalves.models.User(
+        coEvery { homeRepository.searchUser(1L) } returns User(
             id = 1L,
             balance = BigDecimal(250),
             usd = BigInteger("20")
@@ -56,13 +59,13 @@ class ExchangeScreenTest {
         loadKoinModules(exchangeModuleTest)
 
         val currency =
-            br.com.alexalves.models.Currency("Dollar", BigDecimal(5), BigDecimal(4), 2.44, "USD")
+            Currency("Dollar", BigDecimal(5), BigDecimal(4), 2.44, "USD")
         val intent =
-            Intent(ApplicationProvider.getApplicationContext(), br.com.alexalves.feature_exchange.ui.activities.ExchangeActivity::class.java)
+            Intent(ApplicationProvider.getApplicationContext(), ExchangeActivity::class.java)
         intent.putExtra(ArgumentConsts.currency_argument, currency)
 
         Intents.init()
-        launchActivity<br.com.alexalves.feature_exchange.ui.activities.ExchangeActivity>(intent)
+        launchActivity<ExchangeActivity>(intent)
     }
 
     @After

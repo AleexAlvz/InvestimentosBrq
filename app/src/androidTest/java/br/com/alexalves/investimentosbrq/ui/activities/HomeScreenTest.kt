@@ -14,7 +14,6 @@ import androidx.test.espresso.intent.Intents.intended
 import androidx.test.espresso.intent.matcher.IntentMatchers.hasComponent
 import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import br.com.alexalves.base.repository.ExchangeRepository
 import br.com.alexalves.base.repository.HomeRepository
 import br.com.alexalves.feature_exchange.ui.activities.ExchangeActivity
 import br.com.alexalves.investimentosbrq.CustomMatchers.Companion.childAtPosition
@@ -22,6 +21,8 @@ import br.com.alexalves.investimentosbrq.CustomMatchers.Companion.verifyItemInPo
 import br.com.alexalves.investimentosbrq.R
 import br.com.alexalves.investimentosbrq.ui.adapter.CurrencyAdapter
 import br.com.alexalves.investimentosbrq.viewmodel.HomeViewModel
+import br.com.alexalves.models.Currency
+import br.com.alexalves.models.User
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
 import io.mockk.impl.annotations.MockK
@@ -48,15 +49,15 @@ class HomeScreenTest {
         MockKAnnotations.init(this, relaxUnitFun = true)
 
         val currencies = listOf(
-            br.com.alexalves.models.Currency(
+            Currency(
                 "Bitcoin",
                 BigDecimal.ZERO,
                 BigDecimal.ZERO,
                 0.09,
                 "BTC"
             ),
-            br.com.alexalves.models.Currency("Euro", BigDecimal.ZERO, BigDecimal.ZERO, 0.10, "EUR"),
-            br.com.alexalves.models.Currency(
+            Currency("Euro", BigDecimal.ZERO, BigDecimal.ZERO, 0.10, "EUR"),
+            Currency(
                 "Dollar",
                 BigDecimal.ZERO,
                 BigDecimal.ZERO,
@@ -66,7 +67,7 @@ class HomeScreenTest {
         )
 
         coEvery { homeRepository.searchCurrencies() } returns currencies
-        coEvery { homeRepository.searchUser(1L) } returns br.com.alexalves.models.User(id = 1L)
+        coEvery { homeRepository.searchUser(1L) } returns User(id = 1L)
 
         val homeTestModule = module {
             viewModel<HomeViewModel>(override = true) { HomeViewModel(homeRepository) }

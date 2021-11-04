@@ -1,11 +1,10 @@
 package br.com.alexalves.investimentosbrq.viewmodel
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
+import br.com.alexalves.base.coroutines.AppContextProvider
 import br.com.alexalves.base.repository.ExchangeRepository
 import br.com.alexalves.feature_exchange.ui.viewmodels.ExchangeViewModel
-import br.com.alexalves.models.BusinessExchangeState
-import br.com.alexalves.models.Currency
-import br.com.alexalves.models.TypeOperation
+import br.com.alexalves.models.*
 import br.com.alexalves.models.exceptions.PurchaseNotApprovalException
 import br.com.alexalves.models.exceptions.SaleNotApprovalException
 import br.com.alexalves.models.exceptions.UserNotFoundException
@@ -34,7 +33,7 @@ class ExchangeViewModelTest {
     @Before
     fun setUp() {
         MockKAnnotations.init(this, relaxUnitFun = true)
-        br.com.alexalves.base.coroutines.AppContextProvider.coroutinesContextProviderDelegate =
+        AppContextProvider.coroutinesContextProviderDelegate =
             br.com.alexalves.base.coroutines.TestContextProvider()
         exchangeViewModel = ExchangeViewModel(exchangeRepository)
     }
@@ -44,14 +43,14 @@ class ExchangeViewModelTest {
     @Test
     fun `When initExchangeFragment is successful then update screenState`() {
         //Arrange
-        val currency = br.com.alexalves.models.Currency(
+        val currency = Currency(
             "Dollar",
             BigDecimal.ZERO,
             BigDecimal.ZERO,
             0.10,
             "USD"
         )
-        val user = br.com.alexalves.models.User()
+        val user = User()
 
         coEvery { exchangeRepository.searchUser(user.id) } returns user
 
@@ -59,7 +58,7 @@ class ExchangeViewModelTest {
         exchangeViewModel.initCambioFragment(currency, user.id)
 
         //Assert
-        val expectedScreenState = br.com.alexalves.models.ScreenExchangeState.InitExchangeFragment(currency, user.balance, user.usd)
+        val expectedScreenState = ScreenExchangeState.InitExchangeFragment(currency, user.balance, user.usd)
         val actualScreenState = exchangeViewModel.viewScreenState.value
 
         assertEquals(expectedScreenState, actualScreenState)
@@ -68,15 +67,15 @@ class ExchangeViewModelTest {
     @Test
     fun `When initExchangeFragment fails in search user Then catch userNotFoundException in screenState`() {
         //Arrange
-        val currency = br.com.alexalves.models.Currency(
+        val currency = Currency(
             "Dollar",
             BigDecimal.ZERO,
             BigDecimal.ZERO,
             0.10,
             "USD"
         )
-        val user = br.com.alexalves.models.User()
-        val userNotFoundException = br.com.alexalves.models.exceptions.UserNotFoundException()
+        val user = User()
+        val userNotFoundException = UserNotFoundException()
 
         coEvery { exchangeRepository.searchUser(user.id) } throws userNotFoundException
 
@@ -84,7 +83,7 @@ class ExchangeViewModelTest {
         exchangeViewModel.initCambioFragment(currency, user.id)
 
         //Assert
-        val actualScreenState = exchangeViewModel.viewScreenState.value as br.com.alexalves.models.ScreenExchangeState.FailureInInitExchangeFragment
+        val actualScreenState = exchangeViewModel.viewScreenState.value as ScreenExchangeState.FailureInInitExchangeFragment
 
         assertEquals(userNotFoundException.javaClass, actualScreenState.error.javaClass)
     }
@@ -95,10 +94,10 @@ class ExchangeViewModelTest {
     fun `When purchaseCurrency successful with balance greater than finalValue Then update businessState`() {
         //Arrange
         val currency =
-            br.com.alexalves.models.Currency("Dollar", BigDecimal(5), BigDecimal.ZERO, 0.10, "USD")
+            Currency("Dollar", BigDecimal(5), BigDecimal.ZERO, 0.10, "USD")
         val quantity = BigInteger("10")
         val finalValue = quantity.toBigDecimal()*currency.buy
-        val user = br.com.alexalves.models.User()
+        val user = User()
 
         coEvery { exchangeRepository.searchUser(user.id) } returns user
 
@@ -117,10 +116,10 @@ class ExchangeViewModelTest {
     fun `When purchaseCurrency successful with balance equals finalValue Then update businessState`() {
         //Arrange
         val currency =
-            br.com.alexalves.models.Currency("Dollar", BigDecimal(5), BigDecimal.ZERO, 0.10, "USD")
+            Currency("Dollar", BigDecimal(5), BigDecimal.ZERO, 0.10, "USD")
         val quantity = BigInteger("10")
         val finalValue = quantity.toBigDecimal()*currency.buy
-        val user = br.com.alexalves.models.User(balance = BigDecimal(finalValue.toString()))
+        val user = User(balance = BigDecimal(finalValue.toString()))
 
         coEvery { exchangeRepository.searchUser(user.id) } returns user
 
@@ -140,18 +139,18 @@ class ExchangeViewModelTest {
     fun `When purchaseCurrency fails in search user Then catch UserNotFoundException in businessState`() {
         //Arrange
         val currency =
-            br.com.alexalves.models.Currency("Dollar", BigDecimal(5), BigDecimal.ZERO, 0.10, "USD")
+            Currency("Dollar", BigDecimal(5), BigDecimal.ZERO, 0.10, "USD")
         val quantity = BigInteger("10")
-        val user = br.com.alexalves.models.User()
+        val user = User()
 
-        coEvery { exchangeRepository.searchUser(user.id) } throws br.com.alexalves.models.exceptions.UserNotFoundException()
+        coEvery { exchangeRepository.searchUser(user.id) } throws UserNotFoundException()
 
         //Act
         exchangeViewModel.purchaseCurrency(currency, quantity, user.id)
 
         //Assert
 
-        val actualBusinessState = exchangeViewModel.viewBusinessExchangeState.value as br.com.alexalves.models.BusinessExchangeState.Failure
+        val actualBusinessState = exchangeViewModel.viewBusinessExchangeState.value as BusinessExchangeState.Failure
 
         assertEquals(UserNotFoundException().javaClass, actualBusinessState.error.javaClass)
     }
@@ -160,9 +159,9 @@ class ExchangeViewModelTest {
     fun `When purchaseCurrency not approval purchase Then catch UserNotFoundException in businessState`() {
         //Arrange
         val currency =
-            br.com.alexalves.models.Currency("Dollar", BigDecimal(5), BigDecimal.ZERO, 0.10, "USD")
+            Currency("Dollar", BigDecimal(5), BigDecimal.ZERO, 0.10, "USD")
         val quantity = BigInteger("10")
-        val user = br.com.alexalves.models.User(balance = BigDecimal.ZERO)
+        val user = User(balance = BigDecimal.ZERO)
 
         coEvery { exchangeRepository.searchUser(user.id) } returns user
 
@@ -170,7 +169,7 @@ class ExchangeViewModelTest {
         exchangeViewModel.purchaseCurrency(currency, quantity, user.id)
 
         //Assert
-        val actualBusinessState = exchangeViewModel.viewBusinessExchangeState.value as br.com.alexalves.models.BusinessExchangeState.Failure
+        val actualBusinessState = exchangeViewModel.viewBusinessExchangeState.value as BusinessExchangeState.Failure
         assertEquals(PurchaseNotApprovalException().javaClass, actualBusinessState.error.javaClass)
     }
 
@@ -180,10 +179,10 @@ class ExchangeViewModelTest {
     fun `When saleCurrency successful with amount request less than amountCurrency of user Then update businessState`() {
         //Arrange
         val currency =
-            br.com.alexalves.models.Currency("Dollar", BigDecimal.ZERO, BigDecimal(5), 0.10, "USD")
+            Currency("Dollar", BigDecimal.ZERO, BigDecimal(5), 0.10, "USD")
         val amountRequest = BigInteger("10")
         val finalValue = amountRequest.toBigDecimal()*currency.sell
-        val user = br.com.alexalves.models.User(usd = BigInteger("20"))
+        val user = User(usd = BigInteger("20"))
 
         coEvery { exchangeRepository.searchUser(user.id) } returns user
 
@@ -204,7 +203,7 @@ class ExchangeViewModelTest {
         val currency = Currency("Dollar", BigDecimal.ZERO, BigDecimal(5), 0.10, "USD")
         val amountRequest = BigInteger("10")
         val finalValue = amountRequest.toBigDecimal()*currency.sell
-        val user = br.com.alexalves.models.User(usd = BigInteger("10"))
+        val user = User(usd = BigInteger("10"))
 
         coEvery { exchangeRepository.searchUser(user.id) } returns user
 
@@ -225,7 +224,7 @@ class ExchangeViewModelTest {
         val currency =
             Currency("Dollar", BigDecimal(5), BigDecimal.ZERO, 0.10, "USD")
         val quantity = BigInteger("10")
-        val user = br.com.alexalves.models.User()
+        val user = User()
 
         coEvery { exchangeRepository.searchUser(user.id) } throws UserNotFoundException()
 
@@ -243,9 +242,9 @@ class ExchangeViewModelTest {
     fun `When saleCurrency not approval purchase Then catch UserNotFoundException in businessState`() {
         //Arrange
         val currency =
-            br.com.alexalves.models.Currency("Dollar", BigDecimal(5), BigDecimal.ZERO, 0.10, "USD")
+            Currency("Dollar", BigDecimal(5), BigDecimal.ZERO, 0.10, "USD")
         val quantity = BigInteger("10")
-        val user = br.com.alexalves.models.User(usd = BigInteger.ZERO)
+        val user = User(usd = BigInteger.ZERO)
 
         coEvery { exchangeRepository.searchUser(user.id) } returns user
 
@@ -253,7 +252,7 @@ class ExchangeViewModelTest {
         exchangeViewModel.saleCurrency(currency, quantity, user.id)
 
         //Assert
-        val actualBusinessState = exchangeViewModel.viewBusinessExchangeState.value as br.com.alexalves.models.BusinessExchangeState.Failure
+        val actualBusinessState = exchangeViewModel.viewBusinessExchangeState.value as BusinessExchangeState.Failure
         assertEquals(SaleNotApprovalException().javaClass, actualBusinessState.error.javaClass)
     }
 

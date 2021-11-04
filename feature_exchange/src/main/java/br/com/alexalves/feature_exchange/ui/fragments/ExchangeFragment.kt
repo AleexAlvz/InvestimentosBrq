@@ -9,6 +9,7 @@ import br.com.alexalves.base.BaseFragment
 import br.com.alexalves.feature_exchange.databinding.FragmentExchangeBinding
 import br.com.alexalves.feature_exchange.ui.customview.ButtonBlue
 import br.com.alexalves.feature_exchange.ui.viewmodels.ExchangeViewModel
+import br.com.alexalves.models.*
 import br.com.alexalves.models.consts.ArgumentConsts
 import br.com.alexalves.models.consts.StaticConsts
 import br.com.alexalves.utils.CurrencyUtils
@@ -18,7 +19,7 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 class ExchangeFragment : BaseFragment() {
 
     lateinit var binding: FragmentExchangeBinding
-    var businessSucessCallBack: ((bussinesSucess: br.com.alexalves.models.BusinessExchangeState.Sucess) -> Unit)? = null
+    var businessSucessCallBack: ((bussinesSucess: BusinessExchangeState.Sucess) -> Unit)? = null
     val exchangeViewModel: ExchangeViewModel by viewModel()
     val userId = StaticConsts.UserStaticID
 
@@ -42,16 +43,16 @@ class ExchangeFragment : BaseFragment() {
     }
 
     private fun initCambioFragment() {
-        val currency = arguments?.get(ArgumentConsts.currency_argument) as br.com.alexalves.models.Currency
+        val currency = arguments?.get(ArgumentConsts.currency_argument) as Currency
         exchangeViewModel.initCambioFragment(currency = currency, userId = userId)
     }
 
-    private fun initCambioComponents(fields: br.com.alexalves.models.ScreenExchangeState.InitExchangeFragment) {
+    private fun initCambioComponents(fields: ScreenExchangeState.InitExchangeFragment) {
         initTextFields(fields)
         configureBusinessButtons(fields)
     }
 
-    private fun initTextFields(fields: br.com.alexalves.models.ScreenExchangeState.InitExchangeFragment) {
+    private fun initTextFields(fields: ScreenExchangeState.InitExchangeFragment) {
         binding.let {
             //Title
             val tituloFormatado = "${fields.currency.abbreviation} - ${fields.currency.name}"
@@ -93,10 +94,10 @@ class ExchangeFragment : BaseFragment() {
     private fun observerBuyButtonEvent() {
         exchangeViewModel.viewBuyButtonEvent.observe(viewLifecycleOwner) {
             when (it) {
-                is br.com.alexalves.models.BuyButtonEvent.Enabled -> {
+                is BuyButtonEvent.Enabled -> {
                     binding.fragmentCambioButtonComprar.configuraEstado(true)
                 }
-                is br.com.alexalves.models.BuyButtonEvent.Disabled -> {
+                is BuyButtonEvent.Disabled -> {
                     binding.fragmentCambioButtonComprar.configuraEstado(false)
                 }
             }
@@ -106,10 +107,10 @@ class ExchangeFragment : BaseFragment() {
     private fun observerSellButtonEvent() {
         exchangeViewModel.viewSellButtonEvent.observe(viewLifecycleOwner, {
             when (it) {
-                is br.com.alexalves.models.SellButtonEvent.Enabled -> {
+                is SellButtonEvent.Enabled -> {
                     binding.fragmentCambioButtonVender.configuraEstado(true)
                 }
-                is br.com.alexalves.models.SellButtonEvent.Disabled -> {
+                is SellButtonEvent.Disabled -> {
                     binding.fragmentCambioButtonVender.configuraEstado(false)
                 }
             }
@@ -119,7 +120,7 @@ class ExchangeFragment : BaseFragment() {
     private fun observerScreenState() {
         exchangeViewModel.viewScreenState.observe(viewLifecycleOwner, {
             when (it) {
-                is br.com.alexalves.models.ScreenExchangeState.InitExchangeFragment -> {
+                is ScreenExchangeState.InitExchangeFragment -> {
                     initCambioComponents(it)
                 }
             }
@@ -137,7 +138,7 @@ class ExchangeFragment : BaseFragment() {
         })
     }
 
-    private fun configureBusinessButtons(fields: br.com.alexalves.models.ScreenExchangeState.InitExchangeFragment) {
+    private fun configureBusinessButtons(fields: ScreenExchangeState.InitExchangeFragment) {
         val buyButton = binding.fragmentCambioButtonComprar
         val sellButton = binding.fragmentCambioButtonVender
         val inputLayoutQuantidade = binding.fragmentCambioInputLayoutQuantidade

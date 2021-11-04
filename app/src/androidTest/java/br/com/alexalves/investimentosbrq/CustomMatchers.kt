@@ -11,6 +11,7 @@ import org.hamcrest.Matcher
 import org.hamcrest.TypeSafeMatcher
 
 class CustomMatchers {
+
     companion object {
 
         fun verifyItemInPositionOfRecyclerView(

@@ -4,6 +4,7 @@ import br.com.alexalves.base.database.UserDAO
 import br.com.alexalves.base.repository.HomeDataSource
 import br.com.alexalves.base.repository.InvestimentoServiceAPIWrapper
 import br.com.alexalves.base.service.InvestimentosService
+import br.com.alexalves.models.Currency
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
 import io.mockk.impl.annotations.MockK
@@ -35,7 +36,7 @@ class HomeDataSourceTests {
     @Test
     fun `When searchCurrencies then return currencies`(){
         //Arrange
-        val currencies = listOf<br.com.alexalves.models.Currency>(mockk(name="Dollar"), mockk(name="Bitcoin"), mockk(name="Euro"))
+        val currencies = listOf<Currency>(mockk(name="Dollar"), mockk(name="Bitcoin"), mockk(name="Euro"))
 
         coEvery { service.getService().execute().body() } answers { nothing }
         coEvery { apiWrapper.filterCurrencies(null) } returns currencies

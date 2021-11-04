@@ -8,6 +8,8 @@ import br.com.alexalves.base.BaseActivity
 import br.com.alexalves.investimentosbrq.databinding.ActivityHomeBinding
 import br.com.alexalves.investimentosbrq.ui.adapter.CurrencyAdapter
 import br.com.alexalves.investimentosbrq.viewmodel.HomeViewModel
+import br.com.alexalves.models.Currency
+import br.com.alexalves.models.HomeState
 import br.com.alexalves.models.consts.ArgumentConsts
 import br.com.alexalves.models.consts.StaticConsts
 import br.com.alexalves.models.consts.TextsConsts
@@ -36,13 +38,13 @@ class HomeActivity : BaseActivity() {
     private fun observeCurrencies() {
         homeViewModel.viewHomeState.observe(this, {
             when (it) {
-                is br.com.alexalves.models.HomeState.FoundCurrencies -> { configureRecyclerView(it.currencies) }
-                is br.com.alexalves.models.HomeState.FailureInSearchCurrencies -> { Log.e(TextsConsts.Erro, it.error.message.toString()) }
+                is HomeState.FoundCurrencies -> { configureRecyclerView(it.currencies) }
+                is HomeState.FailureInSearchCurrencies -> { Log.e(TextsConsts.Erro, it.error.message.toString()) }
             }
         })
     }
 
-    private fun configureRecyclerView(currencies: List<br.com.alexalves.models.Currency>) {
+    private fun configureRecyclerView(currencies: List<Currency>) {
         binding.recyclerViewMoedasHome.let {
             it.layoutManager = LinearLayoutManager(this)
             val currencyAdapter = CurrencyAdapter(currencies, this, this::onClickItemCurrency)
@@ -58,7 +60,7 @@ class HomeActivity : BaseActivity() {
         }
     }
 
-    private fun onClickItemCurrency(currency: br.com.alexalves.models.Currency) {
+    private fun onClickItemCurrency(currency: Currency) {
         Intent().let {
             it.setClassName(this, UIConsts.exchangeActivityDirectory)
             it.putExtra(ArgumentConsts.currency_argument, currency)

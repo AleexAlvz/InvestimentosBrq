@@ -2,6 +2,7 @@ package br.com.alexalves.investimentosbrq.datasources
 
 import br.com.alexalves.base.database.UserDAO
 import br.com.alexalves.base.repository.ExchangeDataSource
+import br.com.alexalves.models.User
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
 import io.mockk.impl.annotations.MockK
@@ -29,7 +30,7 @@ class ExchangeDataSourceTests {
     fun `When searchUser then returns the correct User`(){
 
         //Arrange
-        val user = br.com.alexalves.models.User(id = 1L)
+        val user = User(id = 1L)
 
         coEvery { userDao.searchUser(user.id) } returns user
 

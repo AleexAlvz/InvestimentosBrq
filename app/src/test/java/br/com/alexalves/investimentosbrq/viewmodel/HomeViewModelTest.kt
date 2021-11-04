@@ -1,7 +1,13 @@
 package br.com.alexalves.investimentosbrq.viewmodel
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
+import br.com.alexalves.base.coroutines.AppContextProvider
+import br.com.alexalves.base.coroutines.TestContextProvider
 import br.com.alexalves.base.repository.HomeRepository
+import br.com.alexalves.models.Currency
+import br.com.alexalves.models.HomeState.FailureInSearchCurrencies
+import br.com.alexalves.models.HomeState.FoundCurrencies
+import br.com.alexalves.models.exceptions.FailureInFoundCurrenciesException
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
 import io.mockk.impl.annotations.MockK
@@ -14,7 +20,7 @@ import org.junit.runner.RunWith
 import org.junit.runners.JUnit4
 
 @RunWith(JUnit4::class)
-class HomeViewModelTest{
+class HomeViewModelTest {
 
     @get:Rule
     val instantTaskExecutor = InstantTaskExecutorRule()
@@ -24,17 +30,18 @@ class HomeViewModelTest{
     lateinit var homeViewModel: HomeViewModel
 
     @Before
-    fun setup(){
+    fun setup() {
         MockKAnnotations.init(this, relaxUnitFun = true)
-        br.com.alexalves.base.coroutines.AppContextProvider.coroutinesContextProviderDelegate =
-            br.com.alexalves.base.coroutines.TestContextProvider()
+        AppContextProvider.coroutinesContextProviderDelegate =
+            TestContextProvider()
         homeViewModel = HomeViewModel(homeRepository)
     }
 
     @Test
-    fun `When findCurrencies is successful then update homeState`(){
+    fun `When findCurrencies is successful then update homeState`() {
         //Arrange
-        val moedas = listOf<br.com.alexalves.models.Currency>(mockk(name="Dollar"), mockk(name="Bitcoin"), mockk(name="Euro"))
+        val moedas =
+            listOf<Currency>(mockk(name = "Dollar"), mockk(name = "Bitcoin"), mockk(name = "Euro"))
 
         coEvery { homeRepository.searchCurrencies() } returns moedas
 
@@ -42,32 +49,32 @@ class HomeViewModelTest{
         homeViewModel.findCurrencies()
 
         //Assert
-        val expectedHomeState = br.com.alexalves.models.HomeState.FoundCurrencies(moedas)
+        val expectedHomeState = FoundCurrencies(moedas)
         val actualHomeState = homeViewModel.viewHomeState.value
 
         assertEquals(expectedHomeState, actualHomeState)
     }
 
     @Test
-    fun `When findCurrencies fails then throws FailureInFoundCurrenciesException`(){
+    fun `When findCurrencies fails then throws FailureInFoundCurrenciesException`() {
         //Arrange
-        coEvery { homeRepository.searchCurrencies() } throws br.com.alexalves.models.exceptions.FailureInFoundCurrenciesException()
+        coEvery { homeRepository.searchCurrencies() } throws FailureInFoundCurrenciesException()
 
         //Act
         homeViewModel.findCurrencies()
 
         //Assert
 
-        val expectedHomeState = br.com.alexalves.models.HomeState.FailureInSearchCurrencies(br.com.alexalves.models.exceptions.FailureInFoundCurrenciesException())
-        val actualHomeState = homeViewModel.viewHomeState.value as br.com.alexalves.models.HomeState.FailureInSearchCurrencies
+        val expectedHomeState = FailureInSearchCurrencies(FailureInFoundCurrenciesException())
+        val actualHomeState = homeViewModel.viewHomeState.value as FailureInSearchCurrencies
 
         assertEquals(expectedHomeState.javaClass, actualHomeState.javaClass)
     }
 
     @Test
-    fun `When findCurrencies found a empty list then throws FailureInFoundCurrenciesException with message = List isn't valid`(){
+    fun `When findCurrencies found a empty list then throws FailureInFoundCurrenciesException with message = List isn't valid`() {
         //Arrange
-        val moedas = listOf<br.com.alexalves.models.Currency>()
+        val moedas = listOf<Currency>()
 
         coEvery { homeRepository.searchCurrencies() } returns moedas
 
@@ -75,14 +82,17 @@ class HomeViewModelTest{
         homeViewModel.findCurrencies()
 
         //Assert
-        val expectedHomeState = br.com.alexalves.models.HomeState.FailureInSearchCurrencies(
-            br.com.alexalves.models.exceptions.FailureInFoundCurrenciesException(
+        val expectedHomeState = FailureInSearchCurrencies(
+            FailureInFoundCurrenciesException(
                 "List isn't valid"
             )
         )
-        val actualHomeState = homeViewModel.viewHomeState.value as br.com.alexalves.models.HomeState.FailureInSearchCurrencies
+        val actualHomeState = homeViewModel.viewHomeState.value as FailureInSearchCurrencies
 
         assertEquals(expectedHomeState.javaClass, actualHomeState.javaClass)
-        assertEquals(expectedHomeState.error.message.toString(), actualHomeState.error.message.toString())
+        assertEquals(
+            expectedHomeState.error.message.toString(),
+            actualHomeState.error.message.toString()
+        )
     }
 }

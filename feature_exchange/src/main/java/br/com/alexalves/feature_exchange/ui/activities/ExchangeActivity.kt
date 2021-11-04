@@ -7,7 +7,9 @@ import br.com.alexalves.base.BaseActivity
 import br.com.alexalves.feature_exchange.databinding.ActivityExchangeBinding
 import br.com.alexalves.feature_exchange.ui.fragments.ExchangeFragment
 import br.com.alexalves.feature_exchange.ui.fragments.OperationSucessFragment
+import br.com.alexalves.models.BusinessExchangeState
 import br.com.alexalves.models.Currency
+import br.com.alexalves.models.TypeOperation
 import br.com.alexalves.models.consts.ArgumentConsts
 import br.com.alexalves.models.consts.TextsConsts
 import br.com.alexalves.models.consts.UIConsts
@@ -49,7 +51,7 @@ class ExchangeActivity : BaseActivity() {
         return exchangeFragment
     }
 
-    private fun iniciaSucessoCompraFragment(operationSucess: br.com.alexalves.models.BusinessExchangeState.Sucess){
+    private fun iniciaSucessoCompraFragment(operationSucess: BusinessExchangeState.Sucess){
         val fragmentSucess = OperationSucessFragment()
 
         val bundle = Bundle()
@@ -79,10 +81,10 @@ class ExchangeActivity : BaseActivity() {
         }
     }
 
-    fun configureToolbarSucessFragment(typeOperation: br.com.alexalves.models.TypeOperation){
+    fun configureToolbarSucessFragment(typeOperation: TypeOperation){
         MainScope().launch {
             binding.toolbarActivityCambio.let {
-                it.toolbarTitulo.text = if (typeOperation == br.com.alexalves.models.TypeOperation.PURCHASE) TextsConsts.TextComprar else TextsConsts.TextVender
+                it.toolbarTitulo.text = if (typeOperation == TypeOperation.PURCHASE) TextsConsts.TextComprar else TextsConsts.TextVender
                 it.toolbarBackOption.text = TextsConsts.TextCambio
                 it.toolbarBackOption.visibility = View.VISIBLE
                 it.toolbarBackOption.setOnClickListener { startExchangeFragment() }

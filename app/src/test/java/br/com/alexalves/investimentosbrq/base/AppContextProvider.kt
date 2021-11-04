@@ -3,9 +3,9 @@ package br.com.alexalves.investimentosbrq.base
 import kotlinx.coroutines.Dispatchers
 import kotlin.coroutines.CoroutineContext
 
-object AppContextProvider: br.com.alexalves.base.coroutines.CoroutinesContextProvider {
+object AppContextProvider: CoroutinesContextProvider {
 
-    var coroutinesContextProviderDelegate: br.com.alexalves.base.coroutines.CoroutinesContextProvider? = null
+    var coroutinesContextProviderDelegate: CoroutinesContextProvider? = null
 
     override val main: CoroutineContext by lazy {
         coroutinesContextProviderDelegate?.main ?: Dispatchers.Main

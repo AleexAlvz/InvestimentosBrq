@@ -2,6 +2,8 @@ package br.com.alexalves.base.repository
 
 import br.com.alexalves.base.database.UserDAO
 import br.com.alexalves.base.service.InvestimentosService
+import br.com.alexalves.models.Currency
+import br.com.alexalves.models.User
 
 class HomeDataSource(
     private val userDao: UserDAO,
@@ -9,11 +11,11 @@ class HomeDataSource(
     private val service: InvestimentosService
 ) : HomeRepository {
 
-    override suspend fun searchUser(userId: Long): br.com.alexalves.models.User = userDao.searchUser(userId)
+    override suspend fun searchUser(userId: Long): User = userDao.searchUser(userId)
 
-    override suspend fun saveUser(user: br.com.alexalves.models.User) = userDao.saveUser(user)
+    override suspend fun saveUser(user: User) = userDao.saveUser(user)
 
-    override suspend fun searchCurrencies(): List<br.com.alexalves.models.Currency> = investimentoServiceAPIWrapper
+    override suspend fun searchCurrencies(): List<Currency> = investimentoServiceAPIWrapper
         .filterCurrencies(service.getService().execute().body())
 
 }
