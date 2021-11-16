@@ -13,6 +13,7 @@ import br.com.alexalves.models.TypeOperation
 import br.com.alexalves.models.consts.ArgumentConsts
 import br.com.alexalves.models.consts.TextsConsts
 import br.com.alexalves.models.consts.UIConsts
+import br.com.alexalves.utils.extensions.TextViewExtensions.setAccessibleText
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 
@@ -74,7 +75,7 @@ class ExchangeActivity : BaseActivity() {
         MainScope().launch {
             binding.toolbarActivityCambio.let {
                 it.toolbarTitulo.text = TextsConsts.TextCambio
-                it.toolbarBackOption.text = TextsConsts.TextMoedas
+                it.toolbarBackOption.setAccessibleText(TextsConsts.TextMoedas, "Botão voltar para ")
                 it.toolbarBackOption.visibility = View.VISIBLE
                 it.toolbarBackOption.setOnClickListener { voltarParaHome() }
              }
@@ -85,7 +86,7 @@ class ExchangeActivity : BaseActivity() {
         MainScope().launch {
             binding.toolbarActivityCambio.let {
                 it.toolbarTitulo.text = if (typeOperation == TypeOperation.PURCHASE) TextsConsts.TextComprar else TextsConsts.TextVender
-                it.toolbarBackOption.text = TextsConsts.TextCambio
+                it.toolbarBackOption.setAccessibleText(TextsConsts.TextCambio, "Botão voltar para ")
                 it.toolbarBackOption.visibility = View.VISIBLE
                 it.toolbarBackOption.setOnClickListener { startExchangeFragment() }
             }

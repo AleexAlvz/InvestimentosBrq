@@ -4,7 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import br.com.alexalves.base.BaseViewModel
 import br.com.alexalves.base.coroutines.AppContextProvider
-import br.com.alexalves.base.repository.HomeRepository
+import br.com.alexalves.investimentosbrq.repository.HomeRepository
 import br.com.alexalves.models.HomeState
 import br.com.alexalves.models.exceptions.FailureInFoundCurrenciesException
 import kotlinx.coroutines.CoroutineScope

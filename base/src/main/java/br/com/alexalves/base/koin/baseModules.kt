@@ -4,7 +4,7 @@ import androidx.room.Room
 import br.com.alexalves.base.api.InvestimentoServiceAPI
 import br.com.alexalves.base.database.AppDatabase
 import br.com.alexalves.base.database.UserDAO
-import br.com.alexalves.base.repository.InvestimentoServiceAPIWrapper
+import br.com.alexalves.base.api.InvestimentoServiceAPIWrapper
 import br.com.alexalves.base.service.InvestimentosService
 import org.koin.dsl.module
 

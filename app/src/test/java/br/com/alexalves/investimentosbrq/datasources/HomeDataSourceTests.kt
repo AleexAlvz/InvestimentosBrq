@@ -1,8 +1,8 @@
 package br.com.alexalves.investimentosbrq.datasources
 
 import br.com.alexalves.base.database.UserDAO
-import br.com.alexalves.base.repository.HomeDataSource
-import br.com.alexalves.base.repository.InvestimentoServiceAPIWrapper
+import br.com.alexalves.investimentosbrq.repository.HomeDataSource
+import br.com.alexalves.base.api.InvestimentoServiceAPIWrapper
 import br.com.alexalves.base.service.InvestimentosService
 import br.com.alexalves.models.Currency
 import io.mockk.MockKAnnotations

@@ -1,7 +1,7 @@
 package br.com.alexalves.investimentosbrq.datasources
 
 import br.com.alexalves.base.database.UserDAO
-import br.com.alexalves.base.repository.ExchangeDataSource
+import br.com.alexalves.feature_exchange.repository.ExchangeDataSource
 import br.com.alexalves.models.User
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery

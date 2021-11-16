@@ -1,4 +1,4 @@
-package br.com.alexalves.base.repository
+package br.com.alexalves.investimentosbrq.repository
 
 import br.com.alexalves.models.Currency
 import br.com.alexalves.models.User

@@ -1,4 +1,4 @@
-package br.com.alexalves.base.repository
+package br.com.alexalves.feature_exchange.repository
 
 import br.com.alexalves.base.database.UserDAO
 import br.com.alexalves.models.User

@@ -3,6 +3,7 @@ package br.com.alexalves.investimentosbrq.ui.activities
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import br.com.alexalves.base.BaseActivity
 import br.com.alexalves.investimentosbrq.databinding.ActivityHomeBinding

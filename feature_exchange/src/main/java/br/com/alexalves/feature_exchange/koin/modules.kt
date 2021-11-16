@@ -1,6 +1,6 @@
 package br.com.alexalves.feature_exchange.koin
 
-import br.com.alexalves.base.repository.ExchangeDataSource
+import br.com.alexalves.feature_exchange.repository.ExchangeDataSource
 import br.com.alexalves.feature_exchange.ui.viewmodels.ExchangeViewModel
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module

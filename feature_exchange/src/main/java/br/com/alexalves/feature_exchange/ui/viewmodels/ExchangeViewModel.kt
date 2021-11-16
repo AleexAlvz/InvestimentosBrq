@@ -4,7 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import br.com.alexalves.base.BaseViewModel
 import br.com.alexalves.base.coroutines.AppContextProvider
-import br.com.alexalves.base.repository.ExchangeRepository
+import br.com.alexalves.feature_exchange.repository.ExchangeRepository
 import br.com.alexalves.models.*
 import br.com.alexalves.models.consts.AbbreviationCurrenciesConsts
 import br.com.alexalves.models.exceptions.SaleNotApprovalException

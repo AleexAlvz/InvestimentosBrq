@@ -2,7 +2,7 @@ package br.com.alexalves.investimentosbrq.viewmodel
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import br.com.alexalves.base.coroutines.AppContextProvider
-import br.com.alexalves.base.repository.ExchangeRepository
+import br.com.alexalves.feature_exchange.repository.ExchangeRepository
 import br.com.alexalves.feature_exchange.ui.viewmodels.ExchangeViewModel
 import br.com.alexalves.models.*
 import br.com.alexalves.models.exceptions.PurchaseNotApprovalException

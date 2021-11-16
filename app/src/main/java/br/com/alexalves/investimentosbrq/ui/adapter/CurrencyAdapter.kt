@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import br.com.alexalves.investimentosbrq.R
 import br.com.alexalves.models.Currency
 import br.com.alexalves.utils.CurrencyUtils
+import br.com.alexalves.utils.extensions.TextViewExtensions.setAccessibleText
 
 class CurrencyAdapter(
     private val currencies: List<Currency>,
@@ -27,8 +28,8 @@ class CurrencyAdapter(
 
     fun vinculaCampos(holder: CurrenciesViewHolder, currency: Currency) {
         holder.itemView.setOnClickListener { onItemClick(currency) }
-        holder.nomeMoeda.setText(currency.abbreviation)
-        holder.variacaoMoeda.text = CurrencyUtils.getFormattedVariation(currency.variation)
+        holder.nomeMoeda.setAccessibleText(currency.abbreviation, "Moeda")
+        holder.variacaoMoeda.setAccessibleText(CurrencyUtils.getFormattedVariation(currency.variation), "Variação")
         val variationColor = CurrencyUtils.getCurrencyColor(currency.variation, context!!)
         holder.variacaoMoeda.setTextColor(variationColor)
     }

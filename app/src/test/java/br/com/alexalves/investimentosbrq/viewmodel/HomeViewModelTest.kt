@@ -3,7 +3,7 @@ package br.com.alexalves.investimentosbrq.viewmodel
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import br.com.alexalves.base.coroutines.AppContextProvider
 import br.com.alexalves.base.coroutines.TestContextProvider
-import br.com.alexalves.base.repository.HomeRepository
+import br.com.alexalves.investimentosbrq.repository.HomeRepository
 import br.com.alexalves.models.Currency
 import br.com.alexalves.models.HomeState.FailureInSearchCurrencies
 import br.com.alexalves.models.HomeState.FoundCurrencies

@@ -13,6 +13,7 @@ import br.com.alexalves.models.*
 import br.com.alexalves.models.consts.ArgumentConsts
 import br.com.alexalves.models.consts.StaticConsts
 import br.com.alexalves.utils.CurrencyUtils
+import br.com.alexalves.utils.extensions.TextViewExtensions.setAccessibleText
 import com.google.android.material.textfield.TextInputLayout
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -56,10 +57,9 @@ class ExchangeFragment : BaseFragment() {
         binding.let {
             //Title
             val tituloFormatado = "${fields.currency.abbreviation} - ${fields.currency.name}"
-            it.fragmentCambioTextTituloMoeda.text = tituloFormatado
+            it.fragmentCambioTextTituloMoeda.setAccessibleText(tituloFormatado, "Moeda")
             //Variation
-            it.fragmentCambioTextVariacaoMoeda.text =
-                CurrencyUtils.getFormattedVariation(fields.currency.variation)
+            it.fragmentCambioTextVariacaoMoeda.setAccessibleText(CurrencyUtils.getFormattedVariation(fields.currency.variation), "Variação")
             it.fragmentCambioTextVariacaoMoeda.setTextColor(
                 CurrencyUtils.getCurrencyColor(
                     fields.currency.variation,
@@ -69,11 +69,11 @@ class ExchangeFragment : BaseFragment() {
             //Buy
             val buyValue = CurrencyUtils.getFormattedPurchaseValue(fields.currency)
             val buyValueFormated = "Compra: $buyValue"
-            it.fragmentCambioTextValorCompraMoeda.text = buyValueFormated
+            it.fragmentCambioTextValorCompraMoeda.setAccessibleText(buyValueFormated, "Valor de ")
             //Sell
             val sellValue = CurrencyUtils.getFormattedSaleValue(fields.currency)
             val sellValueFormated = "Venda: $sellValue"
-            it.fragmentCambioTextValorVendaMoeda.text = sellValueFormated
+            it.fragmentCambioTextValorVendaMoeda.setAccessibleText(sellValueFormated, "Valor de ")
             //Balance
             val userBalanceFormated =
                 "Saldo disponível: ${CurrencyUtils.getFormattedValue_ToBRLCurrency(fields.userBalance)}"

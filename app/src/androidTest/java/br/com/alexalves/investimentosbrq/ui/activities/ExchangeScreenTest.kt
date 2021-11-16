@@ -15,7 +15,7 @@ import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import br.com.alexalves.investimentosbrq.R
 import br.com.alexalves.models.consts.ArgumentConsts
-import br.com.alexalves.base.repository.ExchangeRepository
+import br.com.alexalves.feature_exchange.repository.ExchangeRepository
 import br.com.alexalves.feature_exchange.ui.activities.ExchangeActivity
 import br.com.alexalves.feature_exchange.ui.viewmodels.ExchangeViewModel
 import br.com.alexalves.models.Currency
