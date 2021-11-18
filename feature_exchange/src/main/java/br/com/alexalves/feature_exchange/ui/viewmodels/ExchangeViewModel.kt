@@ -134,7 +134,7 @@ class ExchangeViewModel(
         currency: Currency,
         totalValue: BigDecimal
     ) = "Parabéns! \n" +
-            "Você acabou de comprar ${quantity} ${currency?.abbreviation} - ${currency?.name}, totalizando \n" +
+            "Você acabou de comprar \n${quantity} ${currency?.abbreviation} - ${currency?.name}, totalizando \n" +
             "R\$ ${totalValue}"
 
 
@@ -223,15 +223,15 @@ class ExchangeViewModel(
     ) {
         user.balance = finalBalance
         when (currency.abbreviation) {
-            AbbreviationCurrenciesConsts().USD -> user.usd = finalCurrencyAmount
-            AbbreviationCurrenciesConsts().EUR -> user.eur = finalCurrencyAmount
-            AbbreviationCurrenciesConsts().GBP -> user.gbp = finalCurrencyAmount
-            AbbreviationCurrenciesConsts().ARS -> user.ars = finalCurrencyAmount
-            AbbreviationCurrenciesConsts().CAD -> user.cad = finalCurrencyAmount
-            AbbreviationCurrenciesConsts().AUD -> user.aud = finalCurrencyAmount
-            AbbreviationCurrenciesConsts().JPY -> user.jpy = finalCurrencyAmount
-            AbbreviationCurrenciesConsts().CNY -> user.cny = finalCurrencyAmount
-            AbbreviationCurrenciesConsts().BTC -> user.btc = finalCurrencyAmount
+            AbbreviationCurrenciesConsts.USD -> user.usd = finalCurrencyAmount
+            AbbreviationCurrenciesConsts.EUR -> user.eur = finalCurrencyAmount
+            AbbreviationCurrenciesConsts.GBP -> user.gbp = finalCurrencyAmount
+            AbbreviationCurrenciesConsts.ARS -> user.ars = finalCurrencyAmount
+            AbbreviationCurrenciesConsts.CAD -> user.cad = finalCurrencyAmount
+            AbbreviationCurrenciesConsts.AUD -> user.aud = finalCurrencyAmount
+            AbbreviationCurrenciesConsts.JPY -> user.jpy = finalCurrencyAmount
+            AbbreviationCurrenciesConsts.CNY -> user.cny = finalCurrencyAmount
+            AbbreviationCurrenciesConsts.BTC -> user.btc = finalCurrencyAmount
         }
     }
 

@@ -10,8 +10,10 @@ import br.com.alexalves.feature_exchange.databinding.FragmentExchangeBinding
 import br.com.alexalves.feature_exchange.ui.customview.ButtonBlue
 import br.com.alexalves.feature_exchange.ui.viewmodels.ExchangeViewModel
 import br.com.alexalves.models.*
+import br.com.alexalves.models.consts.AccessibilityConsts
 import br.com.alexalves.models.consts.ArgumentConsts
 import br.com.alexalves.models.consts.StaticConsts
+import br.com.alexalves.models.consts.TextsConsts
 import br.com.alexalves.utils.CurrencyUtils
 import br.com.alexalves.utils.extensions.TextViewExtensions.setAccessibleText
 import com.google.android.material.textfield.TextInputLayout
@@ -57,7 +59,7 @@ class ExchangeFragment : BaseFragment() {
         binding.let {
             //Title
             val tituloFormatado = "${fields.currency.abbreviation} - ${fields.currency.name}"
-            it.fragmentCambioTextTituloMoeda.setAccessibleText(tituloFormatado, "Moeda")
+            it.fragmentCambioTextTituloMoeda.setAccessibleText(tituloFormatado, AccessibilityConsts.messageBeforeCurrencyText)
             //Variation
             it.fragmentCambioTextVariacaoMoeda.setAccessibleText(CurrencyUtils.getFormattedVariation(fields.currency.variation), "Variação")
             it.fragmentCambioTextVariacaoMoeda.setTextColor(
@@ -69,11 +71,11 @@ class ExchangeFragment : BaseFragment() {
             //Buy
             val buyValue = CurrencyUtils.getFormattedPurchaseValue(fields.currency)
             val buyValueFormated = "Compra: $buyValue"
-            it.fragmentCambioTextValorCompraMoeda.setAccessibleText(buyValueFormated, "Valor de ")
+            it.fragmentCambioTextValorCompraMoeda.setAccessibleText(buyValueFormated, AccessibilityConsts.messageBeforeValue)
             //Sell
             val sellValue = CurrencyUtils.getFormattedSaleValue(fields.currency)
             val sellValueFormated = "Venda: $sellValue"
-            it.fragmentCambioTextValorVendaMoeda.setAccessibleText(sellValueFormated, "Valor de ")
+            it.fragmentCambioTextValorVendaMoeda.setAccessibleText(sellValueFormated, AccessibilityConsts.messageBeforeValue)
             //Balance
             val userBalanceFormated =
                 "Saldo disponível: ${CurrencyUtils.getFormattedValue_ToBRLCurrency(fields.userBalance)}"
@@ -130,10 +132,10 @@ class ExchangeFragment : BaseFragment() {
     private fun observerBusinessState() {
         exchangeViewModel.viewBusinessExchangeState.observe(viewLifecycleOwner, {
             when (it) {
-                is br.com.alexalves.models.BusinessExchangeState.Sucess -> {
+                is BusinessExchangeState.Sucess -> {
                     businessSucessCallBack?.invoke(it)
                 }
-                is br.com.alexalves.models.BusinessExchangeState.Failure -> { }
+                is BusinessExchangeState.Failure -> { }
             }
         })
     }
@@ -166,9 +168,9 @@ class ExchangeFragment : BaseFragment() {
     }
 
     private fun configureInitStateButtons(buttonComprar: ButtonBlue, buttonVender: ButtonBlue) {
-        buttonComprar.configuraTitulo("Comprar")
+        buttonComprar.configuraTitulo(TextsConsts.TextComprar)
         buttonComprar.configuraEstado(false)
-        buttonVender.configuraTitulo("Vender")
+        buttonVender.configuraTitulo(TextsConsts.TextVender)
         buttonVender.configuraEstado(false)
     }
 }

@@ -12,7 +12,7 @@ object CurrencyUtils {
 
     fun getFormattedSaleValue(currency: Currency): String {
         val vendaComDecimais = String.format("%.3f", currency.sell)
-        return currency.source + " " + vendaComDecimais.replace(".", ",")
+        return "R$ " + vendaComDecimais.replace(".", ",")
     }
 
     fun getFormattedValue_ToBRLCurrency(balance: BigDecimal): String {
@@ -21,7 +21,7 @@ object CurrencyUtils {
 
     fun getFormattedPurchaseValue(currency: Currency): String {
         val compraComDecimais = String.format("%.3f", currency.buy)
-        return currency.source + " " + compraComDecimais.replace(".", ",")
+        return "R$ " + compraComDecimais.replace(".", ",")
     }
 
     fun getCurrencyColor(variation: Double, context: Context): Int {
@@ -55,17 +55,16 @@ object CurrencyUtils {
 
     fun filterCurrency(currency: Currency, user: User): BigInteger {
         return when (currency.abbreviation) {
-            AbbreviationCurrenciesConsts().USD -> user.usd
-            AbbreviationCurrenciesConsts().EUR -> user.eur
-            AbbreviationCurrenciesConsts().GBP -> user.gbp
-            AbbreviationCurrenciesConsts().ARS -> user.ars
-            AbbreviationCurrenciesConsts().CAD -> user.cad
-            AbbreviationCurrenciesConsts().AUD -> user.aud
-            AbbreviationCurrenciesConsts().JPY -> user.jpy
-            AbbreviationCurrenciesConsts().CNY -> user.cny
-            AbbreviationCurrenciesConsts().BTC -> user.btc
-            else -> throw Exception(AbbreviationCurrenciesConsts().CURRENCY_NOT_FOUND)
+            AbbreviationCurrenciesConsts.USD -> user.usd
+            AbbreviationCurrenciesConsts.EUR -> user.eur
+            AbbreviationCurrenciesConsts.GBP -> user.gbp
+            AbbreviationCurrenciesConsts.ARS -> user.ars
+            AbbreviationCurrenciesConsts.CAD -> user.cad
+            AbbreviationCurrenciesConsts.AUD -> user.aud
+            AbbreviationCurrenciesConsts.JPY -> user.jpy
+            AbbreviationCurrenciesConsts.CNY -> user.cny
+            AbbreviationCurrenciesConsts.BTC -> user.btc
+            else -> throw Exception(AbbreviationCurrenciesConsts.CURRENCY_NOT_FOUND)
         }
     }
-
 }

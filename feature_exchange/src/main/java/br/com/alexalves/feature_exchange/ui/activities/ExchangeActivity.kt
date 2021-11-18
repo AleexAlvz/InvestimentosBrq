@@ -10,6 +10,7 @@ import br.com.alexalves.feature_exchange.ui.fragments.OperationSucessFragment
 import br.com.alexalves.models.BusinessExchangeState
 import br.com.alexalves.models.Currency
 import br.com.alexalves.models.TypeOperation
+import br.com.alexalves.models.consts.AccessibilityConsts
 import br.com.alexalves.models.consts.ArgumentConsts
 import br.com.alexalves.models.consts.TextsConsts
 import br.com.alexalves.models.consts.UIConsts
@@ -56,7 +57,7 @@ class ExchangeActivity : BaseActivity() {
         val fragmentSucess = OperationSucessFragment()
 
         val bundle = Bundle()
-        bundle.putSerializable("BusinessSucess", operationSucess)
+        bundle.putSerializable(ArgumentConsts.business_sucess_argument, operationSucess)
         fragmentSucess.arguments = bundle
 
         fragmentSucess.buttonHomeListener = { voltarParaHome() }
@@ -75,7 +76,7 @@ class ExchangeActivity : BaseActivity() {
         MainScope().launch {
             binding.toolbarActivityCambio.let {
                 it.toolbarTitulo.text = TextsConsts.TextCambio
-                it.toolbarBackOption.setAccessibleText(TextsConsts.TextMoedas, "Botão voltar para ")
+                it.toolbarBackOption.setAccessibleText(TextsConsts.TextMoedas, AccessibilityConsts.messageBeforeButtonBack)
                 it.toolbarBackOption.visibility = View.VISIBLE
                 it.toolbarBackOption.setOnClickListener { voltarParaHome() }
              }
@@ -86,7 +87,7 @@ class ExchangeActivity : BaseActivity() {
         MainScope().launch {
             binding.toolbarActivityCambio.let {
                 it.toolbarTitulo.text = if (typeOperation == TypeOperation.PURCHASE) TextsConsts.TextComprar else TextsConsts.TextVender
-                it.toolbarBackOption.setAccessibleText(TextsConsts.TextCambio, "Botão voltar para ")
+                it.toolbarBackOption.setAccessibleText(TextsConsts.TextCambio, AccessibilityConsts.messageBeforeButtonBack)
                 it.toolbarBackOption.visibility = View.VISIBLE
                 it.toolbarBackOption.setOnClickListener { startExchangeFragment() }
             }

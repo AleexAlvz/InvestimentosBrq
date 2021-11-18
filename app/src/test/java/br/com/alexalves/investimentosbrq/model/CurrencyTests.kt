@@ -111,7 +111,7 @@ class CurrencyTests {
         val currency =
             Currency("TESTE", BigDecimal.ZERO, BigDecimal.ZERO, 0.0)
         val formatted = CurrencyUtils.getFormattedSaleValue(currency)
-        assertThat(formatted, `is`(equalTo("BRL 0,000")))
+        assertThat(formatted, `is`(equalTo("R$ 0,000")))
     }
 
     @Test
@@ -119,14 +119,14 @@ class CurrencyTests {
         val currency =
             Currency("TESTE", BigDecimal.ZERO, BigDecimal(3.751), 0.0)
         val formatted = CurrencyUtils.getFormattedSaleValue(currency)
-        assertThat(formatted, `is`(equalTo("BRL 3,751")))
+        assertThat(formatted, `is`(equalTo("R$ 3,751")))
     }
 
     @Test
     fun testGetValorCompraFormatadoQuandoValorZero(){
         val moeda = Currency("TESTE", BigDecimal.ZERO, BigDecimal.ZERO, 0.0)
         val formatted = CurrencyUtils.getFormattedPurchaseValue(moeda)
-        assertThat(formatted, `is`(equalTo("BRL 0,000")))
+        assertThat(formatted, `is`(equalTo("R$ 0,000")))
     }
 
     @Test
@@ -134,7 +134,7 @@ class CurrencyTests {
         val currency =
             Currency("TESTE", BigDecimal(3.751), BigDecimal.ZERO, 0.0)
         val formatted = CurrencyUtils.getFormattedPurchaseValue(currency)
-        assertThat(formatted, `is`(equalTo("BRL 3,751")))
+        assertThat(formatted, `is`(equalTo("R$ 3,751")))
     }
 
 }

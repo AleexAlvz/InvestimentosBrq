@@ -7,6 +7,10 @@ import android.view.ViewGroup
 import br.com.alexalves.base.BaseFragment
 import br.com.alexalves.feature_exchange.databinding.FragmentOperationSucessBinding
 import br.com.alexalves.models.BusinessExchangeState
+import br.com.alexalves.models.consts.ArgumentConsts
+import br.com.alexalves.models.consts.OperationConsts
+import br.com.alexalves.models.consts.TextsConsts
+import org.w3c.dom.Text
 
 class OperationSucessFragment: BaseFragment() {
 
@@ -29,12 +33,12 @@ class OperationSucessFragment: BaseFragment() {
     }
 
     private fun configuraTextoSucesso() {
-        val operationSucess = arguments?.get("BusinessSucess") as BusinessExchangeState.Sucess
+        val operationSucess = arguments?.get(ArgumentConsts.business_sucess_argument) as BusinessExchangeState.Sucess
         binding.textOperacaoSucesso.text = operationSucess.message
     }
 
     private fun configuraButtonHome() {
-        binding.operacaoSucedidaButtonHome.configuraTitulo("Home")
+        binding.operacaoSucedidaButtonHome.configuraTitulo(TextsConsts.TextHome)
         configuraButtonHomeListener()
     }
 

@@ -160,7 +160,7 @@ class ExchangeScreenTest {
                 withId(R.id.fragment_cambio_text_valor_compra_moeda),
                 instanceOf(TextView::class.java)
             )
-        ).check(matches(withText("Compra: BRL 5,000")))
+        ).check(matches(withText("Compra: R$ 5,000")))
 
         //Verify text in sell value of card
         onView(
@@ -169,7 +169,7 @@ class ExchangeScreenTest {
                 withId(R.id.fragment_cambio_text_valor_venda_moeda),
                 instanceOf(TextView::class.java)
             )
-        ).check(matches(withText("Venda: BRL 4,000")))
+        ).check(matches(withText("Venda: R$ 4,000")))
     }
 
     @Test

@@ -6,6 +6,7 @@ import br.com.alexalves.base.BaseViewModel
 import br.com.alexalves.base.coroutines.AppContextProvider
 import br.com.alexalves.investimentosbrq.repository.HomeRepository
 import br.com.alexalves.models.HomeState
+import br.com.alexalves.models.User
 import br.com.alexalves.models.exceptions.FailureInFoundCurrenciesException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -39,7 +40,7 @@ class HomeViewModel(
         CoroutineScope(AppContextProvider.io).launch{
             val user = exchangeDataSource.searchUser(userId)
             if (user==null){
-                exchangeDataSource.saveUser(br.com.alexalves.models.User(id = userId))
+                exchangeDataSource.saveUser(User(id = userId))
             }
         }
     }

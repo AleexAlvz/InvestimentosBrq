@@ -1,6 +1,6 @@
 package br.com.alexalves.models.consts
 
-class AbbreviationCurrenciesConsts {
+object AbbreviationCurrenciesConsts {
 
     //Abbreviation of currencies
     val USD = "USD"

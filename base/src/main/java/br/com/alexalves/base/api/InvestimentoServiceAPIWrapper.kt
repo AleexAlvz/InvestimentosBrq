@@ -7,8 +7,8 @@ import br.com.alexalves.utils.CurrencyUtils
 class InvestimentoServiceAPIWrapper {
 
     private fun configureReturnOfCurrenciesAPI(response: ServiceInvestimentos): List<Currency> {
-        val currencies = response?.results?.currencies
-        currencies?.let {
+        val currencies = response.results.currencies
+        currencies.let {
             CurrencyUtils.setAbbreviationAndSource(it.ars, it.source)
             CurrencyUtils.setAbbreviationAndSource(it.aud, it.source)
             CurrencyUtils.setAbbreviationAndSource(it.btc, it.source)
