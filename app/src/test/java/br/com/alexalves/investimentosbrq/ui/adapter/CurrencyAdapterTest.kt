@@ -1,6 +1,6 @@
 package br.com.alexalves.investimentosbrq.ui.adapter
 
-import br.com.alexalves.investimentosbrq.model.Currency
+import br.com.alexalves.models.Currency
 import io.mockk.MockKAnnotations
 import io.mockk.mockk
 import org.junit.Assert.assertEquals
@@ -21,9 +21,10 @@ class CurrencyAdapterTest {
     @Test
     fun `When instance CurrencyAdapter and call getItemCount then return the correct count`(){
         //Arrange
-        val currencies = listOf<Currency>(
-            Currency("NOME", BigDecimal.ZERO,BigDecimal.ZERO, 0.0),
-            Currency("NOME", BigDecimal.ZERO,BigDecimal.ZERO, 0.0))
+        val currencies = listOf(
+            Currency("NOME", BigDecimal.ZERO, BigDecimal.ZERO, 0.0),
+            Currency("NOME", BigDecimal.ZERO, BigDecimal.ZERO, 0.0)
+        )
         val adapter = CurrencyAdapter(currencies, mockk(), mockk())
 
         //Act

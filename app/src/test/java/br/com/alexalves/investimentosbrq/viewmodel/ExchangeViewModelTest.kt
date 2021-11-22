@@ -1,16 +1,13 @@
 package br.com.alexalves.investimentosbrq.viewmodel
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
-import br.com.alexalves.investimentosbrq.base.AppContextProvider
-import br.com.alexalves.investimentosbrq.base.TestContextProvider
-import br.com.alexalves.investimentosbrq.model.BusinessExchangeState
-import br.com.alexalves.investimentosbrq.model.Currency
-import br.com.alexalves.investimentosbrq.model.ScreenExchangeState
-import br.com.alexalves.investimentosbrq.model.User
-import br.com.alexalves.investimentosbrq.model.exceptions.PurchaseNotApprovalException
-import br.com.alexalves.investimentosbrq.model.exceptions.SaleNotApprovalException
-import br.com.alexalves.investimentosbrq.model.exceptions.UserNotFoundException
-import br.com.alexalves.investimentosbrq.repository.ExchangeRepository
+import br.com.alexalves.base.coroutines.AppContextProvider
+import br.com.alexalves.feature_exchange.repository.ExchangeRepository
+import br.com.alexalves.feature_exchange.ui.viewmodels.ExchangeViewModel
+import br.com.alexalves.models.*
+import br.com.alexalves.models.exceptions.PurchaseNotApprovalException
+import br.com.alexalves.models.exceptions.SaleNotApprovalException
+import br.com.alexalves.models.exceptions.UserNotFoundException
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
 import io.mockk.impl.annotations.MockK
@@ -36,7 +33,8 @@ class ExchangeViewModelTest {
     @Before
     fun setUp() {
         MockKAnnotations.init(this, relaxUnitFun = true)
-        AppContextProvider.coroutinesContextProviderDelegate = TestContextProvider()
+        AppContextProvider.coroutinesContextProviderDelegate =
+            br.com.alexalves.base.coroutines.TestContextProvider()
         exchangeViewModel = ExchangeViewModel(exchangeRepository)
     }
 
@@ -45,7 +43,13 @@ class ExchangeViewModelTest {
     @Test
     fun `When initExchangeFragment is successful then update screenState`() {
         //Arrange
-        val currency = Currency("Dollar", BigDecimal.ZERO, BigDecimal.ZERO, 0.10, "USD")
+        val currency = Currency(
+            "Dollar",
+            BigDecimal.ZERO,
+            BigDecimal.ZERO,
+            0.10,
+            "USD"
+        )
         val user = User()
 
         coEvery { exchangeRepository.searchUser(user.id) } returns user
@@ -63,7 +67,13 @@ class ExchangeViewModelTest {
     @Test
     fun `When initExchangeFragment fails in search user Then catch userNotFoundException in screenState`() {
         //Arrange
-        val currency = Currency("Dollar", BigDecimal.ZERO, BigDecimal.ZERO, 0.10, "USD")
+        val currency = Currency(
+            "Dollar",
+            BigDecimal.ZERO,
+            BigDecimal.ZERO,
+            0.10,
+            "USD"
+        )
         val user = User()
         val userNotFoundException = UserNotFoundException()
 
@@ -83,7 +93,8 @@ class ExchangeViewModelTest {
     @Test
     fun `When purchaseCurrency successful with balance greater than finalValue Then update businessState`() {
         //Arrange
-        val currency = Currency("Dollar", BigDecimal(5), BigDecimal.ZERO, 0.10, "USD")
+        val currency =
+            Currency("Dollar", BigDecimal(5), BigDecimal.ZERO, 0.10, "USD")
         val quantity = BigInteger("10")
         val finalValue = quantity.toBigDecimal()*currency.buy
         val user = User()
@@ -94,17 +105,18 @@ class ExchangeViewModelTest {
         exchangeViewModel.purchaseCurrency(currency, quantity, user.id)
 
         //Assert
-        val expectedBusinessState = BusinessExchangeState.SucessPurchase(quantity, finalValue)
+        val expectedBusinessState = BusinessExchangeState.Sucess(TypeOperation.PURCHASE, "Sucess")
 
-        val actualBusinessState = exchangeViewModel.viewBusinessExchangeState.value as BusinessExchangeState.SucessPurchase
+        val actualBusinessState = exchangeViewModel.viewBusinessExchangeState.value as BusinessExchangeState.Sucess
 
-        assertEquals(expectedBusinessState, actualBusinessState)
+        assertEquals(expectedBusinessState.javaClass, actualBusinessState.javaClass)
     }
 
     @Test
     fun `When purchaseCurrency successful with balance equals finalValue Then update businessState`() {
         //Arrange
-        val currency = Currency("Dollar", BigDecimal(5), BigDecimal.ZERO, 0.10, "USD")
+        val currency =
+            Currency("Dollar", BigDecimal(5), BigDecimal.ZERO, 0.10, "USD")
         val quantity = BigInteger("10")
         val finalValue = quantity.toBigDecimal()*currency.buy
         val user = User(balance = BigDecimal(finalValue.toString()))
@@ -116,17 +128,18 @@ class ExchangeViewModelTest {
 
         //Assert
 
-        val expectedBusinessState = BusinessExchangeState.SucessPurchase(quantity, finalValue)
+        val expectedBusinessState = BusinessExchangeState.Sucess(TypeOperation.PURCHASE, "Sucess")
 
-        val actualBusinessState = exchangeViewModel.viewBusinessExchangeState.value as BusinessExchangeState.SucessPurchase
+        val actualBusinessState = exchangeViewModel.viewBusinessExchangeState.value as BusinessExchangeState.Sucess
 
-        assertEquals(expectedBusinessState, actualBusinessState)
+        assertEquals(expectedBusinessState.javaClass, actualBusinessState.javaClass)
     }
 
     @Test
     fun `When purchaseCurrency fails in search user Then catch UserNotFoundException in businessState`() {
         //Arrange
-        val currency = Currency("Dollar", BigDecimal(5), BigDecimal.ZERO, 0.10, "USD")
+        val currency =
+            Currency("Dollar", BigDecimal(5), BigDecimal.ZERO, 0.10, "USD")
         val quantity = BigInteger("10")
         val user = User()
 
@@ -137,7 +150,7 @@ class ExchangeViewModelTest {
 
         //Assert
 
-        val actualBusinessState = exchangeViewModel.viewBusinessExchangeState.value as BusinessExchangeState.FailurePurchase
+        val actualBusinessState = exchangeViewModel.viewBusinessExchangeState.value as BusinessExchangeState.Failure
 
         assertEquals(UserNotFoundException().javaClass, actualBusinessState.error.javaClass)
     }
@@ -145,7 +158,8 @@ class ExchangeViewModelTest {
     @Test
     fun `When purchaseCurrency not approval purchase Then catch UserNotFoundException in businessState`() {
         //Arrange
-        val currency = Currency("Dollar", BigDecimal(5), BigDecimal.ZERO, 0.10, "USD")
+        val currency =
+            Currency("Dollar", BigDecimal(5), BigDecimal.ZERO, 0.10, "USD")
         val quantity = BigInteger("10")
         val user = User(balance = BigDecimal.ZERO)
 
@@ -155,7 +169,7 @@ class ExchangeViewModelTest {
         exchangeViewModel.purchaseCurrency(currency, quantity, user.id)
 
         //Assert
-        val actualBusinessState = exchangeViewModel.viewBusinessExchangeState.value as BusinessExchangeState.FailurePurchase
+        val actualBusinessState = exchangeViewModel.viewBusinessExchangeState.value as BusinessExchangeState.Failure
         assertEquals(PurchaseNotApprovalException().javaClass, actualBusinessState.error.javaClass)
     }
 
@@ -164,7 +178,8 @@ class ExchangeViewModelTest {
     @Test
     fun `When saleCurrency successful with amount request less than amountCurrency of user Then update businessState`() {
         //Arrange
-        val currency = Currency("Dollar", BigDecimal.ZERO, BigDecimal(5), 0.10, "USD")
+        val currency =
+            Currency("Dollar", BigDecimal.ZERO, BigDecimal(5), 0.10, "USD")
         val amountRequest = BigInteger("10")
         val finalValue = amountRequest.toBigDecimal()*currency.sell
         val user = User(usd = BigInteger("20"))
@@ -175,11 +190,11 @@ class ExchangeViewModelTest {
         exchangeViewModel.saleCurrency(currency, amountRequest, user.id)
 
         //Assert
-        val expectedBusinessState = BusinessExchangeState.SucessSale(amountRequest, finalValue)
+        val expectedBusinessState = BusinessExchangeState.Sucess(TypeOperation.SALE, "Sucess")
 
-        val actualBusinessState = exchangeViewModel.viewBusinessExchangeState.value as BusinessExchangeState.SucessSale
+        val actualBusinessState = exchangeViewModel.viewBusinessExchangeState.value as BusinessExchangeState.Sucess
 
-        assertEquals(expectedBusinessState, actualBusinessState)
+        assertEquals(expectedBusinessState.javaClass, actualBusinessState.javaClass)
     }
 
     @Test
@@ -196,17 +211,18 @@ class ExchangeViewModelTest {
         exchangeViewModel.saleCurrency(currency, amountRequest, user.id)
 
         //Assert
-        val expectedBusinessState = BusinessExchangeState.SucessSale(amountRequest, finalValue)
+        val expectedBusinessState = BusinessExchangeState.Sucess(TypeOperation.SALE, "Sucess")
 
-        val actualBusinessState = exchangeViewModel.viewBusinessExchangeState.value as BusinessExchangeState.SucessSale
+        val actualBusinessState = exchangeViewModel.viewBusinessExchangeState.value as BusinessExchangeState.Sucess
 
-        assertEquals(expectedBusinessState, actualBusinessState)
+        assertEquals(expectedBusinessState.javaClass, actualBusinessState.javaClass)
     }
 
     @Test
     fun `When saleCurrency fails in search user Then catch UserNotFoundException in businessState`() {
         //Arrange
-        val currency = Currency("Dollar", BigDecimal(5), BigDecimal.ZERO, 0.10, "USD")
+        val currency =
+            Currency("Dollar", BigDecimal(5), BigDecimal.ZERO, 0.10, "USD")
         val quantity = BigInteger("10")
         val user = User()
 
@@ -217,7 +233,7 @@ class ExchangeViewModelTest {
 
         //Assert
 
-        val actualBusinessState = exchangeViewModel.viewBusinessExchangeState.value as BusinessExchangeState.FailureSale
+        val actualBusinessState = exchangeViewModel.viewBusinessExchangeState.value as BusinessExchangeState.Failure
 
         assertEquals(UserNotFoundException().javaClass, actualBusinessState.error.javaClass)
     }
@@ -225,7 +241,8 @@ class ExchangeViewModelTest {
     @Test
     fun `When saleCurrency not approval purchase Then catch UserNotFoundException in businessState`() {
         //Arrange
-        val currency = Currency("Dollar", BigDecimal(5), BigDecimal.ZERO, 0.10, "USD")
+        val currency =
+            Currency("Dollar", BigDecimal(5), BigDecimal.ZERO, 0.10, "USD")
         val quantity = BigInteger("10")
         val user = User(usd = BigInteger.ZERO)
 
@@ -235,7 +252,7 @@ class ExchangeViewModelTest {
         exchangeViewModel.saleCurrency(currency, quantity, user.id)
 
         //Assert
-        val actualBusinessState = exchangeViewModel.viewBusinessExchangeState.value as BusinessExchangeState.FailureSale
+        val actualBusinessState = exchangeViewModel.viewBusinessExchangeState.value as BusinessExchangeState.Failure
         assertEquals(SaleNotApprovalException().javaClass, actualBusinessState.error.javaClass)
     }
 

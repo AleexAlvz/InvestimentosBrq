@@ -1,2 +1,6 @@
 rootProject.name = "InvestimentosBrq"
 include ':app'
+include ':base'
+include ':models'
+include ':feature_exchange'
+include ':utils'

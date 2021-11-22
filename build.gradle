@@ -25,3 +25,30 @@ allprojects {
 task clean(type: Delete) {
     delete rootProject.buildDir
 }
+
+ext {
+    //config
+    minSdkVersion = 21
+    compileSdkVersion = 31
+    targetSdkVersion = 31
+
+    //implementation
+    material_design_version = "1.4.0"
+    app_compat_version = "1.3.1"
+    core_ktx_version = "1.7.0"
+    koin_version = '2.2.3'
+    room_version = '2.3.0'
+    expresso_version = '3.4.0'
+    retrofit_version = '2.9.0'
+    coroutines_version = '1.5.0'
+    databinding_compiler_version = "3.1.4"
+
+    //testImplementation
+    test_core_ktx_version = "1.4.0"
+    junit_version = "4.13.2"
+    arch_testing = "2.1.0"
+    mockk_version= "1.12.0"
+
+    //androidTestImplementation
+    junit_androidtest_version = "1.1.3"
+}
